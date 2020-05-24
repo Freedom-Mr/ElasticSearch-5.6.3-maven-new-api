@@ -46,7 +46,7 @@ public class ExecuteResult extends ShareParms {
                         setIndexType(json.getString(_TYPE)).
                         setScore(json.getString(_SCORE)).
                         setField( sourceFieldDatas).
-                        setTotal_Type(1);
+                        setTotal_Operation(1);
                 searchResult.setQueryInfos(dataInfo);
             });
         }catch (Exception e){
@@ -213,7 +213,7 @@ public class ExecuteResult extends ShareParms {
                     setIndexType(jsono.getString(_TYPE)).
                     setScore(jsono.getString(_SCORE)).
                     setField( sourceFieldDatas).
-                    setTotal_Type(1);
+                    setTotal_Operation(1);
             queryInfos.add(dataInfo);
         });
     }

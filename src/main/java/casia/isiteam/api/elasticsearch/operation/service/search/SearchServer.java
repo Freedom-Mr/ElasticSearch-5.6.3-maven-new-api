@@ -321,14 +321,14 @@ public class SearchServer extends ElasticSearchApi implements ElasticSearchApi.S
                         if( _source.containsKey(EXCLUDES) ){
                             _source.getJSONArray(EXCLUDES).add(c);
                         }else{
-                            _source.put(EXCLUDES,c);
+                            _source.put(EXCLUDES,a(c));
                         }
                     });
                     s.getIncludesFields().stream().forEach(c->{
                         if( _source.containsKey(INCLUDES) ){
                             _source.getJSONArray(INCLUDES).add(c);
                         }else{
-                            _source.put(INCLUDES,c);
+                            _source.put(INCLUDES,a(c));
                         }
                     });
 

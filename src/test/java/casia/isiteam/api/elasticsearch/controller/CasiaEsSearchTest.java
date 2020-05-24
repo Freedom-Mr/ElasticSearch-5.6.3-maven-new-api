@@ -1,9 +1,6 @@
 package casia.isiteam.api.elasticsearch.controller;
 
-import casia.isiteam.api.elasticsearch.common.enums.FieldOccurs;
-import casia.isiteam.api.elasticsearch.common.enums.GeoLevel;
-import casia.isiteam.api.elasticsearch.common.enums.OperationLevel;
-import casia.isiteam.api.elasticsearch.common.enums.QueriesLevel;
+import casia.isiteam.api.elasticsearch.common.enums.*;
 import casia.isiteam.api.elasticsearch.common.vo.field.aggs.*;
 import casia.isiteam.api.elasticsearch.common.vo.result.AggsInfo;
 import casia.isiteam.api.elasticsearch.common.vo.result.LonLatInfo;
@@ -13,6 +10,8 @@ import casia.isiteam.api.elasticsearch.common.vo.field.search.KeyWordsBuider;
 import casia.isiteam.api.elasticsearch.common.vo.field.search.KeywordsCombine;
 import casia.isiteam.api.elasticsearch.common.vo.field.RangeField;
 import casia.isiteam.api.toolutil.Validator;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import junit.framework.TestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,13 +59,17 @@ public class CasiaEsSearchTest extends TestCase {
                 new TopData(2)
         );*/
 //        aggsFieldBuider.addGeo(new GeoInfo(GeoLevel.Bounds,"lal"),new GeoInfo(GeoLevel.Centroid,"lal"));
-        SearchResult searchResult = casiaEsSearch.setAggregations(
-                aggsFieldBuider
+        SearchResult searchResult = casiaEsSearch
+                .setAggregations(
+                new AggsFieldBuider(
+                        new TopData(2).setReturnField(FieldOccurs.INCLUDES,"eid","site")
+                )
         ).executeAggsInfo();
 
 
         System.out.println("total_doc："+searchResult.getTotal_Doc());
         System.out.println("scrollId："+searchResult.getScrollId());
+        System.out.println("json："+ JSON.toJSONString(searchResult) );
         outInfo(searchResult.getAggsInfos(),0);
     }
     public void outInfo( int childrens,List<QueryInfo> aggsInfos){
@@ -79,7 +82,7 @@ public class CasiaEsSearchTest extends TestCase {
             System.out.print("}，{index_name："+s.getIndexName());
             System.out.print("}，{index_type："+s.getIndexType());
             System.out.print("}，{score："+s.getScore());
-            System.out.print("}，{Total_Type："+s.getTotal_Type());
+            System.out.print("}，{Total_Type："+s.getTotal_Operation());
             System.out.print("}，{field："+s.getField());
             System.out.println("}");
         });

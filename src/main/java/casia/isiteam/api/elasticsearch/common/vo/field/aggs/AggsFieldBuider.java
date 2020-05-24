@@ -22,17 +22,10 @@ public class AggsFieldBuider {
     private List<TopData> topDatas = new ArrayList<>();
     private List<GeoInfo> geoInfos = new ArrayList<>();
 
-    public void addGeo(GeoInfo... geoInfo){
-        if( Validator.check(geoInfo) ){
-            for(GeoInfo info:geoInfo){
-                if( !geoInfos.contains(info) ){
-                    geoInfos.add(info);
-                }
-            }
-        }
-    }
+    public AggsFieldBuider(){
 
-    public void addType(TypeInfo... typeInfo){
+    }
+    public AggsFieldBuider(TypeInfo ... typeInfo) {
         if( Validator.check(typeInfo) ){
             for(TypeInfo info:typeInfo){
                 if( !cardinalitys.contains(info) ){
@@ -41,8 +34,39 @@ public class AggsFieldBuider {
             }
         }
     }
+    public AggsFieldBuider addType(TypeInfo... typeInfo){
+        if( Validator.check(typeInfo) ){
+            for(TypeInfo info:typeInfo){
+                if( !cardinalitys.contains(info) ){
+                    cardinalitys.add(info);
+                }
+            }
+        }
+        return this;
+    }
 
-    public void addTerm(TermInfo ... termInfo){
+    public AggsFieldBuider(GeoInfo ... geoInfo) {
+        if( Validator.check(geoInfo) ){
+            for(GeoInfo info:geoInfo){
+                if( !geoInfos.contains(info) ){
+                    geoInfos.add(info);
+                }
+            }
+        }
+    }
+    public AggsFieldBuider addGeo(GeoInfo... geoInfo){
+        if( Validator.check(geoInfo) ){
+            for(GeoInfo info:geoInfo){
+                if( !geoInfos.contains(info) ){
+                    geoInfos.add(info);
+                }
+            }
+        }
+        return this;
+    }
+
+
+    public AggsFieldBuider(TermInfo ... termInfo){
         if( Validator.check(termInfo) ){
             for(TermInfo info:termInfo){
                 if( !termInfos.contains(info) ){
@@ -51,7 +75,18 @@ public class AggsFieldBuider {
             }
         }
     }
-    public void addOperation(OperationInfo ... operationInfo){
+    public AggsFieldBuider addTerm(TermInfo ... termInfo){
+        if( Validator.check(termInfo) ){
+            for(TermInfo info:termInfo){
+                if( !termInfos.contains(info) ){
+                    termInfos.add(info);
+                }
+            }
+        }
+        return this;
+    }
+
+    public AggsFieldBuider(OperationInfo ... operationInfo){
         if( Validator.check(operationInfo) ){
             for(OperationInfo info:operationInfo){
                 if( !operationInfos.contains(info) ){
@@ -60,8 +95,18 @@ public class AggsFieldBuider {
             }
         }
     }
+    public AggsFieldBuider addOperation(OperationInfo ... operationInfo){
+        if( Validator.check(operationInfo) ){
+            for(OperationInfo info:operationInfo){
+                if( !operationInfos.contains(info) ){
+                    operationInfos.add(info);
+                }
+            }
+        }
+        return this;
+    }
 
-    public void addDate(DateInfo ... dateInfo){
+    public AggsFieldBuider(DateInfo ... dateInfo){
         if( Validator.check(dateInfo) ){
             for(DateInfo info:dateInfo){
                 if( !dateInfos.contains(info) ){
@@ -70,7 +115,18 @@ public class AggsFieldBuider {
             }
         }
     }
-    public void addTopDatas(TopData ... topData){
+    public AggsFieldBuider addDate(DateInfo ... dateInfo){
+        if( Validator.check(dateInfo) ){
+            for(DateInfo info:dateInfo){
+                if( !dateInfos.contains(info) ){
+                    dateInfos.add(info);
+                }
+            }
+        }
+        return this;
+    }
+
+    public AggsFieldBuider(TopData ... topData){
         if( Validator.check(topData) ){
             for(TopData info:topData){
                 if( !topDatas.contains(info) ){
@@ -78,6 +134,16 @@ public class AggsFieldBuider {
                 }
             }
         }
+    }
+    public AggsFieldBuider addTopDatas(TopData ... topData){
+        if( Validator.check(topData) ){
+            for(TopData info:topData){
+                if( !topDatas.contains(info) ){
+                    topDatas.add(info);
+                }
+            }
+        }
+        return this;
     }
 
     public List<TypeInfo> getCardinalitys() {

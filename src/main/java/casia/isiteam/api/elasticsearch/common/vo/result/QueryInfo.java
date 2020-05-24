@@ -17,7 +17,7 @@ public class QueryInfo {
     private String indexType;
     private String id;
     private String score;
-    private long total_Type = -1;
+    private float total_Operation = -1;
 
     public String getIndexName() {
         return indexName;
@@ -64,12 +64,14 @@ public class QueryInfo {
         return this;
     }
 
-    public long getTotal_Type() {
-        return total_Type;
+
+    public float getTotal_Operation() {
+        return total_Operation;
     }
 
-    public QueryInfo setTotal_Type(long total_Type) {
-        this.total_Type = total_Type;
+    public QueryInfo setTotal_Operation(float total_Operation) {
+        this.total_Operation = total_Operation;
         return this;
     }
+
 }
