@@ -407,7 +407,7 @@ public class SearchServer extends ElasticSearchApi implements ElasticSearchApi.S
             return new SearchResult();
         }
         String curl=curl(indexParmsStatus.getUrl(),indexParmsStatus.getIndexName(),indexParmsStatus.getIndexType(),_SEARCH);
-        logger.info(LogUtil.compositionLogCurl(curl,indexSearchBuilder.getCount().toString() ) );
+        logger.debug(LogUtil.compositionLogCurl(curl,indexSearchBuilder.getCount().toString() ) );
         String resultStr = new CasiaHttpUtil().post(curl,indexParmsStatus.getHeards(),null,indexSearchBuilder.getCount().toString());
         return ExecuteResult.executeAggsResult(o(resultStr));
     }

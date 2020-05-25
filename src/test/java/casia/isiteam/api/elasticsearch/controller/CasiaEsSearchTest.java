@@ -62,7 +62,7 @@ public class CasiaEsSearchTest extends TestCase {
         SearchResult searchResult = casiaEsSearch
                 .setAggregations(
                 new AggsFieldBuider(
-                        new TopData(2).setReturnField(FieldOccurs.INCLUDES,"eid","site")
+                        new DateInfo("pubtime","yyyy-MM","1M",1L)
                 )
         ).executeAggsInfo();
 
