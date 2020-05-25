@@ -34,6 +34,16 @@ public class AggsFieldBuider {
             }
         }
     }
+    /*public AggsFieldBuider(List<TypeInfo> typeInfo) {
+        if( Validator.check(typeInfo) ){
+            for(TypeInfo info:typeInfo){
+                if( !cardinalitys.contains(info) ){
+                    cardinalitys.add(info);
+                }
+            }
+        }
+    }*/
+
     public AggsFieldBuider addType(TypeInfo... typeInfo){
         if( Validator.check(typeInfo) ){
             for(TypeInfo info:typeInfo){
@@ -44,6 +54,17 @@ public class AggsFieldBuider {
         }
         return this;
     }
+    public AggsFieldBuider addType(List<TypeInfo> typeInfo){
+        if( Validator.check(typeInfo) ){
+            for(TypeInfo info:typeInfo){
+                if( !cardinalitys.contains(info) ){
+                    cardinalitys.add(info);
+                }
+            }
+        }
+        return this;
+    }
+
 
     public AggsFieldBuider(GeoInfo ... geoInfo) {
         if( Validator.check(geoInfo) ){
@@ -54,6 +75,15 @@ public class AggsFieldBuider {
             }
         }
     }
+   /* public AggsFieldBuider(List<GeoInfo> geoInfo) {
+        if( Validator.check(geoInfo) ){
+            for(GeoInfo info:geoInfo){
+                if( !geoInfos.contains(info) ){
+                    geoInfos.add(info);
+                }
+            }
+        }
+    }*/
     public AggsFieldBuider addGeo(GeoInfo... geoInfo){
         if( Validator.check(geoInfo) ){
             for(GeoInfo info:geoInfo){
@@ -64,7 +94,16 @@ public class AggsFieldBuider {
         }
         return this;
     }
-
+    public AggsFieldBuider addGeo(List<GeoInfo> geoInfo){
+        if( Validator.check(geoInfo) ){
+            for(GeoInfo info:geoInfo){
+                if( !geoInfos.contains(info) ){
+                    geoInfos.add(info);
+                }
+            }
+        }
+        return this;
+    }
 
     public AggsFieldBuider(TermInfo ... termInfo){
         if( Validator.check(termInfo) ){
@@ -75,7 +114,26 @@ public class AggsFieldBuider {
             }
         }
     }
+   /* public AggsFieldBuider(List<TermInfo> termInfo){
+        if( Validator.check(termInfo) ){
+            for(TermInfo info:termInfo){
+                if( !termInfos.contains(info) ){
+                    termInfos.add(info);
+                }
+            }
+        }
+    }*/
     public AggsFieldBuider addTerm(TermInfo ... termInfo){
+        if( Validator.check(termInfo) ){
+            for(TermInfo info:termInfo){
+                if( !termInfos.contains(info) ){
+                    termInfos.add(info);
+                }
+            }
+        }
+        return this;
+    }
+    public AggsFieldBuider addTerm(List<TermInfo> termInfo){
         if( Validator.check(termInfo) ){
             for(TermInfo info:termInfo){
                 if( !termInfos.contains(info) ){
@@ -95,7 +153,26 @@ public class AggsFieldBuider {
             }
         }
     }
+    /*public AggsFieldBuider(List<OperationInfo> operationInfo){
+        if( Validator.check(operationInfo) ){
+            for(OperationInfo info:operationInfo){
+                if( !operationInfos.contains(info) ){
+                    operationInfos.add(info);
+                }
+            }
+        }
+    }*/
     public AggsFieldBuider addOperation(OperationInfo ... operationInfo){
+        if( Validator.check(operationInfo) ){
+            for(OperationInfo info:operationInfo){
+                if( !operationInfos.contains(info) ){
+                    operationInfos.add(info);
+                }
+            }
+        }
+        return this;
+    }
+    public AggsFieldBuider addOperation(List<OperationInfo> operationInfo){
         if( Validator.check(operationInfo) ){
             for(OperationInfo info:operationInfo){
                 if( !operationInfos.contains(info) ){
@@ -115,7 +192,26 @@ public class AggsFieldBuider {
             }
         }
     }
+   /* public AggsFieldBuider(List<DateInfo> dateInfo){
+        if( Validator.check(dateInfo) ){
+            for(DateInfo info:dateInfo){
+                if( !dateInfos.contains(info) ){
+                    dateInfos.add(info);
+                }
+            }
+        }
+    }*/
     public AggsFieldBuider addDate(DateInfo ... dateInfo){
+        if( Validator.check(dateInfo) ){
+            for(DateInfo info:dateInfo){
+                if( !dateInfos.contains(info) ){
+                    dateInfos.add(info);
+                }
+            }
+        }
+        return this;
+    }
+    public AggsFieldBuider addDate(List<DateInfo> dateInfo){
         if( Validator.check(dateInfo) ){
             for(DateInfo info:dateInfo){
                 if( !dateInfos.contains(info) ){
@@ -135,7 +231,26 @@ public class AggsFieldBuider {
             }
         }
     }
+    /*public AggsFieldBuider(List<TopData> topData){
+        if( Validator.check(topData) ){
+            for(TopData info:topData){
+                if( !topDatas.contains(info) ){
+                    topDatas.add(info);
+                }
+            }
+        }
+    }*/
     public AggsFieldBuider addTopDatas(TopData ... topData){
+        if( Validator.check(topData) ){
+            for(TopData info:topData){
+                if( !topDatas.contains(info) ){
+                    topDatas.add(info);
+                }
+            }
+        }
+        return this;
+    }
+    public AggsFieldBuider addTopDatas(List<TopData> topData){
         if( Validator.check(topData) ){
             for(TopData info:topData){
                 if( !topDatas.contains(info) ){

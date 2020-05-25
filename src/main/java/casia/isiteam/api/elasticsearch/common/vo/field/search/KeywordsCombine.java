@@ -14,7 +14,12 @@ public class KeywordsCombine {
     private int minimumMatch = 1;
     private List<KeyWordsBuider> keyWordsBuiders = new ArrayList<>();
 
-
+    public KeywordsCombine(int minimumMatch, List<KeyWordsBuider> keyWordsBuiders) {
+        this.minimumMatch = minimumMatch;
+        for(KeyWordsBuider keyWordsBuider: keyWordsBuiders){
+            this.keyWordsBuiders.add(keyWordsBuider);
+        }
+    }
     public KeywordsCombine(int minimumMatch, KeyWordsBuider ... keyWordsBuiders) {
         this.minimumMatch = minimumMatch;
         for(KeyWordsBuider keyWordsBuider: keyWordsBuiders){
@@ -36,6 +41,12 @@ public class KeywordsCombine {
     }
 
     public KeywordsCombine setKeyWordsBuiders(KeyWordsBuider ... keyWordsBuiders) {
+        for(KeyWordsBuider keyWordsBuider: keyWordsBuiders){
+            this.keyWordsBuiders.add(keyWordsBuider);
+        }
+        return this;
+    }
+    public KeywordsCombine setKeyWordsBuiders(List<KeyWordsBuider> keyWordsBuiders) {
         for(KeyWordsBuider keyWordsBuider: keyWordsBuiders){
             this.keyWordsBuiders.add(keyWordsBuider);
         }

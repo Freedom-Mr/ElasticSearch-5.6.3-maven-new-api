@@ -3,6 +3,7 @@ package casia.isiteam.api.elasticsearch.operation.service.search;
 import casia.isiteam.api.elasticsearch.common.enums.AggsLevel;
 import casia.isiteam.api.elasticsearch.common.enums.FieldOccurs;
 import casia.isiteam.api.elasticsearch.common.enums.GeoLevel;
+import casia.isiteam.api.elasticsearch.common.enums.GeoQueryLevel;
 import casia.isiteam.api.elasticsearch.common.status.IndexSearchBuilder;
 import casia.isiteam.api.elasticsearch.common.vo.result.SearchResult;
 import casia.isiteam.api.elasticsearch.common.vo.field.aggs.AggsFieldBuider;
@@ -156,7 +157,40 @@ public class SearchServer extends ElasticSearchApi implements ElasticSearchApi.S
             keywordsCombine.getKeyWordsBuiders().forEach(s->{
                 String SM = Validator.check(s.getFieldOccurs()) && s.getFieldOccurs().getIsMust().equals(MUST_NOT) ? MUST_NOT : SHOULD;
                 if( !Validator.check(s.getKeywordsCombines()) ){
-                    JSONObject matchjson = o(s.getQueriesLevel().getLevel(),o(s.getField(),s.getKeyWord()));
+                    JSONObject matchjson = o();
+
+                    //关键词格式
+                    if( Validator.check(s.getQueriesLevel()) ){
+                        matchjson.put( s.getQueriesLevel().getLevel(),o(s.getField(),s.getKeyWord())) ;
+                    }
+                    //地理位置格式
+                    else if( Validator.check(s.getGeoQueryLevel()) && Validator.check(s.getGeoQueryInfo()) ){
+                        if( s.getGeoQueryLevel().getLevel() .equals(GeoQueryLevel.Polygon.getLevel()) ){
+                            JSONArray jsonArray =a();
+                            s.getGeoQueryInfo().getPolygon().forEach(lal->jsonArray.add(o(o(LAT,lal.getLat()),LON,lal.getLon())));
+                            matchjson.put(s.getGeoQueryLevel().getLevel(),o(s.getField(),o(POINTS,jsonArray) ));
+                        }else if( s.getGeoQueryLevel().getLevel() .equals(GeoQueryLevel.Box.getLevel()) ){
+                            matchjson.put(s.getGeoQueryLevel().getLevel(),o(s.getField(),o()));
+                            s.getGeoQueryInfo().getBox().forEach((k,v)->{
+                                matchjson.getJSONObject(s.getGeoQueryLevel().getLevel()).getJSONObject(s.getField()).put(k,o(o(LAT,v.getLat()),LON,v.getLon()));
+                            });
+                        }else if( s.getGeoQueryLevel().getLevel() .equals(GeoQueryLevel.Distance.getLevel()) ){
+                            matchjson.put(s.getGeoQueryLevel().getLevel(),o());
+                            matchjson.getJSONObject(s.getGeoQueryLevel().getLevel()).put(DISTANCE, s.getGeoQueryInfo().getDistance() );
+                            matchjson.getJSONObject(s.getGeoQueryLevel().getLevel()).put(s.getField(),o(o(LAT,s.getGeoQueryInfo().getDistanceGeo().getLat()),LON,s.getGeoQueryInfo().getDistanceGeo().getLon()));
+                        }else if( s.getGeoQueryLevel().getLevel() .equals(GeoQueryLevel.DistanceRange.getLevel()) ){
+                            matchjson.put(s.getGeoQueryLevel().getLevel(),o());
+                            matchjson.getJSONObject(s.getGeoQueryLevel().getLevel()).put(FROM, s.getGeoQueryInfo().getFrom() );
+                            matchjson.getJSONObject(s.getGeoQueryLevel().getLevel()).put(TO, s.getGeoQueryInfo().getTo() );
+                            matchjson.getJSONObject(s.getGeoQueryLevel().getLevel()).put(s.getField(),o(o(LAT,s.getGeoQueryInfo().getDistanceGeo().getLat()),LON,s.getGeoQueryInfo().getDistanceGeo().getLon()));
+                        }
+                    }
+                    //其他
+                    else{
+                        return;
+                    }
+
+                    //组装
                     if( keywordsCombine.getKeyWordsBuiders().size() == 1 && !SM.equals(MUST_NOT) ){
                         jsono.putAll(matchjson);
                         return;
@@ -407,7 +441,7 @@ public class SearchServer extends ElasticSearchApi implements ElasticSearchApi.S
             return new SearchResult();
         }
         String curl=curl(indexParmsStatus.getUrl(),indexParmsStatus.getIndexName(),indexParmsStatus.getIndexType(),_SEARCH);
-        logger.info(LogUtil.compositionLogCurl(curl,indexSearchBuilder.getCount().toString() ) );
+        logger.debug(LogUtil.compositionLogCurl(curl,indexSearchBuilder.getCount().toString() ) );
         String resultStr = new CasiaHttpUtil().post(curl,indexParmsStatus.getHeards(),null,indexSearchBuilder.getCount().toString());
         return ExecuteResult.executeAggsResult(o(resultStr));
     }

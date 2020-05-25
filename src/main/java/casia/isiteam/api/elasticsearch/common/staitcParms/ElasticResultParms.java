@@ -100,5 +100,8 @@ public class ElasticResultParms extends JSONCompare {
     protected final static String BOUNDS = "bounds";
     protected final static String LON = "lon";
     protected final static String LAT = "lat";
+    protected final static String POINTS = "points";
+    protected final static String DISTANCE = "distance";
+    protected final static String TO = "to";
 
 }

@@ -2,6 +2,8 @@ package casia.isiteam.api.elasticsearch.controller;
 
 import casia.isiteam.api.elasticsearch.common.enums.*;
 import casia.isiteam.api.elasticsearch.common.vo.field.aggs.*;
+import casia.isiteam.api.elasticsearch.common.vo.field.search.geo.GeoQueryInfo;
+import casia.isiteam.api.elasticsearch.common.vo.field.search.geo.LonLat;
 import casia.isiteam.api.elasticsearch.common.vo.result.AggsInfo;
 import casia.isiteam.api.elasticsearch.common.vo.result.LonLatInfo;
 import casia.isiteam.api.elasticsearch.common.vo.result.QueryInfo;
@@ -16,6 +18,7 @@ import junit.framework.TestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -123,23 +126,25 @@ public class CasiaEsSearchTest extends TestCase {
     }
     public void testSetMatchAllQuery() {
         casiaEsSearch.setIndexName("test","test_data");
+        List<KeyWordsBuider> list= new ArrayList<>();
         SearchResult searchResult = casiaEsSearch.
                 setFrom(0).
-                setSize(20).
+                setSize(3).
 //                addSort(
 //                        new SortField("id", SortOrder.DESC),
 //                        new SortField("eid", SortOrder.ASC)
 //                ).
-                setRange(
-                        new RangeField(FieldOccurs.INCLUDES,"id",32174657,33677173)
-//                        new RangeField(FieldOccurs.EXCLUDES,"pubtime","2020-01-09 07:36:00",null)
-                ).
+//                setRange(
+//                        new RangeField(FieldOccurs.INCLUDES,"id",32174657,33677173)
+////                        new RangeField(FieldOccurs.EXCLUDES,"pubtime","2020-01-09 07:36:00",null)
+//                ).
                 setQueryKeyWords(
-                        new KeywordsCombine(4,
+                        new KeywordsCombine(2,
                                new KeyWordsBuider("title","肺炎",FieldOccurs.INCLUDES, QueriesLevel.Phrase),
                                new KeyWordsBuider("title","病毒",FieldOccurs.EXCLUDES, QueriesLevel.Phrase),
-                               new KeyWordsBuider("site","新.*",FieldOccurs.INCLUDES, QueriesLevel.Regexp),
-                               new KeyWordsBuider(
+                               new KeyWordsBuider("lal",new GeoQueryInfo().addDistance(new LonLat(112.967240F,28.211238F),"100km"),FieldOccurs.INCLUDES, GeoQueryLevel.Distance)
+//                               new KeyWordsBuider("site","新.*",FieldOccurs.INCLUDES, QueriesLevel.Regexp),
+                               /*new KeyWordsBuider(
                                        new KeywordsCombine(1,
                                                new KeyWordsBuider("id","32677740",FieldOccurs.EXCLUDES, QueriesLevel.Term),
                                                new KeyWordsBuider("title","广告",FieldOccurs.EXCLUDES, QueriesLevel.Phrase),
@@ -147,20 +152,20 @@ public class CasiaEsSearchTest extends TestCase {
                                                        new KeywordsCombine(1,new KeyWordsBuider("content","武汉",FieldOccurs.INCLUDES, QueriesLevel.Phrase) )
                                                )
                                        )
-                               )
+                               )*/
                         ),
                         new KeywordsCombine(1,
                                 new KeyWordsBuider("title","疫情",FieldOccurs.INCLUDES, QueriesLevel.Term)
                         )
                 ).
-                setExistsFilter("content","title").
-                setMissingFilter("it").
+//                setExistsFilter("content","title").
+//                setMissingFilter("it").
 //                openProfile().
-                setMinScore(0.1F).
-                setHighlight(null,null,"id").
+//                setMinScore(0.1F).
+//                setHighlight(null,null,"id").
                 setReturnField("i*","site","pubtime","title").
                 setReturnField(true).
-                setReturnField(FieldOccurs.EXCLUDES,"ip").
+//                setReturnField(FieldOccurs.EXCLUDES,"ip").
                 executeQueryInfo();
 
         logger.info("total："+searchResult.getTotal_Doc());

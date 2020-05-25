@@ -1,7 +1,9 @@
 package casia.isiteam.api.elasticsearch.common.vo.field.search;
 
 import casia.isiteam.api.elasticsearch.common.enums.FieldOccurs;
+import casia.isiteam.api.elasticsearch.common.enums.GeoQueryLevel;
 import casia.isiteam.api.elasticsearch.common.enums.QueriesLevel;
+import casia.isiteam.api.elasticsearch.common.vo.field.search.geo.GeoQueryInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,9 +17,16 @@ import java.util.List;
  */
 public class KeyWordsBuider {
     private String field;
-    private String keyWord;
     private FieldOccurs fieldOccurs;
+
+    //keyword buider
+    private String keyWord;
     private QueriesLevel queriesLevel;
+
+    //geo buider
+    private GeoQueryInfo geoQueryInfo;
+    private GeoQueryLevel geoQueryLevel;
+
     private List<KeywordsCombine> keywordsCombines = new ArrayList<>();
 
     public KeyWordsBuider(String field, String keyWord, FieldOccurs fieldOccurs, QueriesLevel queriesLevel) {
@@ -27,6 +36,20 @@ public class KeyWordsBuider {
         this.queriesLevel = queriesLevel;
     }
 
+    public KeyWordsBuider(String field, GeoQueryInfo geoQueryInfo, FieldOccurs fieldOccurs, GeoQueryLevel geoQueryLevel) {
+        this.field = field;
+        this.geoQueryInfo = geoQueryInfo;
+        this.fieldOccurs = fieldOccurs;
+        this.geoQueryLevel = geoQueryLevel;
+    }
+
+    public KeyWordsBuider(List<KeywordsCombine> keywordsCombines) {
+        for(KeywordsCombine keywordsCombine: keywordsCombines ){
+            if( !this.keywordsCombines.contains(keywordsCombine) ){
+                this.keywordsCombines.add(keywordsCombine);
+            }
+        }
+    }
     public KeyWordsBuider(KeywordsCombine ... keywordsCombines) {
         for(KeywordsCombine keywordsCombine: keywordsCombines ){
             if( !this.keywordsCombines.contains(keywordsCombine) ){
@@ -48,8 +71,9 @@ public class KeyWordsBuider {
         return keyWord;
     }
 
-    public KeyWordsBuider setKeyWord(String keyWord) {
+    public KeyWordsBuider setKeyWordAndQueriesLevel(String keyWord,QueriesLevel queriesLevel) {
         this.keyWord = keyWord;
+        this.queriesLevel = queriesLevel;
         return this;
     }
 
@@ -66,10 +90,6 @@ public class KeyWordsBuider {
         return queriesLevel;
     }
 
-    public KeyWordsBuider setQueriesLevel(QueriesLevel queriesLevel) {
-        this.queriesLevel = queriesLevel;
-        return this;
-    }
 
     public List<KeywordsCombine> getKeywordsCombines() {
         return keywordsCombines;
@@ -82,5 +102,25 @@ public class KeyWordsBuider {
             }
         }
         return this;
+    }
+    public KeyWordsBuider setKeywordsCombines(List<KeywordsCombine> keywordsCombines) {
+        for(KeywordsCombine keywordsCombine: keywordsCombines ){
+            if( !this.keywordsCombines.contains(keywordsCombine) ){
+                this.keywordsCombines.add(keywordsCombine);
+            }
+        }
+        return this;
+    }
+    public void setGeoQueryInfoAndGeoQueryLevel(GeoQueryInfo geoQueryInfo, GeoQueryLevel geoQueryLevel) {
+        this.geoQueryInfo = geoQueryInfo;
+        this.geoQueryLevel = geoQueryLevel;
+    }
+
+    public GeoQueryLevel getGeoQueryLevel() {
+        return geoQueryLevel;
+    }
+
+    public GeoQueryInfo getGeoQueryInfo() {
+        return geoQueryInfo;
     }
 }
