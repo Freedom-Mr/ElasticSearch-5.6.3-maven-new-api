@@ -142,7 +142,13 @@ public class CasiaEsSearchTest extends TestCase {
                         new KeywordsCombine(2,
                                new KeyWordsBuider("title","肺炎",FieldOccurs.INCLUDES, QueriesLevel.Phrase),
                                new KeyWordsBuider("title","病毒",FieldOccurs.EXCLUDES, QueriesLevel.Phrase),
-                               new KeyWordsBuider("lal",new GeoQueryInfo().addDistance(new LonLat(112.967240F,28.211238F),"100km"),FieldOccurs.INCLUDES, GeoQueryLevel.Distance)
+//                               new KeyWordsBuider("lal",new GeoQueryInfo().addDistance(new LonLat(112.967240F,28.211238F),"100km"),FieldOccurs.INCLUDES, GeoQueryLevel.Distance)
+                               new KeyWordsBuider("lal",new GeoQueryInfo().addDistanceRange(new LonLat(112.967240F,28.211238F),"50km","100km"),FieldOccurs.INCLUDES, GeoQueryLevel.DistanceRange)
+                            /*   new KeyWordsBuider("lal",new GeoQueryInfo().addPolygon(
+                                       new LonLat(112.967240F,28.211238F),
+                                       new LonLat(115.967240F,28.211238F),
+                                       new LonLat(116.967240F,30.211238F)
+                               ),FieldOccurs.EXCLUDES, GeoQueryLevel.Polygon)*/
 //                               new KeyWordsBuider("site","新.*",FieldOccurs.INCLUDES, QueriesLevel.Regexp),
                                /*new KeyWordsBuider(
                                        new KeywordsCombine(1,
