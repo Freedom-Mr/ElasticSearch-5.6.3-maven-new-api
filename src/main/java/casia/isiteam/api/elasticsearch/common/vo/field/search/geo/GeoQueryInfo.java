@@ -31,9 +31,10 @@ public class GeoQueryInfo {
         this.box .put("top_left",top_left);
         this.box .put("bottom_right",bottom_right);
     }
-    public void addBox(LonLat top_left,LonLat bottom_right){
+    public GeoQueryInfo addBox(LonLat top_left,LonLat bottom_right){
         this.box .put("top_left",top_left);
         this.box .put("bottom_right",bottom_right);
+        return this;
     }
     /**
      * 重心扩展半径为N的 圆形
@@ -56,11 +57,13 @@ public class GeoQueryInfo {
      * @param from N1 例如： 10km
      * @param to N2 例如： 10km
      */
+    @Deprecated
     public GeoQueryInfo(LonLat lonLat, String from,String to) {
         this.distanceGeo = lonLat;
         this.from = from;
         this.to = to;
     }
+    @Deprecated
     public GeoQueryInfo addDistanceRange(LonLat lonLat, String from,String to) {
         this.distanceGeo = lonLat;
         this.from = from;
