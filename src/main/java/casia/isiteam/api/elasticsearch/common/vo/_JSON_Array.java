@@ -1,5 +1,7 @@
 package casia.isiteam.api.elasticsearch.common.vo;
 
+import com.alibaba.fastjson.JSONArray;
+
 /**
  * ClassName: _JSON_Array
  * Description: unknown
@@ -8,5 +10,5 @@ package casia.isiteam.api.elasticsearch.common.vo;
  * Email: zhiyou_wang@foxmail.com
  */
 public class _JSON_Array {
-
+    private JSONArray arrs = new JSONArray();
 }

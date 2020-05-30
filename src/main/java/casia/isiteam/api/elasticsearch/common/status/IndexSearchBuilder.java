@@ -13,10 +13,17 @@ import com.alibaba.fastjson.JSONObject;
  */
 public class IndexSearchBuilder extends ElasticResultParms {
     private JSONObject search = new JSONObject();
+    private JSONObject pire = new JSONObject();
+    private JSONArray nodes = new JSONArray();
     private JSONObject query = new JSONObject();
     private JSONObject queryBigBool = new JSONObject();
+    private JSONObject orges = new JSONObject();
     private JSONObject count = new JSONObject();
+    private JSONObject application = new JSONObject();
     private JSONObject aggs = new JSONObject();
+    private JSONObject user = new JSONObject();
+    private JSONObject info = new JSONObject();
+    private JSONObject threads = new JSONObject();
 
     /****  search  ****/
     public JSONObject getSearch() {

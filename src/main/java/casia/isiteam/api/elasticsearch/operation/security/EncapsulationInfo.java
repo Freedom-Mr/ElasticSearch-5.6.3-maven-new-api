@@ -4,8 +4,12 @@ import casia.isiteam.api.elasticsearch.common.staitcParms.HttpHeader;
 import casia.isiteam.api.elasticsearch.common.staitcParms.ShareParms;
 import casia.isiteam.api.elasticsearch.common.status.IndexParmsStatus;
 import casia.isiteam.api.elasticsearch.common.status.IndexSearchBuilder;
+import casia.isiteam.api.elasticsearch.common.vo._Entity_Query;
+import casia.isiteam.api.elasticsearch.common.vo._JSON_Array;
+import casia.isiteam.api.elasticsearch.common.vo.result.LonLatInfo;
 import casia.isiteam.api.elasticsearch.dbSource.EsDbUtil;
 import casia.isiteam.api.elasticsearch.util.JSONCompare;
+import casia.isiteam.api.elasticsearch.util.StringAppend;
 import casia.isiteam.api.toolutil.Validator;
 import casia.isiteam.api.toolutil.random.CasiaRandomUtil;
 import casia.isiteam.api.toolutil.secretKey.base.CasiaBaseUtil;
@@ -42,17 +46,19 @@ public class EncapsulationInfo extends EsDbUtil {
         maps.put(HttpHeader.ACCEPT.getName(),HttpHeader.ACCEPT.getValue());
         maps.put(HttpHeader.ACCEPT_LANGUAGE.getName(),HttpHeader.ACCEPT_LANGUAGE.getValue());
         maps.put(HttpHeader.ACCEPT_ENCODING.getName(),HttpHeader.ACCEPT_ENCODING.getValue());
-        maps.put(HttpHeader.AUTHORIZATION.getName(),HttpHeader.AUTHORIZATION.getValue()+key);
+        maps.put(HttpHeader.AUTHORIZATION.getName(),HttpHeader.AUTHORIZATION.getValue()+key.replaceAll(RN,NONE));
+        maps.put(HttpHeader.CONNECTION.getName(),HttpHeader.CONNECTION.getValue());
         return maps;
     }
     protected Map<String, String> heards(String username,String password){
-        String key = CasiaBaseUtil.encrypt64(new StringBuffer().append(username).append(COLON).append(password).toString());
+        String key = Validator.check(username) && Validator.check(password) ? CasiaBaseUtil.encrypt64(new StringBuffer().append(username).append(COLON).append(password).toString()) :NONE;
         Map<String, String> maps = new HashMap<>();
         maps.put(HttpHeader.USER_AGENT_FIREFOX.getName(),HttpHeader.USER_AGENT_FIREFOX.getValue());
         maps.put(HttpHeader.ACCEPT.getName(),HttpHeader.ACCEPT.getValue());
         maps.put(HttpHeader.ACCEPT_LANGUAGE.getName(),HttpHeader.ACCEPT_LANGUAGE.getValue());
         maps.put(HttpHeader.ACCEPT_ENCODING.getName(),HttpHeader.ACCEPT_ENCODING.getValue());
-        maps.put(HttpHeader.AUTHORIZATION.getName(),HttpHeader.AUTHORIZATION.getValue()+key);
+        maps.put(HttpHeader.AUTHORIZATION.getName(),HttpHeader.AUTHORIZATION.getValue()+key.replaceAll(RN,NONE));
+        maps.put(HttpHeader.CONNECTION.getName(),HttpHeader.CONNECTION.getValue());
         return maps;
     }
     protected String curl(String url,String ... routers){
@@ -71,9 +77,11 @@ public class EncapsulationInfo extends EsDbUtil {
         }
         return url;
     }
-
-    protected IndexSearchBuilder indexSearchBuilder = new IndexSearchBuilder();
+    protected _JSON_Array arrays = new _JSON_Array();
+    protected _Entity_Query _entity_query = new _Entity_Query();
     protected IndexParmsStatus indexParmsStatus = new IndexParmsStatus();
+    protected StringAppend stringAppend = new StringAppend();
+    protected IndexSearchBuilder indexSearchBuilder = new IndexSearchBuilder();
     public void config(String driverName) {
         indexParmsStatus.setUrl(url(driverName));
         indexParmsStatus.setHeards(heards(driverName));

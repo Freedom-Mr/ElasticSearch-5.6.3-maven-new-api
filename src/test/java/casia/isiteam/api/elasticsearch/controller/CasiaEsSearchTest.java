@@ -177,6 +177,7 @@ public class CasiaEsSearchTest extends TestCase {
 
         logger.info("total："+searchResult.getTotal_Doc());
         logger.info("scrollId："+searchResult.getScrollId());
+        logger.info("QueryInfoSize："+searchResult.getQueryInfos().size());
         searchResult.getQueryInfos().forEach(s->{
             System.out.print("{id："+s.getId());
             System.out.print("}，{_score："+s.getScore());

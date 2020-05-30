@@ -50,6 +50,7 @@ public class ExecuteResult extends ShareParms {
                 searchResult.setQueryInfos(dataInfo);
             });
         }catch (Exception e){
+            System.out.println(e.getMessage());
             logger.error(e.getMessage());
             return searchResult;
         }
@@ -67,13 +68,10 @@ public class ExecuteResult extends ShareParms {
     }
     public static SearchResult executeAggsResult(JSONObject results){
         SearchResult searchResult = new SearchResult();
-
         searchResult.setScrollId(results.containsKey(_SCROLL_ID) ? results.getString(_SCROLL_ID) : null);
-
         JSONObject profileJsons =results.containsKey(PROFILE) ? results.getJSONObject(PROFILE) : null;
         JSONObject hitsJsons = results.getJSONObject(HITS);
         searchResult.setTotal_Doc(hitsJsons.getLong(TOTAL)).setProfile(profileJsons);
-
         JSONObject aggregationsJsons = results.getJSONObject(AGGREGATIONS);
         parseAggesResult(searchResult.getAggsInfos(),aggregationsJsons);
         return searchResult;

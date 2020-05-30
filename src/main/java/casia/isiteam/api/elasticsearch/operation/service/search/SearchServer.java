@@ -392,7 +392,7 @@ public class SearchServer extends ElasticSearchApi implements ElasticSearchApi.S
         }
         String curl =curl(indexParmsStatus.getUrl(),indexParmsStatus.getIndexName(),indexParmsStatus.getIndexType(),_SEARCH);
         logger.debug(LogUtil.compositionLogCurl(curl,indexSearchBuilder.getSearch()) );
-        String resultStr = new CasiaHttpUtil().post(curl,indexParmsStatus.getHeards(),null,indexSearchBuilder.getSearch().toString());
+        String resultStr = new CasiaHttpUtil().post(curl,indexParmsStatus.getHeards(),null,indexSearchBuilder.getSearch().toString() );
         return ExecuteResult.executeQueryResult(o(resultStr));
     }
     /**
@@ -406,13 +406,9 @@ public class SearchServer extends ElasticSearchApi implements ElasticSearchApi.S
             logger.warn(LogUtil.compositionLogEmpty("scroll_time parms"));
             return new SearchResult();
         }
-        String curl =curlSymbol( curl(indexParmsStatus.getUrl(),
-                !Validator.check(scroll_id) ? indexParmsStatus.getIndexName() : "",
-                !Validator.check(scroll_id) ? indexParmsStatus.getIndexType() : "",
-                _SEARCH),
-                Validator.check(scroll_id) ? SLASH : QUESTION  ,
-                Validator.check(scroll_id) ? SCROLL: SCROLL+EQUAL+scroll_time );
-        String bodys = Validator.check(scroll_id) ? o(o(SCROLL,scroll_time),SCROLL_ID,scroll_id).toString() : indexSearchBuilder.getSearch().toString();
+        String curl =curlSymbol( curl(indexParmsStatus.getUrl(),!Validator.check(scroll_id)?indexParmsStatus.getIndexName():"",!Validator.check(scroll_id)?indexParmsStatus.getIndexType():"", _SEARCH),Validator.check(scroll_id)?SLASH:QUESTION  ,
+        Validator.check(scroll_id)?SCROLL:SCROLL+EQUAL+scroll_time);
+        String bodys=Validator.check(scroll_id)?o(o(SCROLL,scroll_time),SCROLL_ID,scroll_id).toString():indexSearchBuilder.getSearch().toString();
         logger.debug(LogUtil.compositionLogCurl(curl,bodys));
         String resultStr = new CasiaHttpUtil().post(curl,
                 indexParmsStatus.getHeards(),

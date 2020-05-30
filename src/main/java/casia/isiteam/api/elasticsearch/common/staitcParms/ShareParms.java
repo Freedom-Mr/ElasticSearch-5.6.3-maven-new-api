@@ -9,21 +9,7 @@ package casia.isiteam.api.elasticsearch.common.staitcParms;
  */
 public class ShareParms extends ElasticResultParms{
     public final static String APPLICATION = "application";
-
-    /**
-     * db
-     */
-    protected final static String DBNAME = "dbname";
-    protected final static String IP_PORT = "ip-port";
-    protected final static String USERNAME = "username";
-    protected final static String PASSWORD = "password";
-
-
-    /**
-     * regex
-     */
-    protected final static String DB_KEY = "^spring.datasource.elasticsearch.\\S*.\\S*";
-    protected final static String AGGS_FIELD = "^(\\?)\\S*(\\?)";
+    public final static String CONFIG_APPLICATION = "config/application.properties";
 
     /**
      * symbol
@@ -41,6 +27,7 @@ public class ShareParms extends ElasticResultParms{
     public final static String NULL = null;
     public final static String QUESTION = "?";
     public final static String EQUAL = "=";
+    public final static String RN = "\r\n";
 
 
     public final static String COMMA_OR_SEMICOLON = COMMA+LINE+SEMICOLON;
@@ -59,6 +46,20 @@ public class ShareParms extends ElasticResultParms{
      * number
      */
     public final static String MAX_1000000 = "1000000";
+
+    /**
+     * regex
+     */
+    protected final static String DB_KEY = "^spring.datasource.elasticsearch.\\S*.\\S*";
+    protected final static String AGGS_FIELD = "^(\\?)\\S*(\\?)";
+
+    /**
+     * db
+     */
+    protected final static String DBNAME = "dbname";
+    protected final static String IP_PORT = "ip-port";
+    protected final static String USERNAME = "username";
+    protected final static String PASSWORD = "password";
 
     /**
      * label

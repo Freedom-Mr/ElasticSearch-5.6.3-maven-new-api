@@ -8,10 +8,9 @@ import casia.isiteam.api.toolutil.regex.CasiaRegexUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.ResourceBundle;
-import java.util.Map;
+import java.io.File;
+import java.io.FileInputStream;
+import java.util.*;
 
 /**
  * ClassName: EsDbUtil
@@ -22,22 +21,32 @@ import java.util.Map;
  */
 public class EsDbUtil extends IndexAuthorStatus {
     private static Logger logger = LoggerFactory.getLogger( EsDbUtil.class);
-    static{
-        configure();
-    }
     private static synchronized void configure(){
+        Map<String,Map<String,Object>> extractInfos = new HashMap<>();
         try {
             ResourceBundle resourceBundle = ResourceBundle.getBundle(APPLICATION);
             Enumeration enumeration = resourceBundle.getKeys();
-            Map<String,Map<String,Object>> extractInfos = new HashMap<>();
             while (enumeration.hasMoreElements()) {
                 Object key = enumeration.nextElement();
                 Object value =  resourceBundle.getObject(String.valueOf(key));
                 extraction(key,value,extractInfos);
             }
-            extractInfos.forEach((k,v)->initEsDb(k,v));
         }catch (Exception e){
-            logger.warn(LogUtil.compositionLogEmpty(APPLICATION));
+            try {
+                Properties props = new Properties() ;
+                props.load(new FileInputStream(new File(CONFIG_APPLICATION)));
+                Enumeration enumeration = props.keys();
+                while (enumeration.hasMoreElements()) {
+                    Object key = enumeration.nextElement();
+                    Object value =  props.getProperty(String.valueOf(key));
+                    extraction(key,value,extractInfos);
+                }
+                props.clone();
+            }catch (Exception E){
+                logger.warn(LogUtil.compositionLogEmpty(APPLICATION));
+            }
+        }finally {
+            extractInfos.forEach((k,v)->initEsDb(k,v));
         }
     }
     private static void initEsDb(String dbName,Map<String,Object> parms){
@@ -67,6 +76,7 @@ public class EsDbUtil extends IndexAuthorStatus {
             logger.error(E.getMessage());
         }
     }
+    static{configure();}
     protected static synchronized _Entity_Db getDb(String driverName){
         return IndexAuthorStatus.elasticDb.containsKey(driverName)? IndexAuthorStatus.elasticDb.get(driverName) : new _Entity_Db();
     }
