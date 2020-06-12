@@ -42,6 +42,7 @@ public class ElasticSearchApi extends EncapsulationInfo {
         SearchResult executeQueryInfo();
         SearchResult executeScrollInfo(String scroll_time,String scroll_id);
         SearchResult executeQueryTotal();
+        @Deprecated
         SearchResult executeAggsInfo();
 
     }

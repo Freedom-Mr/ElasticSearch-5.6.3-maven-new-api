@@ -431,6 +431,7 @@ public class SearchServer extends ElasticSearchApi implements ElasticSearchApi.S
      * execute query
      */
     @Override
+    @Deprecated
     public SearchResult executeAggsInfo() {
         if( !Validator.check( indexSearchBuilder.getAggs() ) ){
             logger.warn(LogUtil.compositionLogEmpty("aggs parms"));
@@ -439,6 +440,6 @@ public class SearchServer extends ElasticSearchApi implements ElasticSearchApi.S
         String curl=curl(indexParmsStatus.getUrl(),indexParmsStatus.getIndexName(),indexParmsStatus.getIndexType(),_SEARCH);
         logger.debug(LogUtil.compositionLogCurl(curl,indexSearchBuilder.getCount().toString() ) );
         String resultStr = new CasiaHttpUtil().post(curl,indexParmsStatus.getHeards(),null,indexSearchBuilder.getCount().toString());
-        return ExecuteResult.executeAggsResult(o(resultStr));
+        return ExecuteResult.executeQueryResult(o(resultStr));
     }
 }

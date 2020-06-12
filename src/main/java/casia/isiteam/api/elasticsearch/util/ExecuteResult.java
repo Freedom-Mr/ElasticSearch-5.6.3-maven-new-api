@@ -32,23 +32,17 @@ public class ExecuteResult extends ShareParms {
             JSONObject hitsJsons = results.getJSONObject(HITS);
             JSONObject profileJsons =results.containsKey(PROFILE) ? results.getJSONObject(PROFILE) : null;
             searchResult.setTotal_Doc(hitsJsons.getLong(TOTAL)).setProfile(profileJsons);
-            hitsJsons.getJSONArray(HITS).stream().forEach(s->{
-                JSONObject json = JSONObject.parseObject(s.toString());
-                JSONObject sourceFieldDatas = json.getJSONObject(_SOURCE);
-                if( json.containsKey(HIGHLIGHT) ){
-                    JSONObject highlightFieldDatas = json.getJSONObject(HIGHLIGHT);
-                    sourceFieldDatas.putAll(highlightFieldDatas);
-                }
-                QueryInfo dataInfo = new QueryInfo();
-                dataInfo.
-                        setId(json.getString(_ID)).
-                        setIndexName(json.getString(_INDEX)).
-                        setIndexType(json.getString(_TYPE)).
-                        setScore(json.getString(_SCORE)).
-                        setField( sourceFieldDatas).
-                        setTotal_Operation(1);
-                searchResult.setQueryInfos(dataInfo);
-            });
+
+
+            if( hitsJsons.containsKey(HITS) ){
+                JSONArray infoJsonArrays = hitsJsons.getJSONArray(HITS);
+                parseInfoResult(searchResult.getQueryInfos(),infoJsonArrays);
+            }
+
+            if( results.containsKey(AGGREGATIONS) ){
+                JSONObject aggregationsJsons = results.getJSONObject(AGGREGATIONS);
+                parseAggesResult(searchResult.getAggsInfos(),aggregationsJsons);
+            }
         }catch (Exception e){
             System.out.println(e.getMessage());
             logger.error(e.getMessage());
@@ -64,16 +58,6 @@ public class ExecuteResult extends ShareParms {
             logger.error(e.getMessage());
             return searchResult;
         }
-        return searchResult;
-    }
-    public static SearchResult executeAggsResult(JSONObject results){
-        SearchResult searchResult = new SearchResult();
-        searchResult.setScrollId(results.containsKey(_SCROLL_ID) ? results.getString(_SCROLL_ID) : null);
-        JSONObject profileJsons =results.containsKey(PROFILE) ? results.getJSONObject(PROFILE) : null;
-        JSONObject hitsJsons = results.getJSONObject(HITS);
-        searchResult.setTotal_Doc(hitsJsons.getLong(TOTAL)).setProfile(profileJsons);
-        JSONObject aggregationsJsons = results.getJSONObject(AGGREGATIONS);
-        parseAggesResult(searchResult.getAggsInfos(),aggregationsJsons);
         return searchResult;
     }
 
@@ -200,27 +184,13 @@ public class ExecuteResult extends ShareParms {
             aggsInfos.add(aggsInfo);
         }
     }
-    private static void parseAggesResult( JSONObject hitsJsons,List<QueryInfo> queryInfos){
-        hitsJsons.getJSONArray(HITS).stream().forEach(s->{
-            JSONObject jsono = JSONObject.parseObject(s.toString());
-            JSONObject sourceFieldDatas = jsono.getJSONObject(_SOURCE);
-            QueryInfo dataInfo = new QueryInfo();
-            dataInfo.
-                    setId(jsono.getString(_ID)).
-                    setIndexName(jsono.getString(_INDEX)).
-                    setIndexType(jsono.getString(_TYPE)).
-                    setScore(jsono.getString(_SCORE)).
-                    setField( sourceFieldDatas).
-                    setTotal_Operation(1);
-            queryInfos.add(dataInfo);
-        });
-    }
+
 
 
 /******************************************************************/
 
 
-    public static SearchResult executeSqlAggsResult(JSONObject results){
+    public static SearchResult executeSqlResult(JSONObject results){
         SearchResult searchResult = new SearchResult();
         searchResult.setScrollId(results.containsKey(_SCROLL_ID) ? results.getString(_SCROLL_ID) : null);
         JSONObject profileJsons =results.containsKey(PROFILE) ? results.getJSONObject(PROFILE) : null;
@@ -316,5 +286,21 @@ public class ExecuteResult extends ShareParms {
         if( Validator.check(aggsInfo.getField()) && !aggsInfos.contains(aggsInfo) ){
             aggsInfos.add(aggsInfo);
         }
+    }
+
+    private static void parseAggesResult( JSONObject hitsJsons,List<QueryInfo> queryInfos){
+        hitsJsons.getJSONArray(HITS).stream().forEach(s->{
+            JSONObject jsono = JSONObject.parseObject(s.toString());
+            JSONObject sourceFieldDatas = jsono.getJSONObject(_SOURCE);
+            QueryInfo dataInfo = new QueryInfo();
+            dataInfo.
+                    setId(jsono.getString(_ID)).
+                    setIndexName(jsono.getString(_INDEX)).
+                    setIndexType(jsono.getString(_TYPE)).
+                    setScore(jsono.getString(_SCORE)).
+                    setField( sourceFieldDatas).
+                    setTotal_Operation(1);
+            queryInfos.add(dataInfo);
+        });
     }
 }

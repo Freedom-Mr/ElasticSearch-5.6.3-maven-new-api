@@ -77,6 +77,7 @@ public class CasiaEsSearch {
     /**
      * execute query total
      */
+    @Deprecated
     public SearchResult executeAggsInfo() {
         return searchApi.executeAggsInfo();
     }

@@ -47,7 +47,7 @@ public class SqlServer extends ElasticSearchApi implements ElasticSearchApi.SqlA
                 SQL+EQUAL+CasiaEscapeUtil.urlEscape(indexSearchBuilder.getThreads().getString(_SQL)));
         logger.debug(LogUtil.compositionLogCurl(indexSearchBuilder.getThreads().getString(_SQL)) );
         String resultStr = new CasiaHttpUtil().get(curl,indexParmsStatus.getHeards() );
-        return ExecuteResult.executeSqlAggsResult(o(resultStr));
+        return ExecuteResult.executeSqlResult(o(resultStr));
     }
 
 }
