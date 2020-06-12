@@ -1,7 +1,11 @@
 package casia.isiteam.api.elasticsearch.controller;
 
+import casia.isiteam.api.elasticsearch.common.enums.FieldOccurs;
+import casia.isiteam.api.elasticsearch.common.vo.field.RangeField;
+import casia.isiteam.api.elasticsearch.common.vo.field.search.KeywordsCombine;
 import casia.isiteam.api.elasticsearch.operation.interfaces.ElasticSearchApi;
 import casia.isiteam.api.elasticsearch.router.ApiRouter;
+import casia.isiteam.api.toolutil.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,5 +89,58 @@ public class CasiaEsDelete {
      */
     public boolean clearCache(){
         return delApi.clearCache();
+    }
+
+
+    /**
+     * delete data by query String
+     * @return
+     */
+    public int deleteDataByQuery(){
+        return delApi.deleteDataByQuery();
+    }
+    /**
+     * set filed range
+     * @param rangeFields
+     * @return
+     */
+    public CasiaEsDelete setRange(RangeField... rangeFields) {
+        if( Validator.check(rangeFields) ){
+            delApi.setRange(rangeFields);
+        }
+        return this;
+    }
+    /**
+     * filter missing filed
+     * @param fields
+     * @return
+     */
+    public CasiaEsDelete setMissingFilter(String ... fields) {
+        if( Validator.check(fields) ){
+            delApi.setFieldExistsFilter(FieldOccurs.EXCLUDES,fields);
+        }
+        return this;
+    }
+    /**
+     *  filter exists filed
+     * @param fields
+     * @return
+     */
+    public CasiaEsDelete setExistsFilter(String ... fields) {
+        if( Validator.check(fields) ){
+            delApi.setFieldExistsFilter(FieldOccurs.INCLUDES,fields);
+        }
+        return this;
+    }
+    /**
+     *  set query keyword
+     * @param keywordsCombines
+     * @return
+     */
+    public CasiaEsDelete setQueryKeyWords(KeywordsCombine... keywordsCombines) {
+        if( Validator.check(keywordsCombines) ){
+            delApi.setQueryKeyWords(keywordsCombines);
+        }
+        return this;
     }
 }

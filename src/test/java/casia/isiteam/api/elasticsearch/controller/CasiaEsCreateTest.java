@@ -41,20 +41,19 @@ public class CasiaEsCreateTest extends TestCase {
         List<String> list = CasiaFileUtil.readAllLines("datas/test_data_list.d", StandardCharsets.UTF_8);
         List<JSONObject> datas = list.stream().map(x -> JSONObject.parseObject(x)).collect( Collectors.toList());
 
-        casiaEsCreate.setIndexName("test","test_data");
+        casiaEsCreate.setIndexName("demo_test","test_data");
         boolean rs = casiaEsCreate.writeData(datas,"id",null);
         System.out.println(rs);
     }
 
     public void testInsertField() {
         Map<String, String> map = new HashMap<>();
-        map.put("type", "keyword");
+        map.put("type", "geo_point");
         map.put("index", "not_analyzed");
         map.put("store", "true");
-        map.put("normalizer", "my_normalizer");
 
-        casiaEsCreate.setIndexName("test","test_data");
-        boolean rs = casiaEsCreate.insertField("uname",map);
+        casiaEsCreate.setIndexName("statellite_info","graph");
+        boolean rs = casiaEsCreate.insertField("location_point",map);
 
         System.out.println(rs);
     }

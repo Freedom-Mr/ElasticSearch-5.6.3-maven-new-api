@@ -1,6 +1,7 @@
 package casia.isiteam.api.elasticsearch.common.status;
 
 import casia.isiteam.api.elasticsearch.common.staitcParms.ElasticResultParms;
+import casia.isiteam.api.toolutil.Validator;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
@@ -26,6 +27,12 @@ public class IndexSearchBuilder extends ElasticResultParms {
     private JSONObject threads = new JSONObject();
 
     /****  search  ****/
+    public JSONObject getDelSearch() {
+        if(Validator.check(queryBigBool)){
+            query.put(BOOL,queryBigBool);
+        }
+        return query;
+    }
     public JSONObject getSearch() {
         query.put(BOOL,queryBigBool);
         search.put(QUERY,query);

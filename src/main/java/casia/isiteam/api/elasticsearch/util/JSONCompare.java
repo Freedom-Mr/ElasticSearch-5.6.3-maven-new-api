@@ -117,5 +117,15 @@ public class JSONCompare {
         }
     }
 
+    public static int getResult(String result,String key){
+        try {
+            JSONObject json = JSONObject.parseObject(result);
+            return Validator.check(json) && json.containsKey(key) ? json.getInteger(key) :0;
+        }catch (Exception e){
+            logger.error(e.getMessage());
+            return 0;
+        }
+    }
+
 
 }

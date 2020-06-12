@@ -98,7 +98,7 @@ public class CreateServer extends ElasticSearchApi implements ElasticSearchApi.C
             return true;
         }
         String curl=curlSymbol( curl(indexParmsStatus.getUrl(),indexParmsStatus.getIndexName(),indexParmsStatus.getIndexType(),_MAPPING) , QUESTION , PRETTY );
-        logger.debug(LogUtil.compositionLogCurl(curl));
+
         CasiaHttpUtil casiaHttpUtil = new CasiaHttpUtil();
         JSONObject parms =o(indexParmsStatus.getIndexType(),
                 o(PROPERTIES,
@@ -107,8 +107,9 @@ public class CreateServer extends ElasticSearchApi implements ElasticSearchApi.C
                     )
                 )
         );
+        logger.debug(LogUtil.compositionLogCurl(curl,parms));
         String queryResultStr = casiaHttpUtil.post( curl,indexParmsStatus.getHeards(),null, parms.toString() );
-        return JSONCompare.validationResult(queryResultStr,ACKNOWLEDGED,UPDATE);
+        return JSONCompare.validationResult(queryResultStr,ACKNOWLEDGED,UPDATE,TRUE);
     }
 
     @Override

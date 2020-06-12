@@ -1,5 +1,10 @@
 package casia.isiteam.api.elasticsearch.controller;
 
+import casia.isiteam.api.elasticsearch.common.enums.FieldOccurs;
+import casia.isiteam.api.elasticsearch.common.enums.QueriesLevel;
+import casia.isiteam.api.elasticsearch.common.vo.field.RangeField;
+import casia.isiteam.api.elasticsearch.common.vo.field.search.KeyWordsBuider;
+import casia.isiteam.api.elasticsearch.common.vo.field.search.KeywordsCombine;
 import junit.framework.TestCase;
 
 import java.util.Arrays;
@@ -42,5 +47,19 @@ public class CasiaEsDeleteTest extends TestCase {
     public void testClearCache() {
         casiaEsDelete.setIndexName("test","test_data");
         System.out.println(casiaEsDelete.clearCache());
+    }
+
+    public void testDeleteDataByQuery() {
+        casiaEsDelete.setIndexName("test","test_data");
+        casiaEsDelete.setRange(
+                  new RangeField(FieldOccurs.INCLUDES,"pubtime","2020-05-09 07:36:00",null)
+        );
+        casiaEsDelete.setQueryKeyWords(
+                new KeywordsCombine(2,
+                        new KeyWordsBuider("title","肺炎", FieldOccurs.INCLUDES, QueriesLevel.Term),
+                        new KeyWordsBuider("title","病毒",FieldOccurs.INCLUDES, QueriesLevel.Term))
+        );
+        int deleteTotal= casiaEsDelete.deleteDataByQuery();
+        System.out.println(deleteTotal);
     }
 }

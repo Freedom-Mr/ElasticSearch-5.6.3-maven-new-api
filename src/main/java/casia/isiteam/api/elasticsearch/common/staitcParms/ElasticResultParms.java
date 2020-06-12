@@ -25,6 +25,7 @@ public class ElasticResultParms extends JSONCompare {
     protected final static String PROPERTIES = "properties";
     protected final static String RESULT = "result";
     protected final static String UPDATE = "update";
+    protected final static String TRUE = "true";
     protected final static String NOOP = "noop";
     protected final static String _QUERY = "_query";
     protected final static String ID = "id";
@@ -32,6 +33,7 @@ public class ElasticResultParms extends JSONCompare {
     protected final static String QUERY = "query";
     protected final static String FOUND = "found";
     protected final static String DELETED = "deleted";
+    protected final static String UPDATED = "updated";
     protected final static String NOT_FOUND = "not_found";
     protected final static String FROM = "from";
     protected final static String SIZE = "size";
@@ -103,5 +105,6 @@ public class ElasticResultParms extends JSONCompare {
     protected final static String POINTS = "points";
     protected final static String DISTANCE = "distance";
     protected final static String TO = "to";
+    protected final static String _DELETE_BY_QUERY = "_delete_by_query";
 
 }

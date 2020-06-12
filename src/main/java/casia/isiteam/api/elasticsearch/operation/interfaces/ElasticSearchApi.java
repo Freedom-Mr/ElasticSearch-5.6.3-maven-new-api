@@ -78,6 +78,12 @@ public class ElasticSearchApi extends EncapsulationInfo {
         boolean deleteScrollByIds(List<String> scroll_ids);
         boolean deleteScrollByAll();
         boolean clearCache();
+
+        void setQueryKeyWords(KeywordsCombine... keywordsCombines);
+        void setRange(RangeField ... rangeFields);
+        void setFieldExistsFilter(FieldOccurs fieldOccurs,String ... fileds);
+        int deleteDataByQuery();
+
     }
 
     public interface UpadeApi {

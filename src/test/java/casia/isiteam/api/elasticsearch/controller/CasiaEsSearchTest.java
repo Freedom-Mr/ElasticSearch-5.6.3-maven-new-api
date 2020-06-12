@@ -1,6 +1,7 @@
 package casia.isiteam.api.elasticsearch.controller;
 
 import casia.isiteam.api.elasticsearch.common.enums.*;
+import casia.isiteam.api.elasticsearch.common.vo.field.SortField;
 import casia.isiteam.api.elasticsearch.common.vo.field.aggs.*;
 import casia.isiteam.api.elasticsearch.common.vo.field.search.geo.GeoQueryInfo;
 import casia.isiteam.api.elasticsearch.common.vo.field.search.geo.LonLat;
@@ -131,19 +132,21 @@ public class CasiaEsSearchTest extends TestCase {
                 setFrom(0).
                 setSize(3).
 //                addSort(
-//                        new SortField("id", SortOrder.DESC),
+//                        new SortField("pubtime", SortOrder.DESC)
 //                        new SortField("eid", SortOrder.ASC)
 //                ).
-//                setRange(
-//                        new RangeField(FieldOccurs.INCLUDES,"id",32174657,33677173)
+                setRange(
+                        new RangeField(FieldOccurs.INCLUDES,"id",32174657,33677173)
 ////                        new RangeField(FieldOccurs.EXCLUDES,"pubtime","2020-01-09 07:36:00",null)
-//                ).
+                ).
                 setQueryKeyWords(
-                        new KeywordsCombine(2,
-                               new KeyWordsBuider("title","肺炎",FieldOccurs.INCLUDES, QueriesLevel.Phrase),
-                               new KeyWordsBuider("title","病毒",FieldOccurs.EXCLUDES, QueriesLevel.Phrase),
+                        new KeywordsCombine(1,
+                               new KeyWordsBuider("mmsi","227696890",FieldOccurs.INCLUDES, QueriesLevel.Term),
+                               new KeyWordsBuider("lal",new GeoQueryInfo().addBox(
+                                        new LonLat(112.967240F,28.211238F),
+                                        new LonLat(111.967240F,26.211238F)),FieldOccurs.INCLUDES, GeoQueryLevel.Box)
 //                               new KeyWordsBuider("lal",new GeoQueryInfo().addDistance(new LonLat(112.967240F,28.211238F),"100km"),FieldOccurs.INCLUDES, GeoQueryLevel.Distance)
-                               new KeyWordsBuider("lal",new GeoQueryInfo().addBox(new LonLat(112.967240F,28.211238F),new LonLat(111.967240F,26.211238F)),FieldOccurs.INCLUDES, GeoQueryLevel.Box)
+//                               new KeyWordsBuider("lal",new GeoQueryInfo().addBox(new LonLat(112.967240F,28.211238F),new LonLat(111.967240F,26.211238F)),FieldOccurs.INCLUDES, GeoQueryLevel.Box)
 //                               new KeyWordsBuider("lal",new GeoQueryInfo().addDistanceRange(new LonLat(112.967240F,28.211238F),"50km","100km"),FieldOccurs.INCLUDES, GeoQueryLevel.DistanceRange)
                             /*   new KeyWordsBuider("lal",new GeoQueryInfo().addPolygon(
                                        new LonLat(112.967240F,28.211238F),
@@ -160,15 +163,12 @@ public class CasiaEsSearchTest extends TestCase {
                                                )
                                        )
                                )*/
-                        ),
-                        new KeywordsCombine(1,
-                                new KeyWordsBuider("title","疫情",FieldOccurs.INCLUDES, QueriesLevel.Term)
                         )
                 ).
-//                setExistsFilter("content","title").
-//                setMissingFilter("it").
+                setExistsFilter("content","title").
+                setMissingFilter("it").
 //                openProfile().
-//                setMinScore(0.1F).
+                setMinScore(0.1F).
 //                setHighlight(null,null,"id").
                 setReturnField("i*","site","pubtime","title").
                 setReturnField(true).
