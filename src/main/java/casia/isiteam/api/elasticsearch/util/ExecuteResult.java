@@ -215,4 +215,106 @@ public class ExecuteResult extends ShareParms {
             queryInfos.add(dataInfo);
         });
     }
+
+
+/******************************************************************/
+
+
+    public static SearchResult executeSqlAggsResult(JSONObject results){
+        SearchResult searchResult = new SearchResult();
+        searchResult.setScrollId(results.containsKey(_SCROLL_ID) ? results.getString(_SCROLL_ID) : null);
+        JSONObject profileJsons =results.containsKey(PROFILE) ? results.getJSONObject(PROFILE) : null;
+        JSONObject hitsJsons = results.getJSONObject(HITS);
+        searchResult.setTotal_Doc(hitsJsons.getLong(TOTAL)).setProfile(profileJsons);
+
+        if( hitsJsons.containsKey(HITS) ){
+            JSONArray infoJsonArrays = hitsJsons.getJSONArray(HITS);
+            parseInfoResult(searchResult.getQueryInfos(),infoJsonArrays);
+        }
+
+        if( results.containsKey(AGGREGATIONS) ){
+            JSONObject aggregationsJsons = results.getJSONObject(AGGREGATIONS);
+            parseSqlAggesResult(searchResult.getAggsInfos(),aggregationsJsons);
+        }
+
+        return searchResult;
+    }
+    private static void parseInfoResult(List<QueryInfo> queryInfos, JSONArray jsonArray){
+        if( !Validator.check(jsonArray) ){
+            return;
+        }
+        jsonArray.stream().forEach(s->{
+            JSONObject json = JSONObject.parseObject(s.toString());
+            JSONObject sourceFieldDatas = json.getJSONObject(_SOURCE);
+            if( json.containsKey(HIGHLIGHT) ){
+                JSONObject highlightFieldDatas = json.getJSONObject(HIGHLIGHT);
+                sourceFieldDatas.putAll(highlightFieldDatas);
+            }
+            QueryInfo dataInfo = new QueryInfo();
+            dataInfo.
+                    setId(json.getString(_ID)).
+                    setIndexName(json.getString(_INDEX)).
+                    setIndexType(json.getString(_TYPE)).
+                    setScore(json.getString(_SCORE)).
+                    setField( sourceFieldDatas).
+                    setTotal_Operation(1);
+            queryInfos.add(dataInfo);
+        });
+    }
+
+    private static void parseSqlAggesResult(List<AggsInfo> aggsInfos, JSONObject json){
+
+        Set<String> keys = json.keySet();
+        AggsInfo aggsInfo = new AggsInfo();
+        for(String key:keys){
+            String v = json.getString(key);
+
+            if( key.equals(KEY) ){
+                if(!json.containsKey(KEY_AS_STRING)){
+                    aggsInfo.setField(v);
+                }
+                continue;
+            }
+            if( key.equals(KEY_AS_STRING) ){
+                aggsInfo.setField(v);
+                continue;
+            }
+            if( key.equals(DOC_COUNT) ){
+                aggsInfo.setTotal_Doc(json.getLong(key));
+                continue;
+            }
+
+            if( key.equals(VALUE) ){
+                aggsInfo.setTotal_Operation(json.getFloat(key));
+                continue;
+            }
+
+            JSONObject jsonObject = JSONObject.parseObject(v);
+
+            if( json.containsKey(KEY) && jsonObject.containsKey(VALUE)  ){
+                aggsInfo.getChildren().add(
+                        new AggsInfo().setField(key).setTotal_Operation(jsonObject.getFloat(VALUE))
+                );
+                continue;
+            }
+
+            aggsInfo.setField( Validator.check(aggsInfo.getField()) ? aggsInfo.getField() : key );
+
+            aggsInfo.setTotal_Doc(aggsInfo.getTotal_Doc()!=-1?aggsInfo.getTotal_Doc(): (jsonObject.containsKey(DOC_COUNT) ? jsonObject.getLong(DOC_COUNT) : -1) ).
+                    setTotal_Operation(aggsInfo.getTotal_Operation()!=-1?aggsInfo.getTotal_Operation(): (jsonObject.containsKey(VALUE) ? jsonObject.getLong(VALUE) : -1) );
+
+            if( jsonObject.containsKey(BUCKETS) ){
+                for(Object s : jsonObject.getJSONArray(BUCKETS)){
+                    parseSqlAggesResult( aggsInfo.getChildren(),JSONObject.parseObject(s.toString()));
+                }
+            }
+            if( jsonObject.containsKey(HITS) ){
+                parseAggesResult( jsonObject.getJSONObject(HITS) , aggsInfo.getQueryInfos());
+            }
+        }
+
+        if( Validator.check(aggsInfo.getField()) && !aggsInfos.contains(aggsInfo) ){
+            aggsInfos.add(aggsInfo);
+        }
+    }
 }

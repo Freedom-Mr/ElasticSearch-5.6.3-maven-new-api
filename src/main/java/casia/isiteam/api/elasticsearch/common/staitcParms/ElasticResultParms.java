@@ -106,5 +106,7 @@ public class ElasticResultParms extends JSONCompare {
     protected final static String DISTANCE = "distance";
     protected final static String TO = "to";
     protected final static String _DELETE_BY_QUERY = "_delete_by_query";
+    protected final static String _SQL = "_sql";
+    protected final static String SQL = "sql";
 
 }

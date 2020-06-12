@@ -5,6 +5,7 @@ import casia.isiteam.api.elasticsearch.operation.service.create.CreateServer;
 import casia.isiteam.api.elasticsearch.operation.service.delete.DeleteServer;
 import casia.isiteam.api.elasticsearch.operation.service.query.QueryServer;
 import casia.isiteam.api.elasticsearch.operation.service.search.SearchServer;
+import casia.isiteam.api.elasticsearch.operation.service.sql.SqlServer;
 import casia.isiteam.api.elasticsearch.operation.service.update.UpdateServer;
 
 
@@ -54,5 +55,13 @@ public class ApiRouter extends Routers{
 
     public static void setQueryRouter(ElasticSearchApi.QueryApi queryRouter) {
         Routers.queryRouter = queryRouter;
+    }
+
+    public static ElasticSearchApi.SqlApi getSqlRouter() {
+        return sqlRouter = new SqlServer();
+    }
+
+    public static void setSqlRouter(ElasticSearchApi.SqlApi sqlRouter) {
+        ApiRouter.sqlRouter = sqlRouter;
     }
 }

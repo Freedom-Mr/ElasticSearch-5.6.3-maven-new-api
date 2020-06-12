@@ -12,6 +12,7 @@ import casia.isiteam.api.elasticsearch.common.vo.result.SearchResult;
 import casia.isiteam.api.elasticsearch.common.vo.field.search.KeyWordsBuider;
 import casia.isiteam.api.elasticsearch.common.vo.field.search.KeywordsCombine;
 import casia.isiteam.api.elasticsearch.common.vo.field.RangeField;
+import casia.isiteam.api.elasticsearch.util.OutInfo;
 import casia.isiteam.api.toolutil.Validator;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -70,61 +71,9 @@ public class CasiaEsSearchTest extends TestCase {
                 )
         ).executeAggsInfo();
 
+        OutInfo.out(searchResult);
+    }
 
-        System.out.println("total_doc："+searchResult.getTotal_Doc());
-        System.out.println("scrollId："+searchResult.getScrollId());
-        System.out.println("json："+ JSON.toJSONString(searchResult) );
-        outInfo(searchResult.getAggsInfos(),0);
-    }
-    public void outInfo( int childrens,List<QueryInfo> aggsInfos){
-        StringBuffer sb = new StringBuffer();
-        for(int i=0;i<childrens;i++ ){
-            sb.append("\t");
-        }
-        aggsInfos.forEach(s->{
-            System.out.print(sb+"{id："+s.getId());
-            System.out.print("}，{index_name："+s.getIndexName());
-            System.out.print("}，{index_type："+s.getIndexType());
-            System.out.print("}，{score："+s.getScore());
-            System.out.print("}，{Total_Type："+s.getTotal_Operation());
-            System.out.print("}，{field："+s.getField());
-            System.out.println("}");
-        });
-    }
-    public void outInfo(List<AggsInfo> aggsInfos,int childrens){
-        StringBuffer sb = new StringBuffer();
-        for(int i=0;i<childrens;i++ ){
-            sb.append("\t");
-        }
-        for(AggsInfo s:aggsInfos){
-            System.out.print(sb+"{field："+s.getField());
-            System.out.print("}，{type："+s.getType());
-            System.out.print("}，{total_doc："+s.getTotal_Doc());
-            System.out.print("}，{total_Operation："+s.getTotal_Operation());
-            System.out.println("}");
-            if(Validator.check(s.getChildren())){
-                outInfo(s.getChildren(),childrens+1);
-            }
-            if( Validator.check(s.getQueryInfos()) ){
-                outInfo( childrens+1,s.getQueryInfos());
-            }if( Validator.check(s.getLonLatInfos()) ){
-                outLaLInfo( childrens+1,s.getLonLatInfos());
-            }
-        }
-    }
-    public void outLaLInfo( int childrens,List<LonLatInfo> aggsInfos){
-        StringBuffer sb = new StringBuffer();
-        for(int i=0;i<childrens;i++ ){
-            sb.append("\t");
-        }
-        aggsInfos.forEach(s->{
-            System.out.print(sb+"{field："+s.getField());
-            System.out.print("}，{type："+s.getType());
-            System.out.print("}，{lon："+s.getLon());
-            System.out.print("}，{lat："+s.getLat());
-            System.out.println("}");
-        });
-    }
     public void testSetMatchAllQuery() {
         casiaEsSearch.setIndexName("test","test_data");
         List<KeyWordsBuider> list= new ArrayList<>();
@@ -141,7 +90,7 @@ public class CasiaEsSearchTest extends TestCase {
                 ).
                 setQueryKeyWords(
                         new KeywordsCombine(1,
-                               new KeyWordsBuider("mmsi","227696890",FieldOccurs.INCLUDES, QueriesLevel.Term),
+                               new KeyWordsBuider("mmsi","\\sad*dsa-?>.(",FieldOccurs.INCLUDES, QueriesLevel.Term),
                                new KeyWordsBuider("lal",new GeoQueryInfo().addBox(
                                         new LonLat(112.967240F,28.211238F),
                                         new LonLat(111.967240F,26.211238F)),FieldOccurs.INCLUDES, GeoQueryLevel.Box)
@@ -175,18 +124,7 @@ public class CasiaEsSearchTest extends TestCase {
 //                setReturnField(FieldOccurs.EXCLUDES,"ip").
                 executeQueryInfo();
 
-        logger.info("total："+searchResult.getTotal_Doc());
-        logger.info("scrollId："+searchResult.getScrollId());
-        logger.info("QueryInfoSize："+searchResult.getQueryInfos().size());
-        searchResult.getQueryInfos().forEach(s->{
-            System.out.print("{id："+s.getId());
-            System.out.print("}，{_score："+s.getScore());
-            System.out.print("}，{indexName："+s.getIndexName());
-            System.out.print("}，{indexType："+s.getIndexType());
-            System.out.print("}，{fileds："+s.getField());
-            System.out.println("}");
-        });
-
+        OutInfo.out(searchResult);
 
        /* casiaEsSearch.reset();
         searchResult = casiaEsSearch.setMatchAllQuery().executeQuery();

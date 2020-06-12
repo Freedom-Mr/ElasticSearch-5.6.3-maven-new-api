@@ -117,4 +117,11 @@ public class IndexSearchBuilder extends ElasticResultParms {
         queryBigBool.put(key,parms);
         return this;
     }
+    /*******sql*****/
+    public JSONObject getThreads() {
+        return threads;
+    }
+    public void setThreads(String sql) {
+        this.threads.put(_SQL,sql.replaceAll("^\\s",""));
+    }
 }

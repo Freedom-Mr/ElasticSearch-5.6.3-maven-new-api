@@ -94,8 +94,17 @@ public class ElasticSearchApi extends EncapsulationInfo {
         boolean updateParameterById (String _id ,Map< String, Object > parameters);
     }
 
+    public interface SqlApi {
+        void config(String driverName);
+        void config(List<String> ipPorts);
+        void config(List<String> ipPorts,String username,String password);
+        void setQuerySql(String sql);
+        SearchResult executeQueryInfo();
+    }
+
     public void addIndexName(String indexName,String indexType) {
         indexParmsStatus.setIndexName(indexName);
         indexParmsStatus.setIndexType(indexType);
     }
+
 }
