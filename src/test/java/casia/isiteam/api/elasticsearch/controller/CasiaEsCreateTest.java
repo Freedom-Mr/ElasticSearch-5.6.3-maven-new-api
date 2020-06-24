@@ -1,10 +1,13 @@
 package casia.isiteam.api.elasticsearch.controller;
 
 import casia.isiteam.api.toolutil.file.CasiaFileUtil;
+import casia.isiteam.api.toolutil.time.CasiaTimeFormat;
+import casia.isiteam.api.toolutil.time.CasiaTimeUtil;
 import com.alibaba.fastjson.JSONObject;
 import junit.framework.TestCase;
 
 import java.nio.charset.StandardCharsets;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -16,7 +19,7 @@ import java.util.stream.Collectors;
  * Email: zhiyou_wang@foxmail.com
  */
 public class CasiaEsCreateTest extends TestCase {
-    CasiaEsCreate casiaEsCreate = new CasiaEsCreate("data");
+    CasiaEsCreate casiaEsCreate = new CasiaEsCreate("all");
     String mapping = CasiaFileUtil.readAllBytes("mapping/test_mapping.txt");
 
     /**
@@ -41,9 +44,15 @@ public class CasiaEsCreateTest extends TestCase {
         List<String> list = CasiaFileUtil.readAllLines("datas/test_data_list.d", StandardCharsets.UTF_8);
         List<JSONObject> datas = list.stream().map(x -> JSONObject.parseObject(x)).collect( Collectors.toList());
 
-        casiaEsCreate.setIndexName("demo_test","test_data");
-        boolean rs = casiaEsCreate.writeData(datas,"id",null);
-        System.out.println(rs);
+        casiaEsCreate.setIndexName("test","test_data");
+
+//        boolean rs =  casiaEsCreate.writeData(datas,"id",null);
+//        System.out.println(rs);
+
+        Map<String,Object> rss =casiaEsCreate.writeDatas(datas,"id");
+        rss.forEach((k,v)->{
+            System.out.println(k+"\t"+v);
+        });
     }
 
     public void testInsertField() {

@@ -21,6 +21,7 @@ public class AggsFieldBuider {
     private List<DateInfo> dateInfos = new ArrayList<>();
     private List<TopData> topDatas = new ArrayList<>();
     private List<GeoInfo> geoInfos = new ArrayList<>();
+    private List<PriceInfo> priceInfos = new ArrayList<>();
 
     public AggsFieldBuider(){
 
@@ -250,11 +251,31 @@ public class AggsFieldBuider {
         }
         return this;
     }
-    public AggsFieldBuider addTopDatas(List<TopData> topData){
-        if( Validator.check(topData) ){
-            for(TopData info:topData){
-                if( !topDatas.contains(info) ){
-                    topDatas.add(info);
+
+    public AggsFieldBuider(PriceInfo ... priceInfo){
+        if( Validator.check(priceInfo) ){
+            for(PriceInfo info:priceInfo){
+                if( !priceInfos.contains(info) ){
+                    priceInfos.add(info);
+                }
+            }
+        }
+    }
+    public AggsFieldBuider addPriceInfos(PriceInfo ... priceInfo){
+        if( Validator.check(priceInfo) ){
+            for(PriceInfo info:priceInfo){
+                if( !priceInfos.contains(info) ){
+                    priceInfos.add(info);
+                }
+            }
+        }
+        return this;
+    }
+    public AggsFieldBuider addPriceInfos(List<PriceInfo> priceInfo){
+        if( Validator.check(priceInfo) ){
+            for(PriceInfo info:priceInfo){
+                if( !priceInfos.contains(info) ){
+                    priceInfos.add(info);
                 }
             }
         }
@@ -284,4 +305,8 @@ public class AggsFieldBuider {
     public List<GeoInfo> getGeoInfos() {
         return geoInfos;
     }
+    public List<PriceInfo> getPriceInfos() {
+        return priceInfos;
+    }
+
 }

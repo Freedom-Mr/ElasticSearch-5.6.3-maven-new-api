@@ -16,6 +16,7 @@ public enum AggsLevel {
     Date("date_histogram","Date"),
     Group("cardinality","Group"),
     Top("top_hits","Top"),
+    Price("range","Price"),
 
 //    Stats("extended_stats"),
     Avg("avg","Avg"),

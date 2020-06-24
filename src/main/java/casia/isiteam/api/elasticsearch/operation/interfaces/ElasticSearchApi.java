@@ -54,6 +54,7 @@ public class ElasticSearchApi extends EncapsulationInfo {
         void setIndexName(String indexName,String indexType);
         boolean creatIndex(String indexName,String mapping);
         boolean writeData(List<JSONObject> datas , String uniqueKeyName ,String bakingName);
+        Map<String,Object> writeDatas( List<JSONObject> datas , String uniqueKeyName ,String bakingName);
         boolean insertField(String fieldName,Map<String, String> map);
         boolean closeIndex();
         boolean openIndex();

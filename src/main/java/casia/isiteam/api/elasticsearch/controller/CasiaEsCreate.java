@@ -75,6 +75,12 @@ public class CasiaEsCreate {
     public Boolean writeData(List<JSONObject> datas , String uniqueKeyName ,String bakingName){
         return createApi.writeData(datas,uniqueKeyName,bakingName);
     }
+    public Map<String,Object> writeDatas(List<JSONObject> datas , String uniqueKeyName){
+        return createApi.writeDatas(datas,uniqueKeyName,null);
+    }
+    public Map<String,Object> writeDatas(List<JSONObject> datas , String uniqueKeyName ,String bakingName){
+        return createApi.writeDatas(datas,uniqueKeyName,bakingName);
+    }
     /**
      * insert field to index
      * @param fieldName field name

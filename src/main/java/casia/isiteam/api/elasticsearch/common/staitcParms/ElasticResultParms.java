@@ -73,6 +73,7 @@ public class ElasticResultParms extends JSONCompare {
     protected final static String BOOL = "bool";
     protected final static String SHOULD = "should";
     protected final static String RANGE = "range";
+    protected final static String RANGES = "ranges";
     protected final static String GTE = "gte";
     protected final static String LTE = "lte";
     protected final static String EXISTS = "exists";
@@ -108,5 +109,7 @@ public class ElasticResultParms extends JSONCompare {
     protected final static String _DELETE_BY_QUERY = "_delete_by_query";
     protected final static String _SQL = "_sql";
     protected final static String SQL = "sql";
+    protected final static String ERRORS = "errors";
+    protected final static String KEYED = "keyed";
 
 }

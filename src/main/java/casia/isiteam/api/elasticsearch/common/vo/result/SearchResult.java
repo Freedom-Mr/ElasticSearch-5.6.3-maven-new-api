@@ -16,6 +16,7 @@ public class SearchResult {
     private long total_Doc = 0;
     private String scrollId;
     private JSONObject profile;
+    private boolean statusCode = true;
     private List<QueryInfo> queryInfos = new ArrayList<>();
     private List<AggsInfo> aggsInfos = new ArrayList<>();
 
@@ -68,5 +69,13 @@ public class SearchResult {
     public SearchResult setProfile(JSONObject profile) {
         this.profile = profile;
         return this;
+    }
+
+    public boolean status() {
+        return statusCode;
+    }
+
+    public void setStatus(boolean status) {
+        this.statusCode = status;
     }
 }

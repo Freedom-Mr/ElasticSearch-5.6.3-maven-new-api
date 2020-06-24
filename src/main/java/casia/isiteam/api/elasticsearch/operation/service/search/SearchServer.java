@@ -380,6 +380,45 @@ public class SearchServer extends ElasticSearchApi implements ElasticSearchApi.S
                 }
             });
         }
+        //Price 范围文档数
+        if( Validator.check(aggsFieldBuider.getPriceInfos()) ){
+            aggsFieldBuider.getPriceInfos().forEach(s->{
+                String newField = StringAppend.aggsFieldAppend(AggsLevel.Price,s.getField());
+                if( !object.containsKey( newField) ){
+                    JSONArray array = a();
+                    s.getRanges().forEach(r->{
+                        String[] rs = r.split(CROSS);
+                        if( Validator.check(rs) && rs.length ==1){
+                            JSONObject ob =o(FROM,Long.parseLong(rs[0]));
+                            if(!array.contains(ob)){array.add(ob);}
+                        }else  if( Validator.check(rs) && rs.length ==2){
+                            JSONObject ss= o();
+                            try {
+                                long from_ = Long.parseLong(rs[0]);
+                                o(ss,FROM, from_);
+                            }catch (Exception e){}
+                            try {
+                                long to_ = Long.parseLong(rs[1]);
+                                o(ss,TO, to_);
+                            }catch (Exception e){}
+                            if(Validator.check(ss) && !array.contains(ss)){array.add(ss);}
+                        }
+                    });
+                    object.put( newField ,
+                            o(AggsLevel.Price.getLevel(),
+                                o(
+                                    o(o(FIELD,s.getField()),KEYED,s.getKeyed()),
+                                        RANGES,array
+                                )
+                            )
+                    );
+                    if( Validator.check(s.getAggsFieldBuider()) ){
+                        o( object.getJSONObject(newField),AGGS,o());
+                        pareAggsFieldBuider(s.getAggsFieldBuider(),object.getJSONObject(newField).getJSONObject(AGGS));
+                    }
+                }
+            });
+        }
     }
 
     /**
@@ -404,7 +443,9 @@ public class SearchServer extends ElasticSearchApi implements ElasticSearchApi.S
     public SearchResult executeScrollInfo(String scroll_time,String scroll_id) {
         if( !Validator.check( scroll_time ) ){
             logger.warn(LogUtil.compositionLogEmpty("scroll_time parms"));
-            return new SearchResult();
+            SearchResult searchResult= new SearchResult();
+            searchResult.setStatus(false);
+            return searchResult;
         }
         String curl =curlSymbol( curl(indexParmsStatus.getUrl(),!Validator.check(scroll_id)?indexParmsStatus.getIndexName():"",!Validator.check(scroll_id)?indexParmsStatus.getIndexType():"", _SEARCH),Validator.check(scroll_id)?SLASH:QUESTION  ,
         Validator.check(scroll_id)?SCROLL:SCROLL+EQUAL+scroll_time);
@@ -435,7 +476,9 @@ public class SearchServer extends ElasticSearchApi implements ElasticSearchApi.S
     public SearchResult executeAggsInfo() {
         if( !Validator.check( indexSearchBuilder.getAggs() ) ){
             logger.warn(LogUtil.compositionLogEmpty("aggs parms"));
-            return new SearchResult();
+            SearchResult searchResult= new SearchResult();
+            searchResult.setStatus(false);
+            return searchResult;
         }
         String curl=curl(indexParmsStatus.getUrl(),indexParmsStatus.getIndexName(),indexParmsStatus.getIndexType(),_SEARCH);
         logger.debug(LogUtil.compositionLogCurl(curl,indexSearchBuilder.getCount().toString() ) );

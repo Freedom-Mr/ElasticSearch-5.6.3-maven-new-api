@@ -42,17 +42,17 @@ public class CasiaEsSearchTest extends TestCase {
 //                new TypeInfo("site"),
 //                new TypeInfo("eid")
 //        );
-        AggsFieldBuider cFieldBuider = new AggsFieldBuider();
-        cFieldBuider.addType(new TypeInfo("eid"));
-        cFieldBuider.addGeo(new GeoInfo(GeoLevel.Bounds,"lal"),new GeoInfo(GeoLevel.Centroid,"lal"));
+//        AggsFieldBuider cFieldBuider = new AggsFieldBuider();
+//        cFieldBuider.addType(new TypeInfo("eid"));
+//        cFieldBuider.addGeo(new GeoInfo(GeoLevel.Bounds,"lal"),new GeoInfo(GeoLevel.Centroid,"lal"));
 //        cFieldBuider.addTopDatas(new TopData(2));
 //        cFieldBuider.addType(new TypeInfo("domain"));
 //        cFieldBuider.addOperation(new OperationInfo(OperationLevel.Avg,"eid"));
 //        cFieldBuider.addTerm(new TermInfo("domain",2));
-        aggsFieldBuider.addTerm(
-                new TermInfo("site",4,cFieldBuider)
-//                new TermInfo("eid",5, SortOrder.ASC)
-        );
+//        aggsFieldBuider.addTerm(
+//                new TermInfo("site",4,cFieldBuider)
+////                new TermInfo("eid",5, SortOrder.ASC)
+//        );
 //        aggsFieldBuider.addDate(new DateInfo("pubtime","yyyy-MM-dd","1d",1L,cFieldBuider));
        /* aggsFieldBuider.addOperation(
                 new OperationInfo(OperationLevel.Sum,"eid"),
@@ -64,12 +64,20 @@ public class CasiaEsSearchTest extends TestCase {
                 new TopData(2)
         );*/
 //        aggsFieldBuider.addGeo(new GeoInfo(GeoLevel.Bounds,"lal"),new GeoInfo(GeoLevel.Centroid,"lal"));
+//        SearchResult searchResult = casiaEsSearch
+//                .setAggregations(
+//                new AggsFieldBuider(
+//                        new DateInfo("pubtime","yyyy-MM","1M",1L)
+//                )
+//        ).executeAggsInfo();
         SearchResult searchResult = casiaEsSearch
                 .setAggregations(
-                new AggsFieldBuider(
-                        new DateInfo("pubtime","yyyy-MM","1M",1L)
-                )
-        ).executeAggsInfo();
+                        new AggsFieldBuider(
+                                new PriceInfo("eid","*-50","50-70","100-*").setAggsFieldBuider(
+                                        new AggsFieldBuider( new DateInfo("pubtime","yyyy-MM","1M",1L) )
+                                )
+                        )
+                ).executeQueryInfo();
 
         OutInfo.out(searchResult);
     }

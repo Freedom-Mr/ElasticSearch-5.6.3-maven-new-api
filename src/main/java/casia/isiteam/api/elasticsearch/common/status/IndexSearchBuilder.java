@@ -36,6 +36,7 @@ public class IndexSearchBuilder extends ElasticResultParms {
     public JSONObject getSearch() {
         query.put(BOOL,queryBigBool);
         search.put(QUERY,query);
+        search.put(AGGS,aggs);
         return search;
     }
     public IndexSearchBuilder putSearchCover(String key,Object parms) {

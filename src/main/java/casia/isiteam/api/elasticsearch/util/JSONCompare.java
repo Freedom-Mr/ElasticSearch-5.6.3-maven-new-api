@@ -7,6 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * ClassName: JSONCompare
@@ -116,7 +118,40 @@ public class JSONCompare {
             return false;
         }
     }
+    public static Map<String,Object> validationResultByCreateDate(long dataSize,String result){
+        Map<String,Object> rs = new HashMap<>();
 
+        rs.put("create",0L);
+        rs.put("update",0L);
+        rs.put("failed",0L);
+        try {
+            JSONObject json = JSONObject.parseObject(result);
+            if( json.containsKey("items") ){
+                json.getJSONArray("items").forEach(s->{
+                    JSONObject c = JSONObject.parseObject(String.valueOf(s)).getJSONObject("index");
+                    if( c.containsKey("status") ){
+                        long failed= Long.parseLong(rs.get("failed").toString());
+                        if( c.getInteger("status") == 201){
+                            rs.put("create", Long.parseLong(rs.get("create").toString())+ c.getJSONObject("_shards").getInteger("successful") );
+                            rs.put("failed",  failed+ c.getJSONObject("_shards").getInteger("failed") );
+                        }else if( c.getInteger("status") == 200){
+                            rs.put("update", Long.parseLong(rs.get("update").toString())+ c.getJSONObject("_shards").getInteger("successful") );
+                            rs.put("failed", failed+ c.getJSONObject("_shards").getInteger("failed") );
+                        }else if( c.getInteger("status") == 400){
+                            rs.put("failed", failed+1 );
+                            rs.put(c.getString("_id"),c.getJSONObject("error"));
+                        }
+                    }
+                });
+            }
+        }catch (Exception e){
+            logger.error(e.getMessage());
+            rs.put("failed",dataSize);
+            rs.put("allFail",result);
+            return rs;
+        }
+        return rs;
+    }
     public static int getResult(String result,String key){
         try {
             JSONObject json = JSONObject.parseObject(result);

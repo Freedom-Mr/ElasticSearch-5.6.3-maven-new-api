@@ -18,6 +18,7 @@ import java.util.List;
  */
 public class OutInfo {
     public static void out(SearchResult searchResult){
+        System.out.println("查询状态："+searchResult.status());
         System.out.println("Total_doc："+searchResult.getTotal_Doc());
         System.out.println("ScrollId："+searchResult.getScrollId());
         System.out.println("JsonString："+ JSON.toJSONString(searchResult) );

@@ -44,6 +44,7 @@ public class ExecuteResult extends ShareParms {
                 parseAggesResult(searchResult.getAggsInfos(),aggregationsJsons);
             }
         }catch (Exception e){
+            searchResult.setStatus(false);
             System.out.println(e.getMessage());
             logger.error(e.getMessage());
             return searchResult;
@@ -173,6 +174,18 @@ public class ExecuteResult extends ShareParms {
                     parseAggesResult( jsonObject.getJSONObject(HITS) , aggsInfo.getQueryInfos());
                 }
             }
+            if(key.startsWith(QUESTION+ AggsLevel.Price.getLevel()+QUESTION)){
+                if( jsonObject.containsKey(BUCKETS) ){
+                    jsonObject.getJSONObject(BUCKETS).forEach((n,m)->{
+                        JSONObject newchildern = JSONObject.parseObject(String.valueOf(m));
+                        newchildern.put(KEY,n);
+                        newchildern.remove(TO);
+                        newchildern.remove(FROM);
+                        parseAggesResult(aggsInfo.getChildren(),newchildern);
+                    });
+                }
+            }
+
             Optional<AggsLevel> aggsLevel = Arrays.asList(AggsLevel.values()).stream().filter(s->key.startsWith(QUESTION+ s.getLevel()+QUESTION)).findFirst();
             if( aggsLevel.isPresent()){
                 aggsInfo.getChildren().stream().filter(s->!Validator.check(s.getType())).forEach(s->{
@@ -192,21 +205,27 @@ public class ExecuteResult extends ShareParms {
 
     public static SearchResult executeSqlResult(JSONObject results){
         SearchResult searchResult = new SearchResult();
-        searchResult.setScrollId(results.containsKey(_SCROLL_ID) ? results.getString(_SCROLL_ID) : null);
-        JSONObject profileJsons =results.containsKey(PROFILE) ? results.getJSONObject(PROFILE) : null;
-        JSONObject hitsJsons = results.getJSONObject(HITS);
-        searchResult.setTotal_Doc(hitsJsons.getLong(TOTAL)).setProfile(profileJsons);
+        try {
+            searchResult.setScrollId(results.containsKey(_SCROLL_ID) ? results.getString(_SCROLL_ID) : null);
+            JSONObject profileJsons =results.containsKey(PROFILE) ? results.getJSONObject(PROFILE) : null;
+            JSONObject hitsJsons = results.getJSONObject(HITS);
+            searchResult.setTotal_Doc(hitsJsons.getLong(TOTAL)).setProfile(profileJsons);
 
-        if( hitsJsons.containsKey(HITS) ){
-            JSONArray infoJsonArrays = hitsJsons.getJSONArray(HITS);
-            parseInfoResult(searchResult.getQueryInfos(),infoJsonArrays);
+            if( hitsJsons.containsKey(HITS) ){
+                JSONArray infoJsonArrays = hitsJsons.getJSONArray(HITS);
+                parseInfoResult(searchResult.getQueryInfos(),infoJsonArrays);
+            }
+
+            if( results.containsKey(AGGREGATIONS) ){
+                JSONObject aggregationsJsons = results.getJSONObject(AGGREGATIONS);
+                parseSqlAggesResult(searchResult.getAggsInfos(),aggregationsJsons);
+            }
+        }catch (Exception e){
+            searchResult.setStatus(false);
+            System.out.println(e.getMessage());
+            logger.error(e.getMessage());
+            return searchResult;
         }
-
-        if( results.containsKey(AGGREGATIONS) ){
-            JSONObject aggregationsJsons = results.getJSONObject(AGGREGATIONS);
-            parseSqlAggesResult(searchResult.getAggsInfos(),aggregationsJsons);
-        }
-
         return searchResult;
     }
     private static void parseInfoResult(List<QueryInfo> queryInfos, JSONArray jsonArray){

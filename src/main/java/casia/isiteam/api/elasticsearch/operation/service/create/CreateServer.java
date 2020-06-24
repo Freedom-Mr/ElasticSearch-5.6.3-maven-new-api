@@ -12,10 +12,7 @@ import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * ClassName: CreateServer
@@ -78,13 +75,59 @@ public class CreateServer extends ElasticSearchApi implements ElasticSearchApi.C
         });
         String resultStr = new CasiaHttpUtil().post(curl,indexParmsStatus.getHeards(),null,indexStrBuffer.toString());
         try {
-            return Validator.check(o(resultStr)) ? true : false;
+            boolean c = validationResult(resultStr,ERRORS,false);
+            if( !c ){
+                logger.info("fail：{}",resultStr);
+                logger.error(resultStr);
+            }
+            return c;
         }catch (Exception e){
             logger.error(e.getMessage());
             return false;
         }
     }
+    /**
+     * write data to index
+     * @param datas
+     * @param uniqueKeyName
+     * @param bakingName
+     * @return true or false
+     */
+    public Map<String,Object> writeDatas( List<JSONObject> datas , String uniqueKeyName ,String bakingName){
+        Map<String,Object> maps = new HashMap<>();
+        maps.put("create",0L);
+        maps.put("update",0L);
+        maps.put("failed",0L);
 
+        if( !Validator.check( datas ) ){
+            logger.warn(LogUtil.compositionLogEmpty("datas"));
+            return maps;
+        }
+        String curl=curl(indexParmsStatus.getUrl(),indexParmsStatus.getIndexName(),indexParmsStatus.getIndexType(),_BULK);
+        logger.debug(LogUtil.compositionLogCurl(curl,uniqueKeyName,datas.size()));
+
+        StringBuffer indexStrBuffer = new StringBuffer();
+        datas.stream().filter(s->s.containsKey(uniqueKeyName)).forEach(s->{
+            indexStrBuffer.append(
+                    os(INDEX,
+                            o(_ID,s.getString(uniqueKeyName))+  //设置类型数据存储分片
+                                    ( Validator.check(bakingName) ?  o(bakingName,BAKING)+"" : NONE)
+                    )
+            ).append(N)
+                    .append(
+                            s
+                    )
+                    .append(N);
+        });
+        String resultStr = new CasiaHttpUtil().post(curl,indexParmsStatus.getHeards(),null,indexStrBuffer.toString());
+        try {
+            return validationResultByCreateDate(datas.size(),resultStr);
+        }catch (Exception e){
+            logger.error(e.getMessage());
+            maps.put("failed",datas.size());
+            return maps;
+        }
+    }
     /**
      * insert field to index
      * @param fieldName field name

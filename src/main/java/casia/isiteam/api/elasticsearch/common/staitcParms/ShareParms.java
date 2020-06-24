@@ -28,6 +28,8 @@ public class ShareParms extends ElasticResultParms{
     public final static String QUESTION = "?";
     public final static String EQUAL = "=";
     public final static String RN = "\r\n";
+    public final static String CROSS = "-";
+    public final static String STAR = "*";
 
 
     public final static String COMMA_OR_SEMICOLON = COMMA+LINE+SEMICOLON;
