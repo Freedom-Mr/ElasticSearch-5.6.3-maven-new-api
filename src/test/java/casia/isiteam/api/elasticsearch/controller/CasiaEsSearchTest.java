@@ -36,7 +36,7 @@ public class CasiaEsSearchTest extends TestCase {
     CasiaEsSearch casiaEsSearch = new CasiaEsSearch("web");
     public void testSetAggs() {
         casiaEsSearch.setIndexName("test","test_data");
-
+        casiaEsSearch.setSize(0);
         AggsFieldBuider aggsFieldBuider = new AggsFieldBuider();
 //        aggsFieldBuider.addType(
 //                new TypeInfo("site"),
@@ -73,9 +73,16 @@ public class CasiaEsSearchTest extends TestCase {
         SearchResult searchResult = casiaEsSearch
                 .setAggregations(
                         new AggsFieldBuider(
-                                new PriceInfo("eid","*-50","50-70","100-*").setAggsFieldBuider(
-                                        new AggsFieldBuider( new DateInfo("pubtime","yyyy-MM","1M",1L) )
-                                )
+//                                new PriceInfo("eid","*-50","50-70","100-*")
+//
+//                                new IpRangeInfo("ip","27.195.96.196-27.195.96.199","27.195.96.199-*","27.195.96.127/23").setAggsFieldBuider(
+//                                        new AggsFieldBuider(
+////                                                new DateInfo("pubtime","yyyy-MM","1M",1L)
+//                                            new GridInfo("lal",3)
+//                                        )
+//                                )
+
+                                new GridInfo("lal",3)
                         )
                 ).executeQueryInfo();
 

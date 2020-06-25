@@ -22,6 +22,8 @@ public class AggsFieldBuider {
     private List<TopData> topDatas = new ArrayList<>();
     private List<GeoInfo> geoInfos = new ArrayList<>();
     private List<PriceInfo> priceInfos = new ArrayList<>();
+    private List<IpRangeInfo> ipRangeInfos = new ArrayList<>();
+    private List<GridInfo> gridInfos = new ArrayList<>();
 
     public AggsFieldBuider(){
 
@@ -282,6 +284,66 @@ public class AggsFieldBuider {
         return this;
     }
 
+    public AggsFieldBuider(IpRangeInfo ... ipRangeInfo){
+        if( Validator.check(ipRangeInfo) ){
+            for(IpRangeInfo info:ipRangeInfo){
+                if( !this.ipRangeInfos.contains(info) ){
+                    this.ipRangeInfos.add(info);
+                }
+            }
+        }
+    }
+    public AggsFieldBuider addIpRangeInfos(IpRangeInfo ... ipRangeInfo){
+        if( Validator.check(ipRangeInfo) ){
+            for(IpRangeInfo info:ipRangeInfo){
+                if( !this.ipRangeInfos.contains(info) ){
+                    this.ipRangeInfos.add(info);
+                }
+            }
+        }
+        return this;
+    }
+    public AggsFieldBuider addIpRangeInfos(List<IpRangeInfo> ipRangeInfo){
+        if( Validator.check(ipRangeInfo) ){
+            for(IpRangeInfo info:ipRangeInfo){
+                if( !this.ipRangeInfos.contains(info) ){
+                    this.ipRangeInfos.add(info);
+                }
+            }
+        }
+        return this;
+    }
+
+    public AggsFieldBuider(GridInfo ... gridInfo){
+        if( Validator.check(gridInfo) ){
+            for(GridInfo info:gridInfo){
+                if( !this.gridInfos.contains(info) ){
+                    this.gridInfos.add(info);
+                }
+            }
+        }
+    }
+    public AggsFieldBuider addGridInfos(GridInfo ... gridInfo){
+        if( Validator.check(gridInfo) ){
+            for(GridInfo info:gridInfo){
+                if( !this.gridInfos.contains(info) ){
+                    this.gridInfos.add(info);
+                }
+            }
+        }
+        return this;
+    }
+    public AggsFieldBuider addGridInfos(List<GridInfo> gridInfo){
+        if( Validator.check(gridInfo) ){
+            for(GridInfo info:gridInfo){
+                if( !this.gridInfos.contains(info) ){
+                    this.gridInfos.add(info);
+                }
+            }
+        }
+        return this;
+    }
+
     public List<TypeInfo> getCardinalitys() {
         return cardinalitys;
     }
@@ -309,4 +371,11 @@ public class AggsFieldBuider {
         return priceInfos;
     }
 
+    public List<IpRangeInfo> getIpRangeInfos() {
+        return ipRangeInfos;
+    }
+
+    public List<GridInfo> getGridInfos() {
+        return gridInfos;
+    }
 }

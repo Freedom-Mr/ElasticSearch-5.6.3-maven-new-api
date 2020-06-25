@@ -17,6 +17,8 @@ public enum AggsLevel {
     Group("cardinality","Group"),
     Top("top_hits","Top"),
     Price("range","Price"),
+    IPRange("ip_range","IPRange"),
+    Grid("geohash_grid","Grid"),
 
 //    Stats("extended_stats"),
     Avg("avg","Avg"),

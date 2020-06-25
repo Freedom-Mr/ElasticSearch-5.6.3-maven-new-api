@@ -36,6 +36,7 @@ public class ElasticResultParms extends JSONCompare {
     protected final static String UPDATED = "updated";
     protected final static String NOT_FOUND = "not_found";
     protected final static String FROM = "from";
+    protected final static String MASK = "mask";
     protected final static String SIZE = "size";
     protected final static String HITS = "hits";
     protected final static String TOTAL = "total";
@@ -111,5 +112,7 @@ public class ElasticResultParms extends JSONCompare {
     protected final static String SQL = "sql";
     protected final static String ERRORS = "errors";
     protected final static String KEYED = "keyed";
+    protected final static String IP_RANGE = "ip_range";
+    protected final static String PRECISION = "precision";
 
 }

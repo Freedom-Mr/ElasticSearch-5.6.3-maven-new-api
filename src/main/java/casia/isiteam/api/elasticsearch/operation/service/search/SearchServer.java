@@ -16,6 +16,7 @@ import casia.isiteam.api.elasticsearch.util.LogUtil;
 import casia.isiteam.api.elasticsearch.util.StringAppend;
 import casia.isiteam.api.http.controller.CasiaHttpUtil;
 import casia.isiteam.api.toolutil.Validator;
+import casia.isiteam.api.toolutil.regex.CasiaRegexUtil;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
@@ -419,6 +420,67 @@ public class SearchServer extends ElasticSearchApi implements ElasticSearchApi.S
                 }
             });
         }
+        //IP 范围文档数
+        if( Validator.check(aggsFieldBuider.getIpRangeInfos()) ){
+            aggsFieldBuider.getIpRangeInfos().forEach(s->{
+                String newField = StringAppend.aggsFieldAppend(AggsLevel.IPRange,s.getField());
+                if( !object.containsKey( newField) ){
+                    JSONArray array = a();
+                    s.getRanges().forEach(r->{
+                        if( Validator.check(CasiaRegexUtil.matchCIDR(r)) ){
+                            JSONObject ob =o(MASK,r);
+                            if( !array.contains(ob) ){
+                                array.add(ob);
+                            }
+                        }else{
+                            String[] rs = r.split(CROSS);
+                            if( Validator.check(rs) && rs.length ==1){
+                                JSONObject ob =o(FROM,rs[0]);
+                                if(!array.contains(ob)){array.add(ob);}
+                            }else  if( Validator.check(rs) && rs.length ==2){
+                                JSONObject ss =o();
+                                if( Validator.check(CasiaRegexUtil.matchIP(rs[0])) ){
+                                    ss.put(FROM,rs[0]);
+                                }
+                                if( Validator.check(CasiaRegexUtil.matchIP(rs[1])) ){
+                                    ss.put(TO,rs[1]);
+                                }
+                                if(Validator.check(ss) && !array.contains(ss)){array.add(ss);}
+                            }
+                        }
+                    });
+                    object.put( newField ,
+                            o(AggsLevel.IPRange.getLevel(),
+                                    o(
+                                            o(o(FIELD,s.getField()),KEYED,s.getKeyed()),
+                                            RANGES,array
+                                    )
+                            )
+                    );
+                    if( Validator.check(s.getAggsFieldBuider()) ){
+                        o( object.getJSONObject(newField),AGGS,o());
+                        pareAggsFieldBuider(s.getAggsFieldBuider(),object.getJSONObject(newField).getJSONObject(AGGS));
+                    }
+                }
+            });
+        }
+        //地理网格文档数
+        if( Validator.check(aggsFieldBuider.getGridInfos()) ){
+            aggsFieldBuider.getGridInfos().forEach(s->{
+                String newField = StringAppend.aggsFieldAppend(AggsLevel.Grid,s.getField());
+                if( !object.containsKey( newField) ){
+                    object.put( newField ,
+                            o(AggsLevel.Grid.getLevel(),
+                                    o( o(FIELD,s.getField()), PRECISION,s.getPrecision())
+                            )
+                    );
+                }
+                if( Validator.check(s.getAggsFieldBuider()) ){
+                    o( object.getJSONObject(newField),AGGS,o());
+                    pareAggsFieldBuider(s.getAggsFieldBuider(),object.getJSONObject(newField).getJSONObject(AGGS));
+                }
+            });
+        }
     }
 
     /**
@@ -430,7 +492,7 @@ public class SearchServer extends ElasticSearchApi implements ElasticSearchApi.S
             logger.debug(LogUtil.compositionLogEmpty("query parms"));
         }
         String curl =curl(indexParmsStatus.getUrl(),indexParmsStatus.getIndexName(),indexParmsStatus.getIndexType(),_SEARCH);
-        logger.debug(LogUtil.compositionLogCurl(curl,indexSearchBuilder.getSearch()) );
+        logger.info(LogUtil.compositionLogCurl(curl,indexSearchBuilder.getSearch()) );
         String resultStr = new CasiaHttpUtil().post(curl,indexParmsStatus.getHeards(),null,indexSearchBuilder.getSearch().toString() );
         return ExecuteResult.executeQueryResult(o(resultStr));
     }

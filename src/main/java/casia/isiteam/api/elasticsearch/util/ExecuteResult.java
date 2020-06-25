@@ -185,6 +185,25 @@ public class ExecuteResult extends ShareParms {
                     });
                 }
             }
+            if(key.startsWith(QUESTION+ AggsLevel.IPRange.getLevel()+QUESTION)){
+                if( jsonObject.containsKey(BUCKETS) ){
+                    jsonObject.getJSONObject(BUCKETS).forEach((n,m)->{
+                        JSONObject newchildern = JSONObject.parseObject(String.valueOf(m));
+                        newchildern.put(KEY,n);
+                        newchildern.remove(TO);
+                        newchildern.remove(FROM);
+                        parseAggesResult(aggsInfo.getChildren(),newchildern);
+                    });
+                }
+            }
+
+            if(key.startsWith(QUESTION+ AggsLevel.Grid.getLevel()+QUESTION)){
+                if( jsonObject.containsKey(BUCKETS) ){
+                    for(Object s : jsonObject.getJSONArray(BUCKETS)){
+                        parseAggesResult(aggsInfo.getChildren(),JSONObject.parseObject(s.toString()));
+                    }
+                }
+            }
 
             Optional<AggsLevel> aggsLevel = Arrays.asList(AggsLevel.values()).stream().filter(s->key.startsWith(QUESTION+ s.getLevel()+QUESTION)).findFirst();
             if( aggsLevel.isPresent()){
