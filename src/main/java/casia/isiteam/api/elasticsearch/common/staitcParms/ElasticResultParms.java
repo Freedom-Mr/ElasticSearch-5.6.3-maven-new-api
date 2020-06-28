@@ -114,5 +114,8 @@ public class ElasticResultParms extends JSONCompare {
     protected final static String KEYED = "keyed";
     protected final static String IP_RANGE = "ip_range";
     protected final static String PRECISION = "precision";
+    protected final static String EXTENDED_BOUNDS = "extended_bounds";
+    protected final static String MIN = "min";
+    protected final static String MAX = "max";
 
 }

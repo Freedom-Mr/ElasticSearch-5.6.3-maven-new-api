@@ -25,6 +25,14 @@ public class DateInfo {
      */
     private Long minDocTotal;
     /**
+     * retun min  date
+     */
+    private String minDate;
+    /**
+     * retun max  date
+     */
+    private String maxDate;
+    /**
      *
      */
     private AggsFieldBuider aggsFieldBuider;
@@ -35,6 +43,13 @@ public class DateInfo {
         this.format = format;
         this.interval = interval;
     }
+    public DateInfo(String field, String format, String interval,String minDate,String maxDate) {
+        this.field = field;
+        this.format = format;
+        this.interval = interval;
+        this.minDate = minDate;
+        this.maxDate = maxDate;
+    }
 
     public DateInfo(String field, String format, String interval, Long minDocTotal) {
         this.field = field;
@@ -43,11 +58,30 @@ public class DateInfo {
         this.minDocTotal = minDocTotal;
     }
 
+    public DateInfo(String field, String format, String interval, Long minDocTotal,String minDate,String maxDate) {
+        this.field = field;
+        this.format = format;
+        this.interval = interval;
+        this.minDocTotal = minDocTotal;
+        this.minDate = minDate;
+        this.maxDate = maxDate;
+    }
+
     public DateInfo(String field, String format, String interval, Long minDocTotal, AggsFieldBuider aggsFieldBuider) {
         this.field = field;
         this.format = format;
         this.interval = interval;
         this.minDocTotal = minDocTotal;
+        this.aggsFieldBuider = aggsFieldBuider;
+    }
+
+    public DateInfo(String field, String format, String interval, Long minDocTotal,String minDate,String maxDate, AggsFieldBuider aggsFieldBuider) {
+        this.field = field;
+        this.format = format;
+        this.interval = interval;
+        this.minDocTotal = minDocTotal;
+        this.minDate = minDate;
+        this.maxDate = maxDate;
         this.aggsFieldBuider = aggsFieldBuider;
     }
 
@@ -93,6 +127,24 @@ public class DateInfo {
 
     public DateInfo setAggsFieldBuider(AggsFieldBuider aggsFieldBuider) {
         this.aggsFieldBuider = aggsFieldBuider;
+        return this;
+    }
+
+    public String getMinDate() {
+        return minDate;
+    }
+
+    public DateInfo setMinDate(String minDate) {
+        this.minDate = minDate;
+        return this;
+    }
+
+    public String getMaxDate() {
+        return maxDate;
+    }
+
+    public DateInfo setMaxDate(String maxDate) {
+        this.maxDate = maxDate;
         return this;
     }
 }

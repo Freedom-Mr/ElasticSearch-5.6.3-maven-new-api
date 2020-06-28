@@ -293,7 +293,7 @@ public class SearchServer extends ElasticSearchApi implements ElasticSearchApi.S
                 if( !object.containsKey( newField) ){
                     object.put( newField ,
                             o(AggsLevel.Date.getLevel(),
-                                o(
+                                o(o(
                                     o(
                                         o(
                                             o(FIELD,s.getField()),
@@ -302,7 +302,7 @@ public class SearchServer extends ElasticSearchApi implements ElasticSearchApi.S
                                         INTERVAL,s.getInterval()
                                     ),
                                     Validator.check(s.getMinDocTotal()) ? MIN_DOC_COUNT : NONE,s.getMinDocTotal()
-                                )
+                                ),EXTENDED_BOUNDS,o(o( Validator.check(s.getMinDate()) ? MIN :NONE,s.getMinDate()),Validator.check(s.getMaxDate()) ? MAX :NONE,s.getMaxDate() ))
                             )
                     );
                     if( Validator.check(s.getAggsFieldBuider()) ){
