@@ -150,9 +150,13 @@ public class ExecuteResult extends ShareParms {
             aggsInfo.setField(
                     Validator.check(aggsInfo.getField()) ? aggsInfo.getField() : key.replaceAll(AGGS_FIELD,NONE) ).
                     setTotal_Doc(aggsInfo.getTotal_Doc()!=-1?aggsInfo.getTotal_Doc(): (jsonObject.containsKey(DOC_COUNT) ? jsonObject.getLong(DOC_COUNT) : -1) ).
-                    setTotal_Operation(aggsInfo.getTotal_Operation()!=-1?aggsInfo.getTotal_Operation(): (jsonObject.containsKey(VALUE) ? jsonObject.getLong(VALUE) : -1) ).
-                    setType( json.containsKey(KEY) ? null :
-                            Arrays.asList(AggsLevel.values()).stream().filter(s->key.startsWith(QUESTION+ s.getLevel()+QUESTION)).findFirst().get().getName());
+                    setTotal_Operation(aggsInfo.getTotal_Operation()!=-1?aggsInfo.getTotal_Operation(): (jsonObject.containsKey(VALUE) ? jsonObject.getLong(VALUE) : -1) );
+            try {
+                aggsInfo.setType( json.containsKey(KEY) ? null :
+                        Arrays.asList(AggsLevel.values()).stream().filter(s->key.startsWith(QUESTION+ s.getLevel()+QUESTION)).findFirst().get().getName());
+            }catch (Exception e){
+                aggsInfo.setType( null );
+            }
 
             if(key.startsWith(QUESTION+ AggsLevel.Term.getLevel()+QUESTION)){
                 if( jsonObject.containsKey(BUCKETS) ){
@@ -202,6 +206,15 @@ public class ExecuteResult extends ShareParms {
                     for(Object s : jsonObject.getJSONArray(BUCKETS)){
                         parseAggesResult(aggsInfo.getChildren(),JSONObject.parseObject(s.toString()));
                     }
+                }
+            }
+
+            if(key.startsWith(QUESTION+ AggsLevel.KeyWord.getLevel()+QUESTION)){
+                if( jsonObject.containsKey(BUCKETS) ){
+                    jsonObject.getJSONObject(BUCKETS).forEach((n,m)->{
+                        JSONObject o = JSONObject.parseObject(String.valueOf(m));o.put(KEY,n);
+                        parseAggesResult(aggsInfo.getChildren(),o);
+                    });
                 }
             }
 

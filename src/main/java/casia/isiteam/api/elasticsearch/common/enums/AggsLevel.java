@@ -19,6 +19,7 @@ public enum AggsLevel {
     Price("range","Price"),
     IPRange("ip_range","IPRange"),
     Grid("geohash_grid","Grid"),
+    KeyWord("filters","KeyWord"),
 
 //    Stats("extended_stats"),
     Avg("avg","Avg"),

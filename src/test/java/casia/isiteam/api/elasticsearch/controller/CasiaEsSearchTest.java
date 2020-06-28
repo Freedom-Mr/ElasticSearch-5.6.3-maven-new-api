@@ -53,9 +53,9 @@ public class CasiaEsSearchTest extends TestCase {
 //                new TermInfo("site",4,cFieldBuider)
 ////                new TermInfo("eid",5, SortOrder.ASC)
 //        );
-        aggsFieldBuider.addDate(new DateInfo("pubtime","yyyy-MM-dd HH","1H",0L,"2020-01-20 00","2020-02-01 00"));
-        SearchResult searchResult = casiaEsSearch.setRange(new RangeField(FieldOccurs.INCLUDES,"pubtime","2020-01-20 00:00:00","2020-02-01 00:00:00"))
-                .setAggregations(aggsFieldBuider).executeQueryInfo();
+//        aggsFieldBuider.addDate(new DateInfo("pubtime","yyyy-MM-dd HH","1H",0L,"2020-01-20 00","2020-02-01 00"));
+//        SearchResult searchResult = casiaEsSearch.setRange(new RangeField(FieldOccurs.INCLUDES,"pubtime","2020-01-20 00:00:00","2020-02-01 00:00:00"))
+//                .setAggregations(aggsFieldBuider).executeQueryInfo();
        /* aggsFieldBuider.addOperation(
                 new OperationInfo(OperationLevel.Sum,"eid"),
                 new OperationInfo(OperationLevel.Avg,"eid",100L),
@@ -87,7 +87,24 @@ public class CasiaEsSearchTest extends TestCase {
 //                                new GridInfo("lal",3)
 //                        )
 //                ).executeQueryInfo();
-
+        SearchResult searchResult = casiaEsSearch
+                .setAggregations(
+                        new AggsFieldBuider(
+                                new KeywordsCombine(2,
+                                        new KeyWordsBuider("domain","ifeng.com",FieldOccurs.INCLUDES, QueriesLevel.Term),
+                                        new KeyWordsBuider().setKeywordsCombines(
+                                                    new KeywordsCombine(1,
+                                                            new KeyWordsBuider("domain","hkbtv.cn",FieldOccurs.INCLUDES, QueriesLevel.Term),
+                                                            new KeyWordsBuider("domain","tt.cn",FieldOccurs.INCLUDES, QueriesLevel.Term)
+                                                    )
+                                            )
+                                ),
+                                new KeywordsCombine(1,
+                                        new KeyWordsBuider("domain","hkbtv.cn",FieldOccurs.INCLUDES, QueriesLevel.Term),
+                                        new KeyWordsBuider("domain","epochtimes.com",FieldOccurs.INCLUDES, QueriesLevel.Term)
+                                )
+                        )
+                ).executeAggsInfo();
         OutInfo.out(searchResult);
     }
 

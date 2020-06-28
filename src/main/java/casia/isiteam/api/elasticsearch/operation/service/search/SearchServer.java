@@ -481,6 +481,20 @@ public class SearchServer extends ElasticSearchApi implements ElasticSearchApi.S
                 }
             });
         }
+        //KeywordsCombines
+        if( Validator.check(aggsFieldBuider.getKeywordsCombines()) ){
+            JSONObject shou = o();
+            for(int i=0;i<aggsFieldBuider.getKeywordsCombines().size();i++){
+                JSONObject newShould = parsQueryKeyWords(o(),aggsFieldBuider.getKeywordsCombines().get(i));
+                shou.put(String.valueOf(i),newShould);
+            }
+            if( Validator.check(shou) ){
+                String newField = StringAppend.aggsFieldAppend(AggsLevel.KeyWord,KEYWORDDOCTOTAL);
+                if( !object.containsKey( newField) ){
+                    object.put( newField ,o(AggsLevel.KeyWord.getLevel(),o(o(AggsLevel.KeyWord.getLevel(),shou),OTHER_BUCKET_KEY,OTHER_DOC)));
+                }
+            }
+        }
     }
 
     /**
@@ -543,7 +557,7 @@ public class SearchServer extends ElasticSearchApi implements ElasticSearchApi.S
             return searchResult;
         }
         String curl=curl(indexParmsStatus.getUrl(),indexParmsStatus.getIndexName(),indexParmsStatus.getIndexType(),_SEARCH);
-        logger.debug(LogUtil.compositionLogCurl(curl,indexSearchBuilder.getCount().toString() ) );
+        logger.info(LogUtil.compositionLogCurl(curl,indexSearchBuilder.getCount().toString() ) );
         String resultStr = new CasiaHttpUtil().post(curl,indexParmsStatus.getHeards(),null,indexSearchBuilder.getCount().toString());
         return ExecuteResult.executeQueryResult(o(resultStr));
     }
