@@ -13,14 +13,18 @@ import java.util.Map;
  * Email: zhiyou_wang@foxmail.com
  */
 public class CasiaEsUpateTest extends TestCase {
-    CasiaEsUpate casiaEsQuery = new CasiaEsUpate("data");
+    CasiaEsUpate casiaEsQuery = new CasiaEsUpate("liangqun");
 
     public void testUpdateParameterById() {
         Map<String, Object> map = new HashMap<String, Object>();
-        map.put("lal", "61.12,61.01");
+        map.put("content", "投资宝周一兑付两千万呀。那边联系方式电话13022150240，邮箱zhangping@foxmail.com，QQ：165542854");
+        map.put("tel_no", new String[]{"13022150240"});
+        map.put("email", new String[]{"zhangping@foxmail.com"});
+        map.put("numbers", new String[]{"165542854"});
 
-        casiaEsQuery.setIndexName("test","test_data");
-        boolean boo = casiaEsQuery.updateParameterById("1",map);
+        casiaEsQuery.setIndexName("event_data_extract_result_v-202001","analysis_data");
+//        casiaEsQuery.setIndexName("all_data_v-202001","analysis_data");
+        boolean boo = casiaEsQuery.updateParameterById("81983e5afae666b3748a280baf9ccb0e",map);
         System.out.println(boo);
     }
 }

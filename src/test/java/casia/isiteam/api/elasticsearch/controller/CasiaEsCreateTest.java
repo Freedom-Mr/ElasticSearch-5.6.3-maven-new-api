@@ -56,15 +56,37 @@ public class CasiaEsCreateTest extends TestCase {
     }
 
     public void testInsertField() {
-        Map<String, String> map = new HashMap<>();
-        map.put("type", "geo_point");
-        map.put("index", "not_analyzed");
-        map.put("store", "true");
+        CasiaEsCreate casiaEsCreate = new CasiaEsCreate("aliyun");
+        // user_youtube_info_ref_zdr user_wechat_info_ref_zdr user_twitter_info_ref_zdr user_mblog_info_ref_zdr user_linkedin_thread_ref_zdr
+        // user_instagram_thread_ref_zdr user_forum_threads_ref_zdr user_facebook_info_ref_zdr user_blog_ref_zdr
+        // zdr_data
 
-        casiaEsCreate.setIndexName("statellite_info","graph");
-        boolean rs = casiaEsCreate.insertField("location_point",map);
+        //event_appdata_ref_monitor  event_blog_ref_monitor  event_facebook_info_ref_monitor  event_forum_threads_ref_monitor
+        //event_instagram_thread_ref_monitor  event_mblog_info_ref_monitor event_news_ref_monitor  event_newspaper_ref_monitor
+        //event_platform_info_ref_monitor  event_twitter_info_ref_monitor  event_video_info_ref_monitor  event_wechat_info_ref_monitor
+        //event_youtube_info_ref_monitor
+        //monitor_data
 
-        System.out.println(rs);
+        //event_appdata_ref_event  event_blog_ref_event  event_facebook_info_ref_event  event_forum_threads_ref_event  event_instagram_thread_ref_event
+        //event_mblog_info_ref_event  event_news_ref_event  event_newspaper_ref_event  event_platform_info_ref_event  event_twitter_info_ref_event
+        //event_video_info_ref_event  event_wechat_info_ref_event  event_youtube_info_ref_event
+        //event_data
+
+        String[] indexName = new String[]{"event_appdata_ref_monitor,event_blog_ref_monitor,event_facebook_info_ref_monitor,event_forum_threads_ref_monitor,event_instagram_thread_ref_monitor,event_mblog_info_ref_monitor,event_news_ref_monitor,event_newspaper_ref_monitor,event_platform_info_ref_monitor,event_twitter_info_ref_monitor,event_video_info_ref_monitor,event_wechat_info_ref_monitor,event_youtube_info_ref_monitor"};
+        String indexType = "monitor_data";
+        String[] filenames =new String[]{"topic_list","topic_size","at_list","at_size","communication_list","communication_size"};
+        String[] types =new String[]{"keyword","integer","keyword","integer","keyword","integer"};
+        for(String index:indexName){
+            for(int i=0;i<filenames.length;i++){
+                Map<String, String> map = new HashMap<>();
+                map.put("type", types[i]);
+                map.put("index", "not_analyzed");
+                map.put("store", "true");
+                casiaEsCreate.setIndexName(index,indexType);
+                boolean rs = casiaEsCreate.insertField(filenames[i],map);
+                System.out.println(index+"\t"+indexType+"\t"+rs);
+            }
+        }
     }
 
     public void testCloseIndex() {

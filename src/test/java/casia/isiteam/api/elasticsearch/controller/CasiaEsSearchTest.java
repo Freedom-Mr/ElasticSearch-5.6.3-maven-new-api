@@ -21,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -38,56 +39,135 @@ public class CasiaEsSearchTest extends TestCase {
         casiaEsSearch.setIndexName("test","test_data");
         casiaEsSearch.setSize(0);
         AggsFieldBuider aggsFieldBuider = new AggsFieldBuider();
-//        aggsFieldBuider.addType(
-//                new TypeInfo("site"),
-//                new TypeInfo("eid")
-//        );
-//        AggsFieldBuider cFieldBuider = new AggsFieldBuider();
-//        cFieldBuider.addType(new TypeInfo("eid"));
-//        cFieldBuider.addGeo(new GeoInfo(GeoLevel.Bounds,"lal"),new GeoInfo(GeoLevel.Centroid,"lal"));
-//        cFieldBuider.addTopDatas(new TopData(2));
-//        cFieldBuider.addType(new TypeInfo("domain"));
-//        cFieldBuider.addOperation(new OperationInfo(OperationLevel.Avg,"eid"));
-//        cFieldBuider.addTerm(new TermInfo("domain",2));
-//        aggsFieldBuider.addTerm(
-//                new TermInfo("site",4,cFieldBuider)
-////                new TermInfo("eid",5, SortOrder.ASC)
-//        );
-//        aggsFieldBuider.addDate(new DateInfo("pubtime","yyyy-MM-dd HH","1H",0L,"2020-01-20 00","2020-02-01 00"));
-//        SearchResult searchResult = casiaEsSearch.setRange(new RangeField(FieldOccurs.INCLUDES,"pubtime","2020-01-20 00:00:00","2020-02-01 00:00:00"))
-//                .setAggregations(aggsFieldBuider).executeQueryInfo();
-       /* aggsFieldBuider.addOperation(
-                new OperationInfo(OperationLevel.Sum,"eid"),
-                new OperationInfo(OperationLevel.Avg,"eid",100L),
-                new OperationInfo(OperationLevel.Max,"eid"),
-                new OperationInfo(OperationLevel.Max,"eid")
-        );*/
-        /*aggsFieldBuider.addTopDatas(
-                new TopData(2)
-        );*/
-//        aggsFieldBuider.addGeo(new GeoInfo(GeoLevel.Bounds,"lal"),new GeoInfo(GeoLevel.Centroid,"lal"));
-//        SearchResult searchResult = casiaEsSearch
-//                .setAggregations(
-//                new AggsFieldBuider(
-//                        new DateInfo("pubtime","yyyy-MM","1M",1L)
-//                )
-//        ).executeAggsInfo();
+
+        /**** Type ***/
+        /*SearchResult searchResult = casiaEsSearch
+                .setAggregations(
+                        new AggsFieldBuider(
+                                new TypeInfo("site"),
+                                new TypeInfo("eid").setPrecision(1000)
+                        ),
+                        new AggsFieldBuider(
+                                new TypeInfo("domain"),
+                                new TypeInfo("site","site2")
+                        )
+                ).executeAggsInfo();*/
+
+        /**** Term ***/
+        /*SearchResult searchResult = casiaEsSearch
+                .setAggregations(
+                        new AggsFieldBuider(
+                                new TermInfo("domain",2).setAggsFieldBuider(
+                                        new AggsFieldBuider(
+                                                new TypeInfo("site"),
+                                                new TypeInfo("eid")
+                                        )
+                                ),
+                                new TermInfo("site",2)
+                        ),
+                        new AggsFieldBuider(
+                                new TermInfo("eid",2).setSortOrder(SortOrder.ASC),
+                                new TermInfo("eid",2,"eid2").setSortOrder(SortOrder.DESC)
+                        )
+                ).executeAggsInfo();*/
+
+        /**** OperationInfo ***/
+        /*SearchResult searchResult = casiaEsSearch
+                .setAggregations(
+                        new AggsFieldBuider(
+                                new OperationInfo(OperationLevel.Avg,"eid"),
+                                new OperationInfo(OperationLevel.Sum,"eid")
+                        ),
+                        new AggsFieldBuider().
+                                addOperation( new OperationInfo(OperationLevel.Max,"eid")).
+                                addType(new TypeInfo("eid")
+                        )
+                ).executeAggsInfo();*/
+
+        /**** date ***/
+       /* SearchResult searchResult = casiaEsSearch.
+                setRange(new RangeField(FieldOccurs.INCLUDES,"pubtime","2020-05-06 00:00:00","2020-05-08 00:00:00"))
+                .setAggregations(
+                    new AggsFieldBuider(
+                            new DateInfo("pubtime","yyyy-MM-dd HH","1H",0L,"2020-05-06 00","2020-05-08 00").
+                                    setAggsFieldBuider(
+                                            new AggsFieldBuider(
+                                                    new TypeInfo("eid")
+                                            )
+                                    )
+                    ),
+                    new AggsFieldBuider(
+                            new DateInfo("addtime","yyyy-MM-dd","1d",0L,"2020-05-06","2020-05-08")
+                    )
+                ).executeQueryInfo();*/
+
+        /**** TopData ***/
+        SearchResult searchResult = casiaEsSearch
+                .setAggregations(
+                        new AggsFieldBuider(
+                                new TopData(2).setAlias("top_list"),
+                                new TopData(2, Arrays.asList(new SortField("pubtime",SortOrder.ASC)))
+                        )
+                ).executeAggsInfo();
+
+        /**** GeoInfo ***/
+        /*SearchResult searchResult = casiaEsSearch
+                .setAggregations(
+                        new AggsFieldBuider(
+                                new GeoInfo(GeoLevel.Bounds,"lal"),
+                                new GeoInfo(GeoLevel.Centroid,"lal")
+                        )
+                ).executeAggsInfo();*/
+
+        /**** Price ***/
 //        SearchResult searchResult = casiaEsSearch
 //                .setAggregations(
 //                        new AggsFieldBuider(
-////                                new PriceInfo("eid","*-50","50-70","100-*")
-////
-////                                new IpRangeInfo("ip","27.195.96.196-27.195.96.199","27.195.96.199-*","27.195.96.127/23").setAggsFieldBuider(
-////                                        new AggsFieldBuider(
-//////                                                new DateInfo("pubtime","yyyy-MM","1M",1L)
-////                                            new GridInfo("lal",3)
-////                                        )
-////                                )
-//
-//                                new GridInfo("lal",3)
+//                                new PriceInfo("eid","*-50","50-70","100-*").setAggsFieldBuider(
+//                                        new AggsFieldBuider(
+//                                                new OperationInfo(OperationLevel.Avg,"eid")
+//                                        ).addTopDatas(new TopData(2))
+//                                )
 //                        )
-//                ).executeQueryInfo();
-        SearchResult searchResult = casiaEsSearch
+//                ).executeAggsInfo();
+
+        /**** IP ***/
+        /*SearchResult searchResult = casiaEsSearch
+                .setAggregations(
+                        new AggsFieldBuider(
+                                new IpRangeInfo("ip","27.195.96.196-27.195.96.199","27.195.96.199-*","27.195.96.127/23")
+                                        .setAggsFieldBuider(
+                                            new AggsFieldBuider(
+                                                    new DateInfo("pubtime","yyyy-MM","1M",1L)
+    //                                            new GridInfo("lal",3)
+                                            )
+                                ),
+                                new IpRangeInfo("ip","27.195.96.196-27.195.96.199","27.195.96.199-*","27.195.96.127/23")
+                                        .setAlias("iplal")
+                                        .setAggsFieldBuider(
+                                                new AggsFieldBuider(
+                                                    new GridInfo("lal",3)
+                                                )
+                                        )
+                        )
+                ).executeAggsInfo();*/
+
+        /**** Grid ***/
+       /* SearchResult searchResult = casiaEsSearch
+                .setAggregations(
+                        new AggsFieldBuider(
+                                new GridInfo("lal",3).
+                                        setAggsFieldBuider(
+                                            new AggsFieldBuider(
+//                                                    new DateInfo("pubtime","yyyy-MM","1M",1L)
+                                                    new GeoInfo(GeoLevel.Bounds,"lal")
+                                            )
+                                        )
+                        )
+                ).executeAggsInfo();*/
+
+        /**** KeyWords ***/
+        /*SearchResult searchResult = casiaEsSearch
                 .setAggregations(
                         new AggsFieldBuider(
                                 new KeywordsCombine(2,
@@ -101,10 +181,30 @@ public class CasiaEsSearchTest extends TestCase {
                                 ),
                                 new KeywordsCombine(1,
                                         new KeyWordsBuider("domain","hkbtv.cn",FieldOccurs.INCLUDES, QueriesLevel.Term),
-                                        new KeyWordsBuider("domain","epochtimes.com",FieldOccurs.INCLUDES, QueriesLevel.Term)
+                                        new KeyWordsBuider("domain","epochtimes.com",FieldOccurs.INCLUDES, QueriesLevel.Term),
+                                        new KeyWordsBuider("lal",new GeoQueryInfo().addBox(
+                                                new LonLat(112.967240F,28.211238F),
+                                                new LonLat(111.967240F,26.211238F)),FieldOccurs.INCLUDES, GeoQueryLevel.Box)
+                                ).setAggsFieldBuider(
+                                        new AggsFieldBuider(
+                                                new DateInfo("pubtime","yyyy-MM","1M",1L).setAlias("pub")
+                                        )
                                 )
                         )
-                ).executeAggsInfo();
+                ).executeAggsInfo();*/
+
+        /**** Matrix ***/
+        /*SearchResult searchResult = casiaEsSearch
+                .setAggregations(
+                        new AggsFieldBuider(
+                                new TermInfo("eid",3).setAggsFieldBuider(
+                                        new AggsFieldBuider(
+                                                new MatrixInfo("support_level","id")
+                                        )
+                                )
+                        )
+                ).executeAggsInfo();*/
+
         OutInfo.out(searchResult);
     }
 

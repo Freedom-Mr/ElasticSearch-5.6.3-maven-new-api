@@ -26,6 +26,7 @@ public class AggsFieldBuider {
     private List<IpRangeInfo> ipRangeInfos = new ArrayList<>();
     private List<GridInfo> gridInfos = new ArrayList<>();
     private List<KeywordsCombine> keywordsCombines = new ArrayList<>();
+    private List<MatrixInfo> matrixInfos = new ArrayList<>();
 
     public AggsFieldBuider(){
 
@@ -376,6 +377,35 @@ public class AggsFieldBuider {
         return this;
     }
 
+    public AggsFieldBuider(MatrixInfo ... matrixInfo){
+        if( Validator.check(matrixInfo) ){
+            for(MatrixInfo info:matrixInfo){
+                if( !this.matrixInfos.contains(info) ){
+                    this.matrixInfos.add(info);
+                }
+            }
+        }
+    }
+    public AggsFieldBuider addMatrixInfos(MatrixInfo ... matrixInfo){
+        if( Validator.check(matrixInfo) ){
+            for(MatrixInfo info:matrixInfo){
+                if( !this.matrixInfos.contains(info) ){
+                    this.matrixInfos.add(info);
+                }
+            }
+        }
+        return this;
+    }
+    public AggsFieldBuider addMatrixInfos(List<MatrixInfo> matrixInfo){
+        if( Validator.check(matrixInfo) ){
+            for(MatrixInfo info:matrixInfo){
+                if( !this.matrixInfos.contains(info) ){
+                    this.matrixInfos.add(info);
+                }
+            }
+        }
+        return this;
+    }
 
     public List<TypeInfo> getCardinalitys() {
         return cardinalitys;
@@ -414,5 +444,9 @@ public class AggsFieldBuider {
 
     public List<KeywordsCombine> getKeywordsCombines() {
         return keywordsCombines;
+    }
+
+    public List<MatrixInfo> getMatrixInfos() {
+        return matrixInfos;
     }
 }

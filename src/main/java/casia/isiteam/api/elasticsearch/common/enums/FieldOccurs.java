@@ -11,18 +11,20 @@ public enum FieldOccurs {
 	/**
 	 * 包含
 	 */
-	INCLUDES("includes","must"),
+	INCLUDES("includes","must","+"),
 	/**
 	 * 不包含
 	 */
-	EXCLUDES("excludes","must_not");
+	EXCLUDES("excludes","must_not","-");
 	
 	private String symbol;
 	private String isMust;
+	private String isExist;
 
-	private FieldOccurs(String symbol,String isMust) {
+	private FieldOccurs(String symbol,String isMust,String isExist) {
 		this.symbol = symbol;
 		this.isMust = isMust;
+		this.isExist = isExist;
 	}
 
 	public String getSymbolValue() {
@@ -32,4 +34,7 @@ public enum FieldOccurs {
 	public String getIsMust() {
 		return isMust;
 	}
-}
+
+	public String getIsExist() {
+		return isExist;
+	}}

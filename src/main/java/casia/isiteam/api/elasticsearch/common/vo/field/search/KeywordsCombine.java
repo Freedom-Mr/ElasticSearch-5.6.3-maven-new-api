@@ -1,5 +1,8 @@
 package casia.isiteam.api.elasticsearch.common.vo.field.search;
 
+import casia.isiteam.api.elasticsearch.common.vo.field.aggs.AggsFieldBuider;
+import casia.isiteam.api.elasticsearch.common.vo.field.aggs.TermInfo;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,11 +17,23 @@ public class KeywordsCombine {
     private int minimumMatch = 1;
     private List<KeyWordsBuider> keyWordsBuiders = new ArrayList<>();
 
+    /**
+     *  Invalid for setQueryKeyWords
+     */
+    private AggsFieldBuider aggsFieldBuider;
+
     public KeywordsCombine(int minimumMatch, List<KeyWordsBuider> keyWordsBuiders) {
         this.minimumMatch = minimumMatch;
         for(KeyWordsBuider keyWordsBuider: keyWordsBuiders){
             this.keyWordsBuiders.add(keyWordsBuider);
         }
+    }
+    public KeywordsCombine(int minimumMatch, List<KeyWordsBuider> keyWordsBuiders,AggsFieldBuider aggsFieldBuider) {
+        this.minimumMatch = minimumMatch;
+        for(KeyWordsBuider keyWordsBuider: keyWordsBuiders){
+            this.keyWordsBuiders.add(keyWordsBuider);
+        }
+        this.aggsFieldBuider = aggsFieldBuider;
     }
     public KeywordsCombine(int minimumMatch, KeyWordsBuider ... keyWordsBuiders) {
         this.minimumMatch = minimumMatch;
@@ -50,6 +65,15 @@ public class KeywordsCombine {
         for(KeyWordsBuider keyWordsBuider: keyWordsBuiders){
             this.keyWordsBuiders.add(keyWordsBuider);
         }
+        return this;
+    }
+
+    public AggsFieldBuider getAggsFieldBuider() {
+        return aggsFieldBuider;
+    }
+
+    public KeywordsCombine setAggsFieldBuider(AggsFieldBuider aggsFieldBuider) {
+        this.aggsFieldBuider = aggsFieldBuider;
         return this;
     }
 }

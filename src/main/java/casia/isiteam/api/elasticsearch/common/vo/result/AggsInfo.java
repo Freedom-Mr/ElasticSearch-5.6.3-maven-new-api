@@ -22,7 +22,10 @@ public class AggsInfo {
     public AggsInfo() {
 
     }
-
+    public AggsInfo(String type,String field) {
+        this.type = type;
+        this.field = field;
+    }
     public AggsInfo(String type,String field, long total_Doc, float total_Operation) {
         this.type = type;
         this.field = field;

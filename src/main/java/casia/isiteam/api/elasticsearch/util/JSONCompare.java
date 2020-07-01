@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -42,7 +43,13 @@ public class JSONCompare {
         }
         return json;
     }
-
+    public JSONArray a(List<String> values){
+        JSONArray jsonArray = new JSONArray();
+        if( Validator.check(values) ){
+            jsonArray.addAll(values);
+        }
+        return jsonArray;
+    }
     public JSONArray a(Object ... values){
         JSONArray jsonArray = new JSONArray();
         if( Validator.check(values) ){

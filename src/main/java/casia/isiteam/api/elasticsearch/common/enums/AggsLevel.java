@@ -14,12 +14,13 @@ public enum AggsLevel {
 
     Term("terms","Term"),
     Date("date_histogram","Date"),
-    Group("cardinality","Group"),
+    Group("cardinality","Type"),
     Top("top_hits","Top"),
     Price("range","Price"),
     IPRange("ip_range","IPRange"),
     Grid("geohash_grid","Grid"),
     KeyWord("filters","KeyWord"),
+    Matrix("matrix_stats","Matrix"),
 
 //    Stats("extended_stats"),
     Avg("avg","Avg"),

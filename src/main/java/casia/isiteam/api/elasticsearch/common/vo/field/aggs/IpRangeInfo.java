@@ -28,6 +28,13 @@ public class IpRangeInfo {
      *
      */
     private AggsFieldBuider aggsFieldBuider;
+    /**
+     * field alias
+     */
+    private String alias;
+
+    public IpRangeInfo() {}
+
     public IpRangeInfo(String field, List<String> ranges) {
         this.field = field;
         if(Validator.check(ranges)){
@@ -38,6 +45,19 @@ public class IpRangeInfo {
             });
         }
     }
+
+    public IpRangeInfo(String field, List<String> ranges, String alias) {
+        this.field = field;
+        if(Validator.check(ranges)){
+            ranges.forEach(s->{
+                if( !this.ranges.contains(s) ){
+                    this.ranges.add(s);
+                }
+            });
+        }
+        this.alias = alias;
+    }
+
     public IpRangeInfo(String field, List<String> ranges, AggsFieldBuider aggsFieldBuider) {
         this.field = field;
         if(Validator.check(ranges)){
@@ -49,6 +69,20 @@ public class IpRangeInfo {
         }
         this.aggsFieldBuider=aggsFieldBuider;
     }
+
+    public IpRangeInfo(String field,  List<String> ranges, AggsFieldBuider aggsFieldBuider, String alias) {
+        this.field = field;
+        if(Validator.check(ranges)){
+            ranges.forEach(s->{
+                if( !this.ranges.contains(s) ){
+                    this.ranges.add(s);
+                }
+            });
+        }
+        this.aggsFieldBuider = aggsFieldBuider;
+        this.alias = alias;
+    }
+
     public IpRangeInfo(String field, String ... range) {
         this.field = field;
         if(Validator.check(range)){
@@ -59,6 +93,7 @@ public class IpRangeInfo {
             }
         }
     }
+
     public String getField() {
         return field;
     }
@@ -104,5 +139,14 @@ public class IpRangeInfo {
 
     public boolean getKeyed() {
         return keyed;
+    }
+
+    public String getAlias() {
+        return alias;
+    }
+
+    public IpRangeInfo setAlias(String alias) {
+        this.alias = alias;
+        return this;
     }
 }

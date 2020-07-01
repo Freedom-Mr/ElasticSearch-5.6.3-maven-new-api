@@ -121,5 +121,14 @@ public class ElasticResultParms extends JSONCompare {
     protected final static String OTHER_BUCKET_KEY = "other_bucket_key";
     protected final static String OTHER_DOC = "other_doc";
     protected final static String KEYWORDDOCTOTAL = "KeyWordDocTotal";
+    protected final static String MATRIX_STATS = "matrix_stats";
+    protected final static String MATRIXINFO = "matrixInfo";
+    protected final static String INCOME = "income";
+    protected final static String NAME = "name";
+    protected final static String MEAN = "mean";
+    protected final static String VARIANCE = "variance";
+    protected final static String SKEWNESS = "skewness";
+    protected final static String COVARIANCE = "covariance";
+    protected final static String CORRELATION = "correlation";
 
 }

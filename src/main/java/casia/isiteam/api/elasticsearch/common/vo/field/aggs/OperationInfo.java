@@ -22,16 +22,42 @@ public class OperationInfo {
      * set number where field missing a value, default values is 0
      */
     private Long missing;
-
+    /**
+     * field alias
+     */
+    private String alias;
+    public OperationInfo() {}
     public OperationInfo(OperationLevel operationLevel, String field) {
         this.operationLevel = operationLevel;
         this.field = field;
+    }
+
+    public OperationInfo(OperationLevel operationLevel, String field, String alias) {
+        this.operationLevel = operationLevel;
+        this.field = field;
+        this.alias = alias;
     }
 
     public OperationInfo(OperationLevel operationLevel, String field, Long missing) {
         this.operationLevel = operationLevel;
         this.field = field;
         this.missing = missing;
+    }
+
+    public OperationInfo(OperationLevel operationLevel, String field, Long missing, String alias) {
+        this.operationLevel = operationLevel;
+        this.field = field;
+        this.missing = missing;
+        this.alias = alias;
+    }
+
+    public String getAlias() {
+        return alias;
+    }
+
+    public OperationInfo setAlias(String alias) {
+        this.alias = alias;
+        return this;
     }
 
     public String getField() {
@@ -60,4 +86,6 @@ public class OperationInfo {
         this.operationLevel = operationLevel;
         return this;
     }
+
+
 }

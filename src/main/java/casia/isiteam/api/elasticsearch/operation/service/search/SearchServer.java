@@ -5,6 +5,7 @@ import casia.isiteam.api.elasticsearch.common.enums.FieldOccurs;
 import casia.isiteam.api.elasticsearch.common.enums.GeoLevel;
 import casia.isiteam.api.elasticsearch.common.enums.GeoQueryLevel;
 import casia.isiteam.api.elasticsearch.common.status.IndexSearchBuilder;
+import casia.isiteam.api.elasticsearch.common.vo.field.search.KeyWordsBuider;
 import casia.isiteam.api.elasticsearch.common.vo.result.SearchResult;
 import casia.isiteam.api.elasticsearch.common.vo.field.aggs.AggsFieldBuider;
 import casia.isiteam.api.elasticsearch.common.vo.field.search.KeywordsCombine;
@@ -17,10 +18,13 @@ import casia.isiteam.api.elasticsearch.util.StringAppend;
 import casia.isiteam.api.http.controller.CasiaHttpUtil;
 import casia.isiteam.api.toolutil.Validator;
 import casia.isiteam.api.toolutil.regex.CasiaRegexUtil;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.stream.Collectors;
 
 /**
  * ClassName: SearchServer
@@ -247,7 +251,7 @@ public class SearchServer extends ElasticSearchApi implements ElasticSearchApi.S
         //类型
         if( Validator.check(aggsFieldBuider.getCardinalitys()) ){
             aggsFieldBuider.getCardinalitys().forEach(s->{
-                String newField = StringAppend.aggsFieldAppend(AggsLevel.Group,s.getField());
+                String newField = StringAppend.aggsFieldAppend(AggsLevel.Group,s.getField(),s.getAlias());
                 if( !object.containsKey( newField) ){
                     object.put( newField ,
                             o(AggsLevel.Group.getLevel(),
@@ -257,10 +261,10 @@ public class SearchServer extends ElasticSearchApi implements ElasticSearchApi.S
                 }
             });
         }
-        //TOP 聚合字段信息
+        //Term 聚合字段信息
         if( Validator.check(aggsFieldBuider.getTermInfos()) ){
             aggsFieldBuider.getTermInfos().forEach(s->{
-                String newField = StringAppend.aggsFieldAppend(AggsLevel.Term,s.getField());
+                String newField = StringAppend.aggsFieldAppend(AggsLevel.Term,s.getField(),s.getAlias());
                 if( !object.containsKey( newField) ){
                     object.put( newField ,
                         o(AggsLevel.Term.getLevel(),
@@ -289,7 +293,7 @@ public class SearchServer extends ElasticSearchApi implements ElasticSearchApi.S
         //date
         if( Validator.check(aggsFieldBuider.getDateInfos()) ){
             aggsFieldBuider.getDateInfos().forEach(s->{
-                String newField = StringAppend.aggsFieldAppend(AggsLevel.Date,s.getField());
+                String newField = StringAppend.aggsFieldAppend(AggsLevel.Date,s.getField(),s.getAlias());
                 if( !object.containsKey( newField) ){
                     object.put( newField ,
                             o(AggsLevel.Date.getLevel(),
@@ -315,7 +319,7 @@ public class SearchServer extends ElasticSearchApi implements ElasticSearchApi.S
         //Operation
         if( Validator.check(aggsFieldBuider.getOperationInfos()) ){
             aggsFieldBuider.getOperationInfos().forEach(s->{
-                String newField = StringAppend.aggsFieldAppend(s.getOperationLevel().getLevel(),s.getField());
+                String newField = StringAppend.aggsFieldAppend(s.getOperationLevel().getLevel(),s.getField(),s.getAlias());
                 if( !object.containsKey( newField) ){
                     object.put( newField ,
                             o(s.getOperationLevel().getLevel(),
@@ -328,7 +332,7 @@ public class SearchServer extends ElasticSearchApi implements ElasticSearchApi.S
         //Geo
         if( Validator.check(aggsFieldBuider.getGeoInfos()) ){
             aggsFieldBuider.getGeoInfos().forEach(s->{
-                String newField = StringAppend.aggsFieldAppend(s.getGeoLevel().getLevel(),s.getField());
+                String newField = StringAppend.aggsFieldAppend(s.getGeoLevel().getLevel(),s.getField(),s.getAlias());
                 if( !object.containsKey( newField) ){
                     object.put( newField ,
                             o(s.getGeoLevel().getLevel(),
@@ -342,7 +346,7 @@ public class SearchServer extends ElasticSearchApi implements ElasticSearchApi.S
         //TopData
         if( Validator.check(aggsFieldBuider.getTopDatas()) ){
             aggsFieldBuider.getTopDatas().forEach(s->{
-                String newField = StringAppend.aggsFieldAppend(AggsLevel.Top,HITS+DATA);
+                String newField = StringAppend.aggsFieldAppend(AggsLevel.Top,Validator.check(s.getAlias()) ? s.getAlias() : HITS+DATA );
                 if( !object.containsKey( newField) ){
                     JSONArray sorts = a();
                     s.getSortFields().stream().forEach(c->{
@@ -384,7 +388,7 @@ public class SearchServer extends ElasticSearchApi implements ElasticSearchApi.S
         //Price 范围文档数
         if( Validator.check(aggsFieldBuider.getPriceInfos()) ){
             aggsFieldBuider.getPriceInfos().forEach(s->{
-                String newField = StringAppend.aggsFieldAppend(AggsLevel.Price,s.getField());
+                String newField = StringAppend.aggsFieldAppend(AggsLevel.Price,s.getField(),s.getAlias());
                 if( !object.containsKey( newField) ){
                     JSONArray array = a();
                     s.getRanges().forEach(r->{
@@ -423,7 +427,7 @@ public class SearchServer extends ElasticSearchApi implements ElasticSearchApi.S
         //IP 范围文档数
         if( Validator.check(aggsFieldBuider.getIpRangeInfos()) ){
             aggsFieldBuider.getIpRangeInfos().forEach(s->{
-                String newField = StringAppend.aggsFieldAppend(AggsLevel.IPRange,s.getField());
+                String newField = StringAppend.aggsFieldAppend(AggsLevel.IPRange,s.getField(),s.getAlias());
                 if( !object.containsKey( newField) ){
                     JSONArray array = a();
                     s.getRanges().forEach(r->{
@@ -467,7 +471,7 @@ public class SearchServer extends ElasticSearchApi implements ElasticSearchApi.S
         //地理网格文档数
         if( Validator.check(aggsFieldBuider.getGridInfos()) ){
             aggsFieldBuider.getGridInfos().forEach(s->{
-                String newField = StringAppend.aggsFieldAppend(AggsLevel.Grid,s.getField());
+                String newField = StringAppend.aggsFieldAppend(AggsLevel.Grid,s.getField(),s.getAlias());
                 if( !object.containsKey( newField) ){
                     object.put( newField ,
                             o(AggsLevel.Grid.getLevel(),
@@ -483,20 +487,50 @@ public class SearchServer extends ElasticSearchApi implements ElasticSearchApi.S
         }
         //KeywordsCombines
         if( Validator.check(aggsFieldBuider.getKeywordsCombines()) ){
-            JSONObject shou = o();
-            for(int i=0;i<aggsFieldBuider.getKeywordsCombines().size();i++){
-                JSONObject newShould = parsQueryKeyWords(o(),aggsFieldBuider.getKeywordsCombines().get(i));
-                shou.put(String.valueOf(i),newShould);
-            }
-            if( Validator.check(shou) ){
-                String newField = StringAppend.aggsFieldAppend(AggsLevel.KeyWord,KEYWORDDOCTOTAL);
-                if( !object.containsKey( newField) ){
-                    object.put( newField ,o(AggsLevel.KeyWord.getLevel(),o(o(AggsLevel.KeyWord.getLevel(),shou),OTHER_BUCKET_KEY,OTHER_DOC)));
+            aggsFieldBuider.getKeywordsCombines().forEach(s->{
+                JSONObject newShould = parsQueryKeyWords(o(),s);
+                if( Validator.check(newShould) ){
+                    String keyName=NONE;
+                    for(KeyWordsBuider keyWordsBuider:s.getKeyWordsBuiders()){
+                        keyName=keyName+ (Validator.check(keyName)?BLANK:NONE)+getKeyString(keyWordsBuider);
+                    };
+                    String newField = StringAppend.aggsFieldAppend(AggsLevel.KeyWord,keyName);
+                    if( !object.containsKey( newField) ){
+                        object.put( newField ,o(AggsLevel.KeyWord.getLevel(),o(AggsLevel.KeyWord.getLevel(),o(keyName,newShould))));
+                    }
+                    if( Validator.check(s.getAggsFieldBuider()) ){
+                        o( object.getJSONObject(newField),AGGS,o());
+                        pareAggsFieldBuider(s.getAggsFieldBuider(),object.getJSONObject(newField).getJSONObject(AGGS));
+                    }
                 }
-            }
+            });
+        }
+        //Matrix Info
+        if( Validator.check(aggsFieldBuider.getMatrixInfos()) ){
+            aggsFieldBuider.getMatrixInfos().forEach(s->{
+                String newField = StringAppend.aggsFieldAppend(AggsLevel.Matrix,MATRIXINFO);
+                if( !object.containsKey(newField) ){
+                    object.put( newField , o(MATRIX_STATS,o(o(FIELDS,a(s.getFields())),Validator.check(s.getMissing()) ? MISSING :NONE,o(INCOME,s.getMissing()))) );
+                }
+            });
         }
     }
-
+    private String getKeyString(KeyWordsBuider keyWordsBuider){
+        String keyString = NONE;
+        if( Validator.check(keyWordsBuider.getKeywordsCombines() )){
+            for(KeywordsCombine s:keyWordsBuider.getKeywordsCombines()){
+                if( Validator.check(s.getKeyWordsBuiders()) ){
+                    for(KeyWordsBuider c:s.getKeyWordsBuiders()){
+                        keyString =keyString+ (Validator.check(keyString)?BLANK:NONE)+getKeyString(c);
+                    }
+                }
+            }
+        }else{
+            keyString=keyString+(Validator.check(keyString)?BLANK:NONE)+ keyWordsBuider.getFieldOccurs().getIsExist()+
+                    keyWordsBuider.getField()+COLON+keyWordsBuider.getKeyWord();
+        }
+        return keyString;
+    }
     /**
      * execute query
      */
@@ -506,7 +540,7 @@ public class SearchServer extends ElasticSearchApi implements ElasticSearchApi.S
             logger.debug(LogUtil.compositionLogEmpty("query parms"));
         }
         String curl =curl(indexParmsStatus.getUrl(),indexParmsStatus.getIndexName(),indexParmsStatus.getIndexType(),_SEARCH);
-        logger.info(LogUtil.compositionLogCurl(curl,indexSearchBuilder.getSearch()) );
+        logger.debug(LogUtil.compositionLogCurl(curl,indexSearchBuilder.getSearch()) );
         String resultStr = new CasiaHttpUtil().post(curl,indexParmsStatus.getHeards(),null,indexSearchBuilder.getSearch().toString() );
         return ExecuteResult.executeQueryResult(o(resultStr));
     }
@@ -557,7 +591,7 @@ public class SearchServer extends ElasticSearchApi implements ElasticSearchApi.S
             return searchResult;
         }
         String curl=curl(indexParmsStatus.getUrl(),indexParmsStatus.getIndexName(),indexParmsStatus.getIndexType(),_SEARCH);
-        logger.info(LogUtil.compositionLogCurl(curl,indexSearchBuilder.getCount().toString() ) );
+        logger.debug(LogUtil.compositionLogCurl(curl,indexSearchBuilder.getCount().toString() ) );
         String resultStr = new CasiaHttpUtil().post(curl,indexParmsStatus.getHeards(),null,indexSearchBuilder.getCount().toString());
         return ExecuteResult.executeQueryResult(o(resultStr));
     }

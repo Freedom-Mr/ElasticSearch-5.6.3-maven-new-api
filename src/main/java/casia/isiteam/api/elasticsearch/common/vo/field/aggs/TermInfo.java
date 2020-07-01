@@ -34,14 +34,30 @@ public class TermInfo {
      *
      */
     private AggsFieldBuider aggsFieldBuider;
+    /**
+     * field alias
+     */
+    private String alias;
 
+    public TermInfo() { }
     public TermInfo(String field) {
         this.field = field;
+    }
+
+    public TermInfo(String field, String alias) {
+        this.field = field;
+        this.alias = alias;
     }
 
     public TermInfo(String field, Integer size) {
         this.field = field;
         this.size = size;
+    }
+
+    public TermInfo(String field, Integer size, String alias) {
+        this.field = field;
+        this.size = size;
+        this.alias = alias;
     }
 
     public TermInfo(String field, Integer size, SortOrder sortOrder) {
@@ -50,11 +66,26 @@ public class TermInfo {
         this.sortOrder = sortOrder;
     }
 
+    public TermInfo(String field, Integer size, SortOrder sortOrder, String alias) {
+        this.field = field;
+        this.size = size;
+        this.sortOrder = sortOrder;
+        this.alias = alias;
+    }
+
     public TermInfo(String field, Integer size, Long minDocTotal, SortOrder sortOrder) {
         this.field = field;
         this.size = size;
         this.minDocTotal = minDocTotal;
         this.sortOrder = sortOrder;
+    }
+
+    public TermInfo(String field, Integer size, Long minDocTotal, SortOrder sortOrder, String alias) {
+        this.field = field;
+        this.size = size;
+        this.minDocTotal = minDocTotal;
+        this.sortOrder = sortOrder;
+        this.alias = alias;
     }
 
     public TermInfo(String field, Integer size, Long minDocTotal, SortOrder sortOrder, AggsFieldBuider aggsFieldBuider) {
@@ -65,10 +96,26 @@ public class TermInfo {
         this.aggsFieldBuider = aggsFieldBuider;
     }
 
+    public TermInfo(String field, Integer size, Long minDocTotal, SortOrder sortOrder, AggsFieldBuider aggsFieldBuider, String alias) {
+        this.field = field;
+        this.size = size;
+        this.minDocTotal = minDocTotal;
+        this.sortOrder = sortOrder;
+        this.aggsFieldBuider = aggsFieldBuider;
+        this.alias = alias;
+    }
+
     public TermInfo(String field, Integer size, AggsFieldBuider aggsFieldBuider) {
         this.field = field;
         this.size = size;
         this.aggsFieldBuider = aggsFieldBuider;
+    }
+
+    public TermInfo(String field, Integer size, AggsFieldBuider aggsFieldBuider, String alias) {
+        this.field = field;
+        this.size = size;
+        this.aggsFieldBuider = aggsFieldBuider;
+        this.alias = alias;
     }
 
     public TermInfo(String field, Integer size, Long minDocTotal, Integer shardSize, SortOrder sortOrder, AggsFieldBuider aggsFieldBuider) {
@@ -78,6 +125,25 @@ public class TermInfo {
         this.shardSize = shardSize;
         this.sortOrder = sortOrder;
         this.aggsFieldBuider = aggsFieldBuider;
+    }
+
+    public TermInfo(String field, Integer size, Long minDocTotal, Integer shardSize, SortOrder sortOrder, AggsFieldBuider aggsFieldBuider, String alias) {
+        this.field = field;
+        this.size = size;
+        this.minDocTotal = minDocTotal;
+        this.shardSize = shardSize;
+        this.sortOrder = sortOrder;
+        this.aggsFieldBuider = aggsFieldBuider;
+        this.alias = alias;
+    }
+
+    public String getAlias() {
+        return alias;
+    }
+
+    public TermInfo setAlias(String alias) {
+        this.alias = alias;
+        return this;
     }
 
     public String getField() {

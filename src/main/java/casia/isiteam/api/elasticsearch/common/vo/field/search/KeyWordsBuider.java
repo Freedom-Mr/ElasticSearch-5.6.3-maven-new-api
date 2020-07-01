@@ -28,6 +28,10 @@ public class KeyWordsBuider {
     private GeoQueryLevel geoQueryLevel;
 
     private List<KeywordsCombine> keywordsCombines = new ArrayList<>();
+    /**
+     * field alias
+     */
+    private String alias;
 
     public KeyWordsBuider(String field, String keyWord, FieldOccurs fieldOccurs, QueriesLevel queriesLevel) {
         this.field = field;
@@ -123,4 +127,6 @@ public class KeyWordsBuider {
     public GeoQueryInfo getGeoQueryInfo() {
         return geoQueryInfo;
     }
+
+
 }

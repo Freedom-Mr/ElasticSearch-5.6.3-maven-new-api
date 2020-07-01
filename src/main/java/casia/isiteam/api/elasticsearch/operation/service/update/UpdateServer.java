@@ -40,7 +40,11 @@ public class UpdateServer extends ElasticSearchApi implements ElasticSearchApi.U
         JSONObject js = o(DOC,o(JSON.toJSONString(parameters)));
         CasiaHttpUtil casiaHttpUtil = new CasiaHttpUtil();
         String resultStr = casiaHttpUtil.post( curl,indexParmsStatus.getHeards(),null, js.toString() );
-        return JSONCompare.validationResult(resultStr,RESULT,UPDATE,NOOP);
+        boolean rs= JSONCompare.validationResult(resultStr,RESULT,UPDATE,UPDATED,NOOP);
+        if(!rs){
+            logger.warn(resultStr);
+        }
+        return rs;
     }
     /**
      * update data info by query

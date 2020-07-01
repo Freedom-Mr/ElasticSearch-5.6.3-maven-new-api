@@ -23,20 +23,51 @@ public class GridInfo {
      *
      */
     private AggsFieldBuider aggsFieldBuider;
-
+    /**
+     * field alias
+     */
+    private String alias;
+    public GridInfo() {}
     public GridInfo(String field, int precision) {
         this.field = field;
         this.precision = precision;
+    }
+
+    public GridInfo(String field, int precision, String alias) {
+        this.field = field;
+        this.precision = precision;
+        this.alias = alias;
     }
 
     public GridInfo(String field) {
         this.field = field;
     }
 
+    public GridInfo(String field, String alias) {
+        this.field = field;
+        this.alias = alias;
+    }
+
     public GridInfo(String field, int precision, AggsFieldBuider aggsFieldBuider) {
         this.field = field;
         this.precision = precision;
         this.aggsFieldBuider = aggsFieldBuider;
+    }
+
+    public GridInfo(String field, int precision, AggsFieldBuider aggsFieldBuider, String alias) {
+        this.field = field;
+        this.precision = precision;
+        this.aggsFieldBuider = aggsFieldBuider;
+        this.alias = alias;
+    }
+
+    public String getAlias() {
+        return alias;
+    }
+
+    public GridInfo setAlias(String alias) {
+        this.alias = alias;
+        return this;
     }
 
     public String getField() {
