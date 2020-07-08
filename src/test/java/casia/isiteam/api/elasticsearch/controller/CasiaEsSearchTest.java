@@ -12,6 +12,7 @@ import casia.isiteam.api.elasticsearch.common.vo.result.SearchResult;
 import casia.isiteam.api.elasticsearch.common.vo.field.search.KeyWordsBuider;
 import casia.isiteam.api.elasticsearch.common.vo.field.search.KeywordsCombine;
 import casia.isiteam.api.elasticsearch.common.vo.field.RangeField;
+import casia.isiteam.api.elasticsearch.controller.api.CasiaEsApi;
 import casia.isiteam.api.elasticsearch.util.OutInfo;
 import casia.isiteam.api.toolutil.Validator;
 import com.alibaba.fastjson.JSON;
@@ -34,8 +35,9 @@ import java.util.List;
 public class CasiaEsSearchTest extends TestCase {
     private Logger logger = LoggerFactory.getLogger( this.getClass());
 
-    CasiaEsSearch casiaEsSearch = new CasiaEsSearch("web");
+
     public void testSetAggs() {
+        CasiaEsSearch casiaEsSearch = new CasiaEsSearch("web");
         casiaEsSearch.setIndexName("test","test_data");
         casiaEsSearch.setSize(0);
         AggsFieldBuider aggsFieldBuider = new AggsFieldBuider();
@@ -209,6 +211,7 @@ public class CasiaEsSearchTest extends TestCase {
     }
 
     public void testSetMatchAllQuery() {
+        CasiaEsSearch casiaEsSearch = new CasiaEsSearch("web");
         casiaEsSearch.setIndexName("test","test_data");
         List<KeyWordsBuider> list= new ArrayList<>();
         SearchResult searchResult = casiaEsSearch.
@@ -218,16 +221,17 @@ public class CasiaEsSearchTest extends TestCase {
 //                        new SortField("pubtime", SortOrder.DESC)
 //                        new SortField("eid", SortOrder.ASC)
 //                ).
-                setRange(
-                        new RangeField(FieldOccurs.INCLUDES,"id",32174657,33677173)
-////                        new RangeField(FieldOccurs.EXCLUDES,"pubtime","2020-01-09 07:36:00",null)
-                ).
+//                setRange(
+//                        new RangeField(FieldOccurs.INCLUDES,"id",32174657,33677173)
+//                        new RangeField(FieldOccurs.EXCLUDES,"pubtime","2020-01-09 07:36:00",null)
+//                ).
                 setQueryKeyWords(
                         new KeywordsCombine(1,
-                               new KeyWordsBuider("mmsi","\\sad*dsa-?>.(",FieldOccurs.INCLUDES, QueriesLevel.Term),
-                               new KeyWordsBuider("lal",new GeoQueryInfo().addBox(
-                                        new LonLat(112.967240F,28.211238F),
-                                        new LonLat(111.967240F,26.211238F)),FieldOccurs.INCLUDES, GeoQueryLevel.Box)
+                                new KeyWordsBuider("site","中国",FieldOccurs.INCLUDES, QueriesLevel.Term)
+//                               new KeyWordsBuider("mmsi","\\sad*dsa-?>.(",FieldOccurs.INCLUDES, QueriesLevel.Term),
+//                               new KeyWordsBuider("lal",new GeoQueryInfo().addBox(
+//                                        new LonLat(112.967240F,28.211238F),
+//                                        new LonLat(111.967240F,26.211238F)),FieldOccurs.INCLUDES, GeoQueryLevel.Box)
 //                               new KeyWordsBuider("lal",new GeoQueryInfo().addDistance(new LonLat(112.967240F,28.211238F),"100km"),FieldOccurs.INCLUDES, GeoQueryLevel.Distance)
 //                               new KeyWordsBuider("lal",new GeoQueryInfo().addBox(new LonLat(112.967240F,28.211238F),new LonLat(111.967240F,26.211238F)),FieldOccurs.INCLUDES, GeoQueryLevel.Box)
 //                               new KeyWordsBuider("lal",new GeoQueryInfo().addDistanceRange(new LonLat(112.967240F,28.211238F),"50km","100km"),FieldOccurs.INCLUDES, GeoQueryLevel.DistanceRange)
@@ -260,15 +264,22 @@ public class CasiaEsSearchTest extends TestCase {
 
         OutInfo.out(searchResult);
 
-       /* casiaEsSearch.reset();
-        searchResult = casiaEsSearch.setMatchAllQuery().executeQuery();
-        System.out.println("total："+searchResult.getTotal());
-        searchResult.getDataInfos().forEach(s->{
-            System.out.print("id："+s.getId());
-            System.out.print("\tindexName："+s.getIndexName());
-            System.out.print("\tindexType："+s.getIndexType());
-            System.out.print("\tfileds："+s.getField());
-            System.out.println("");
-        });*/
+    }
+    public void test() {
+        CasiaEsApi casiaEsApi = new CasiaEsApi("beihang");
+        casiaEsApi.search().setIndexName("event_mblog_ref_beihang","beihang_data");
+        casiaEsApi.search().
+                setFrom(0).
+                setSize(3).
+            setQueryKeyWords(
+                new KeywordsCombine(1,
+                        new KeyWordsBuider("blogger","天津日报",FieldOccurs.INCLUDES, QueriesLevel.Term)
+                )
+            );
+
+        SearchResult searchResult = casiaEsApi.search().setReturnField("i*","blogger","pubtime","title").executeQueryInfo();
+
+        OutInfo.out(searchResult);
+
     }
 }

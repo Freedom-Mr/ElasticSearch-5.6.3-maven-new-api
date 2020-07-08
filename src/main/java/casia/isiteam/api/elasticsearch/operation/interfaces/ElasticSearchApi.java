@@ -7,6 +7,7 @@ import casia.isiteam.api.elasticsearch.common.vo.field.search.KeywordsCombine;
 import casia.isiteam.api.elasticsearch.common.vo.field.RangeField;
 import casia.isiteam.api.elasticsearch.common.vo.field.SortField;
 import casia.isiteam.api.elasticsearch.operation.security.EncapsulationInfo;
+import casia.isiteam.api.toolutil.Validator;
 import com.alibaba.fastjson.JSONObject;
 
 import java.util.List;
@@ -53,6 +54,7 @@ public class ElasticSearchApi extends EncapsulationInfo {
         void config(List<String> ipPorts,String username,String password);
         void setIndexName(String indexName,String indexType);
         boolean creatIndex(String indexName,String mapping);
+        boolean creatIndex(String mapping);
         boolean writeData(List<JSONObject> datas , String uniqueKeyName ,String bakingName);
         Map<String,Object> writeDatas( List<JSONObject> datas , String uniqueKeyName ,String bakingName);
         boolean insertField(String fieldName,Map<String, String> map);
@@ -60,6 +62,8 @@ public class ElasticSearchApi extends EncapsulationInfo {
         boolean openIndex();
         boolean flushIndex();
         boolean refreshIndex();
+        Map<String,Object> reIndexData(String oldIndexName,String newIndexName);
+        boolean addIndexAlias(String alias);
     }
     public interface QueryApi {
         void config(String driverName);
@@ -68,6 +72,7 @@ public class ElasticSearchApi extends EncapsulationInfo {
         void setIndexName(String indexName,String indexType);
         JSONObject queryIndexByName(String indexName);
         List<String> queryIndexNames();
+        public Map<String,List<String>> queryIndexAlias(String wildcard);
     }
     public interface DelApi {
         void config(String driverName);
@@ -85,7 +90,7 @@ public class ElasticSearchApi extends EncapsulationInfo {
         void setRange(RangeField ... rangeFields);
         void setFieldExistsFilter(FieldOccurs fieldOccurs,String ... fileds);
         int deleteDataByQuery();
-
+        boolean delIndexAlias(String alias);
     }
 
     public interface UpadeApi {
@@ -105,8 +110,8 @@ public class ElasticSearchApi extends EncapsulationInfo {
     }
 
     public void addIndexName(String indexName,String indexType) {
-        indexParmsStatus.setIndexName(indexName);
-        indexParmsStatus.setIndexType(indexType);
+        if(Validator.check(indexName)){indexParmsStatus.setIndexName(indexName);};
+        if(Validator.check(indexType)){indexParmsStatus.setIndexType(indexType);};
     }
 
 }

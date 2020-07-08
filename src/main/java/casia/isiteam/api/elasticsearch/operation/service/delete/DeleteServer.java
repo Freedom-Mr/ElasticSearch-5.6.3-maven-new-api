@@ -263,4 +263,18 @@ public class DeleteServer extends ElasticSearchApi implements ElasticSearchApi.D
             return o();
         }
     }
+
+    @Override
+    public boolean delIndexAlias(String alias) {
+        String curl=curl(indexParmsStatus.getUrl(),_ALIASES);
+        JSONObject parms =o( ACTIONS, a( o(REMOVE,o(o(INDEX,indexParmsStatus.getIndexName()),ALIAS,alias) ) ) );
+        CasiaHttpUtil casiaHttpUtil = new CasiaHttpUtil();
+        String queryResultStr = casiaHttpUtil.post( curl,indexParmsStatus.getHeards(),null, parms.toString() );
+        try {
+            return validationResult(queryResultStr,ACKNOWLEDGED,true);
+        }catch (Exception e){
+            logger.error("result：{}；error：",queryResultStr,e.getMessage());
+            return false;
+        }
+    }
 }

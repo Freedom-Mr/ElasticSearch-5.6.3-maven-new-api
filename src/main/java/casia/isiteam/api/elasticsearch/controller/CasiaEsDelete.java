@@ -44,6 +44,12 @@ public class CasiaEsDelete {
     public void setIndexName(String indexName,String indexType) {
         delApi.setIndexName(indexName,indexType);
     }
+    public void setIndexName(String indexName) {
+        delApi.setIndexName(indexName,null);
+    }
+    public void setIndexType(String indexType) {
+        delApi.setIndexName(null,indexType);
+    }
     /**
      * 根据索引名删除索引信息
      * @return true or false
@@ -90,7 +96,14 @@ public class CasiaEsDelete {
     public boolean clearCache(){
         return delApi.clearCache();
     }
-
+    /**
+     * delete index alias by indexName
+     * @param alias
+     * @return
+     */
+    public boolean deleteIndexAlias(String alias){
+        return delApi.delIndexAlias(alias);
+    }
 
     /**
      * delete data by query String
@@ -143,4 +156,5 @@ public class CasiaEsDelete {
         }
         return this;
     }
+
 }

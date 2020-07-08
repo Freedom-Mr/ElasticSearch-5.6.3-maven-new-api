@@ -18,38 +18,51 @@ import java.util.Arrays;
  */
 public class CasiaEsDeleteTest extends TestCase {
 
-    CasiaEsDelete casiaEsDelete = new CasiaEsDelete("data");
 
     public void testDeleteIndexByName() {
+
+        CasiaEsDelete casiaEsDelete = new CasiaEsDelete("data");
         casiaEsDelete.setIndexName("test","");
         System.out.println(casiaEsDelete.deleteIndexByName());
     }
 
 
     public void testDeleteDataByIds() {
+
+        CasiaEsDelete casiaEsDelete = new CasiaEsDelete("data");
         casiaEsDelete.setIndexName("test","test_data");
         System.out.println(casiaEsDelete.deleteDataByIds(Arrays.asList(new String[]{"123456789","1"})));
     }
 
     public void testDeleteDataById() {
+
+        CasiaEsDelete casiaEsDelete = new CasiaEsDelete("data");
         casiaEsDelete.setIndexName("test","test_data");
         System.out.println(casiaEsDelete.deleteDataById("1"));
     }
 
     public void testDeleteScrollByIds() {
+
+        CasiaEsDelete casiaEsDelete = new CasiaEsDelete("data");
         System.out.println(casiaEsDelete.deleteScrollByIds(Arrays.asList(new String[]{"DXF1ZXJ5QW5kRmV0Y2gBAAAAAAAAALQWZzZzanNIOGVULTZWS0Z4ckh6amVwUQ=="})));
     }
 
     public void testDeleteScrollByAll() {
+
+        CasiaEsDelete casiaEsDelete = new CasiaEsDelete("data");
         System.out.println(casiaEsDelete.deleteScrollByAll());
     }
 
     public void testClearCache() {
+
+        CasiaEsDelete casiaEsDelete = new CasiaEsDelete("data");
         casiaEsDelete.setIndexName("test","test_data");
         System.out.println(casiaEsDelete.clearCache());
     }
 
     public void testDeleteDataByQuery() {
+
+        CasiaEsDelete casiaEsDelete = new CasiaEsDelete("data");
         casiaEsDelete.setIndexName("test","test_data");
         casiaEsDelete.setRange(
                   new RangeField(FieldOccurs.INCLUDES,"pubtime","2020-05-09 07:36:00",null)
@@ -61,5 +74,12 @@ public class CasiaEsDeleteTest extends TestCase {
         );
         int deleteTotal= casiaEsDelete.deleteDataByQuery();
         System.out.println(deleteTotal);
+    }
+
+    public void testDeleteIndexAlias() {
+        CasiaEsDelete casiaEsDelete = new CasiaEsDelete("data");
+        casiaEsDelete.setIndexName("demo_test","test_data");
+        Boolean rs= casiaEsDelete.deleteIndexAlias("wu");
+        System.out.println(rs);
     }
 }

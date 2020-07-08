@@ -13,7 +13,7 @@ public class LogUtil {
     }
     public static String compositionLogCurl(String url,Object ... bodyParms){
         StringBuffer sb = new StringBuffer();
-        sb.append("curl:").append(url).append(" -d P");
+        sb.append("curl:").append(url).append("_d-P");
         for(Object parm:bodyParms){
             sb.append(" ").append(parm).append("}");
         }

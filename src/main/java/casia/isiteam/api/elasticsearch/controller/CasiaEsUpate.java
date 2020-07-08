@@ -41,7 +41,12 @@ public class CasiaEsUpate {
     public void setIndexName(String indexName,String indexType) {
         upadeApi.setIndexName(indexName,indexType);
     }
-
+    public void setIndexName(String indexName) {
+        upadeApi.setIndexName(indexName,null);
+    }
+    public void setIndexType(String indexType) {
+        upadeApi.setIndexName(null,indexType);
+    }
     /**
      * 根据主键修改字段值
      * @param _id 主键

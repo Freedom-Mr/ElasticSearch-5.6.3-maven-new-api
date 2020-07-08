@@ -19,6 +19,10 @@ public class ElasticResultParms extends JSONCompare {
     protected final static String _ID = "_id";
     protected final static String _UPDATE = "_update";
     protected final static String INDEX = "index";
+    protected final static String REMOVE = "remove";
+    protected final static String ALIAS = "alias";
+    protected final static String SOURCE = "source";
+    protected final static String DEST = "dest";
     protected final static String DOC = "doc";
     protected final static String _CAT = "_cat";
     protected final static String INDICES = "indices";
@@ -34,6 +38,11 @@ public class ElasticResultParms extends JSONCompare {
     protected final static String FOUND = "found";
     protected final static String DELETED = "deleted";
     protected final static String UPDATED = "updated";
+    protected final static String CREATED = "created";
+    protected final static String BATCHES = "batches";
+    protected final static String BATCHE = "batche";
+    protected final static String CREATE = "create";
+    protected final static String DELETE = "delete";
     protected final static String NOT_FOUND = "not_found";
     protected final static String FROM = "from";
     protected final static String MASK = "mask";
@@ -68,6 +77,7 @@ public class ElasticResultParms extends JSONCompare {
     protected final static String _SHARDS = "_shards";
     protected final static String _FLUSH = "_flush";
     protected final static String _REFRESH = "_refresh";
+    protected final static String _REINDEX = "_reindex";
     protected final static String MUST = "must";
     protected final static String MUST_NOT = "must_not";
     protected final static String FILTER = "filter";
@@ -111,6 +121,7 @@ public class ElasticResultParms extends JSONCompare {
     protected final static String _SQL = "_sql";
     protected final static String SQL = "sql";
     protected final static String ERRORS = "errors";
+    protected final static String ERROR = "error";
     protected final static String KEYED = "keyed";
     protected final static String IP_RANGE = "ip_range";
     protected final static String PRECISION = "precision";
@@ -130,5 +141,11 @@ public class ElasticResultParms extends JSONCompare {
     protected final static String SKEWNESS = "skewness";
     protected final static String COVARIANCE = "covariance";
     protected final static String CORRELATION = "correlation";
+    protected final static String TIMED_OUT = "timed_out";
+    protected final static String _ALIASES = "_aliases";
+    protected final static String _ALIAS = "_alias";
+    protected final static String ALIASES = "aliases";
+    protected final static String ADD = "add";
+    protected final static String ACTIONS = "actions";
 
 }

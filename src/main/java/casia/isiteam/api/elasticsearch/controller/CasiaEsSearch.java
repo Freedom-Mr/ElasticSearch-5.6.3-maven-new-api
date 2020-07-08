@@ -47,6 +47,12 @@ public class CasiaEsSearch {
     public void setIndexName(String indexName,String indexType) {
         searchApi.setIndexName(indexName,indexType);
     }
+    public void setIndexName(String indexName) {
+        searchApi.setIndexName(indexName,null);
+    }
+    public void setIndexType(String indexType) {
+        searchApi.setIndexName(null,indexType);
+    }
     /**
      * reset query
      */
