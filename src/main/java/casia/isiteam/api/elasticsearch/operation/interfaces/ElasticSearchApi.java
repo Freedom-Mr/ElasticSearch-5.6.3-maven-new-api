@@ -1,6 +1,7 @@
 package casia.isiteam.api.elasticsearch.operation.interfaces;
 
 import casia.isiteam.api.elasticsearch.common.enums.FieldOccurs;
+import casia.isiteam.api.elasticsearch.common.enums.GeoQueryLevel;
 import casia.isiteam.api.elasticsearch.common.vo.field.aggs.AggsFieldBuider;
 import casia.isiteam.api.elasticsearch.common.vo.result.SearchResult;
 import casia.isiteam.api.elasticsearch.common.vo.field.search.KeywordsCombine;
@@ -8,6 +9,7 @@ import casia.isiteam.api.elasticsearch.common.vo.field.RangeField;
 import casia.isiteam.api.elasticsearch.common.vo.field.SortField;
 import casia.isiteam.api.elasticsearch.operation.security.EncapsulationInfo;
 import casia.isiteam.api.toolutil.Validator;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 import java.util.List;
@@ -86,6 +88,7 @@ public class ElasticSearchApi extends EncapsulationInfo {
         boolean deleteScrollByAll();
         boolean clearCache();
 
+        void reset();
         void setQueryKeyWords(KeywordsCombine... keywordsCombines);
         void setRange(RangeField ... rangeFields);
         void setFieldExistsFilter(FieldOccurs fieldOccurs,String ... fileds);
@@ -99,6 +102,16 @@ public class ElasticSearchApi extends EncapsulationInfo {
         void config(List<String> ipPorts,String username,String password);
         void setIndexName(String indexName,String indexType);
         boolean updateParameterById (String _id ,Map< String, Object > parameters);
+        Map<String,Object> updateParameterByQuery (String field, Object newValue);
+        boolean moveShardRoute (int shard_id ,String from_node_name,String to_node_name);
+        boolean cancelShardRoute (int shard_id ,String node_name);
+        boolean allocateShardRoute (int shard_id ,String node_name);
+        boolean updateNumberOfReplicas (int replicas_number );
+
+        void reset();
+        void setQueryKeyWords(KeywordsCombine... keywordsCombines);
+        void setRange(RangeField ... rangeFields);
+        void setFieldExistsFilter(FieldOccurs fieldOccurs,String ... fileds);
     }
 
     public interface SqlApi {
@@ -113,5 +126,6 @@ public class ElasticSearchApi extends EncapsulationInfo {
         if(Validator.check(indexName)){indexParmsStatus.setIndexName(indexName);};
         if(Validator.check(indexType)){indexParmsStatus.setIndexType(indexType);};
     }
+
 
 }

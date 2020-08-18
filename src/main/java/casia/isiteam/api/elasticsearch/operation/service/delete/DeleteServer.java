@@ -2,6 +2,7 @@ package casia.isiteam.api.elasticsearch.operation.service.delete;
 
 import casia.isiteam.api.elasticsearch.common.enums.FieldOccurs;
 import casia.isiteam.api.elasticsearch.common.enums.GeoQueryLevel;
+import casia.isiteam.api.elasticsearch.common.status.IndexSearchBuilder;
 import casia.isiteam.api.elasticsearch.common.vo.field.RangeField;
 import casia.isiteam.api.elasticsearch.common.vo.field.search.KeywordsCombine;
 import casia.isiteam.api.elasticsearch.operation.interfaces.ElasticSearchApi;
@@ -30,6 +31,7 @@ public class DeleteServer extends ElasticSearchApi implements ElasticSearchApi.D
     public void setIndexName(String indexName,String indexType) {
         addIndexName(indexName,indexType);
     }
+
     /**
      * delete index by indexName
      * @return true or false
@@ -121,9 +123,6 @@ public class DeleteServer extends ElasticSearchApi implements ElasticSearchApi.D
         return o(resultStr).containsKey(_SHARDS);
     }
 
-
-
-
     /**
      * delete data by query String
      * @return
@@ -139,7 +138,29 @@ public class DeleteServer extends ElasticSearchApi implements ElasticSearchApi.D
         String resultStr = new CasiaHttpUtil().post(curl,indexParmsStatus.getHeards(),null,body.toString());
         return JSONCompare.getResult(resultStr,DELETED);
     }
+    @Override
+    public boolean delIndexAlias(String alias) {
+        String curl=curl(indexParmsStatus.getUrl(),_ALIASES);
+        JSONObject parms =o( ACTIONS, a( o(REMOVE,o(o(INDEX,indexParmsStatus.getIndexName()),ALIAS,alias) ) ) );
+        CasiaHttpUtil casiaHttpUtil = new CasiaHttpUtil();
+        String queryResultStr = casiaHttpUtil.post( curl,indexParmsStatus.getHeards(),null, parms.toString() );
+        try {
+            return validationResult(queryResultStr,ACKNOWLEDGED,true);
+        }catch (Exception e){
+            logger.error("result：{}；error：",queryResultStr,e.getMessage());
+            return false;
+        }
+    }
 
+
+    /***************Query******************/
+    /**
+     * clearn query parms
+     */
+    @Override
+    public void reset(){
+        indexSearchBuilder = new IndexSearchBuilder();
+    };
     public void setRange(RangeField... rangeFields) {
         for(RangeField filed : rangeFields ){
             JSONObject rangefiled = o(RANGE,o(filed.getField(),o(o(GTE,filed.getGte()),LTE,filed.getLte())));
@@ -153,7 +174,6 @@ public class DeleteServer extends ElasticSearchApi implements ElasticSearchApi.D
             }
         }
     }
-
     public void setFieldExistsFilter(FieldOccurs fieldOccurs, String ... fileds) {
         for(String filed : fileds ){
             JSONObject existsFiled = o(EXISTS,o(FIELD,filed));
@@ -178,103 +198,7 @@ public class DeleteServer extends ElasticSearchApi implements ElasticSearchApi.D
             }
         }
     }
-    /**
-     * pars translate query build keyword
-     * @param jsono
-     * @param keywordsCombine
-     * @return
-     */
-    private JSONObject parsQueryKeyWords(JSONObject jsono,KeywordsCombine keywordsCombine){
-        if( Validator.check(keywordsCombine) && Validator.check(keywordsCombine.getKeyWordsBuiders()) ){
-            keywordsCombine.getKeyWordsBuiders().forEach(s->{
-                String SM = Validator.check(s.getFieldOccurs()) && s.getFieldOccurs().getIsMust().equals(MUST_NOT) ? MUST_NOT : SHOULD;
-                if( !Validator.check(s.getKeywordsCombines()) ){
-                    JSONObject matchjson = o();
 
-                    //关键词格式
-                    if( Validator.check(s.getQueriesLevel()) ){
-                        matchjson.put( s.getQueriesLevel().getLevel(),o(s.getField(),s.getKeyWord())) ;
-                    }
-                    //地理位置格式
-                    else if( Validator.check(s.getGeoQueryLevel()) && Validator.check(s.getGeoQueryInfo()) ){
-                        if( s.getGeoQueryLevel().getLevel() .equals(GeoQueryLevel.Polygon.getLevel()) ){
-                            JSONArray jsonArray =a();
-                            s.getGeoQueryInfo().getPolygon().forEach(lal->jsonArray.add(o(o(LAT,lal.getLat()),LON,lal.getLon())));
-                            matchjson.put(s.getGeoQueryLevel().getLevel(),o(s.getField(),o(POINTS,jsonArray) ));
-                        }else if( s.getGeoQueryLevel().getLevel() .equals(GeoQueryLevel.Box.getLevel()) ){
-                            matchjson.put(s.getGeoQueryLevel().getLevel(),o(s.getField(),o()));
-                            s.getGeoQueryInfo().getBox().forEach((k,v)->{
-                                matchjson.getJSONObject(s.getGeoQueryLevel().getLevel()).getJSONObject(s.getField()).put(k,o(o(LAT,v.getLat()),LON,v.getLon()));
-                            });
-                        }else if( s.getGeoQueryLevel().getLevel() .equals(GeoQueryLevel.Distance.getLevel()) ){
-                            matchjson.put(s.getGeoQueryLevel().getLevel(),o());
-                            matchjson.getJSONObject(s.getGeoQueryLevel().getLevel()).put(DISTANCE, s.getGeoQueryInfo().getDistance() );
-                            matchjson.getJSONObject(s.getGeoQueryLevel().getLevel()).put(s.getField(),o(o(LAT,s.getGeoQueryInfo().getDistanceGeo().getLat()),LON,s.getGeoQueryInfo().getDistanceGeo().getLon()));
-                        }else if( s.getGeoQueryLevel().getLevel() .equals(GeoQueryLevel.DistanceRange.getLevel()) ){
-                            matchjson.put(s.getGeoQueryLevel().getLevel(),o());
-                            matchjson.getJSONObject(s.getGeoQueryLevel().getLevel()).put(FROM, s.getGeoQueryInfo().getFrom() );
-                            matchjson.getJSONObject(s.getGeoQueryLevel().getLevel()).put(TO, s.getGeoQueryInfo().getTo() );
-                            matchjson.getJSONObject(s.getGeoQueryLevel().getLevel()).put(s.getField(),o(o(LAT,s.getGeoQueryInfo().getDistanceGeo().getLat()),LON,s.getGeoQueryInfo().getDistanceGeo().getLon()));
-                        }
-                    }
-                    //其他
-                    else{
-                        return;
-                    }
 
-                    //组装
-                    if( keywordsCombine.getKeyWordsBuiders().size() == 1 && !SM.equals(MUST_NOT) ){
-                        jsono.putAll(matchjson);
-                        return;
-                    }
-                    oAddoKey(jsono,BOOL);
-                    if( SM.equals(MUST_NOT) ){
-                        oAddaKey(jsono.getJSONObject(BOOL),SHOULD);
-                        JSONObject js = o(BOOL,o(MUST_NOT,matchjson));
-                        if( !jsono.getJSONObject(BOOL).getJSONArray(SHOULD).stream().filter(a->
-                                a.toString() .equals( js.toString() ) ).findFirst().isPresent()
-                        ){
-                            jsono.getJSONObject(BOOL).getJSONArray(SHOULD).add( js );
-                        }
-                    }else{
-                        oAddaKey(jsono.getJSONObject(BOOL),SM);
-                        if( !jsono.getJSONObject(BOOL).getJSONArray(SM).stream().filter(a->
-                                a.toString() .equals( matchjson.toString() ) ).findFirst().isPresent()
-                        ){
-                            jsono.getJSONObject(BOOL).getJSONArray(SM).add( matchjson );
-                        }
-                    }
-                }else {
-                    s.getKeywordsCombines().forEach(d->{
-                        oAddoKey(jsono,BOOL);
-                        oAddaKey(jsono.getJSONObject(BOOL),SHOULD);
-                        jsono.getJSONObject(BOOL).getJSONArray(SHOULD).add(0,o());
-                        parsQueryKeyWords(jsono.getJSONObject(BOOL).getJSONArray(SHOULD).getJSONObject(0),d);
-                    });
-                }
-            });
-            if(jsono.containsKey(BOOL)){
-                keywordsCombine.setMinimumMatch( keywordsCombine.getMinimumMatch()>0 && keywordsCombine.getMinimumMatch()<=jsono.getJSONObject(BOOL).getJSONArray(SHOULD).size() ?
-                        keywordsCombine.getMinimumMatch() : jsono.getJSONObject(BOOL).getJSONArray(SHOULD).size() );
-                jsono.getJSONObject(BOOL).put(MINIMUM_SHOULD_MATCH,keywordsCombine.getMinimumMatch());
-            }
-            return jsono;
-        }else{
-            return o();
-        }
-    }
 
-    @Override
-    public boolean delIndexAlias(String alias) {
-        String curl=curl(indexParmsStatus.getUrl(),_ALIASES);
-        JSONObject parms =o( ACTIONS, a( o(REMOVE,o(o(INDEX,indexParmsStatus.getIndexName()),ALIAS,alias) ) ) );
-        CasiaHttpUtil casiaHttpUtil = new CasiaHttpUtil();
-        String queryResultStr = casiaHttpUtil.post( curl,indexParmsStatus.getHeards(),null, parms.toString() );
-        try {
-            return validationResult(queryResultStr,ACKNOWLEDGED,true);
-        }catch (Exception e){
-            logger.error("result：{}；error：",queryResultStr,e.getMessage());
-            return false;
-        }
-    }
 }

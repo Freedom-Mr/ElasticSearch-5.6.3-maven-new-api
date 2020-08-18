@@ -15,12 +15,16 @@ import casia.isiteam.api.elasticsearch.common.vo.field.RangeField;
 import casia.isiteam.api.elasticsearch.controller.api.CasiaEsApi;
 import casia.isiteam.api.elasticsearch.util.OutInfo;
 import casia.isiteam.api.toolutil.Validator;
+import casia.isiteam.api.toolutil.time.CasiaTimeFormat;
+import casia.isiteam.api.toolutil.time.CasiaTimeUtil;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import junit.framework.TestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -87,11 +91,11 @@ public class CasiaEsSearchTest extends TestCase {
                 ).executeAggsInfo();*/
 
         /**** date ***/
-       /* SearchResult searchResult = casiaEsSearch.
-                setRange(new RangeField(FieldOccurs.INCLUDES,"pubtime","2020-05-06 00:00:00","2020-05-08 00:00:00"))
+        SearchResult searchResult = casiaEsSearch.
+                setRange(new RangeField(FieldOccurs.INCLUDES,"pubtime","2020-05-06 00:00:00","2020-06-06 00:00:00"))
                 .setAggregations(
                     new AggsFieldBuider(
-                            new DateInfo("pubtime","yyyy-MM-dd HH","1H",0L,"2020-05-06 00","2020-05-08 00").
+                            new DateInfo("pubtime","yyyy-MM-dd","7d",0L,"2020-05-06","2020-06-06").
                                     setAggsFieldBuider(
                                             new AggsFieldBuider(
                                                     new TypeInfo("eid")
@@ -99,18 +103,18 @@ public class CasiaEsSearchTest extends TestCase {
                                     )
                     ),
                     new AggsFieldBuider(
-                            new DateInfo("addtime","yyyy-MM-dd","1d",0L,"2020-05-06","2020-05-08")
+                            new DateInfo("addtime","yyyy-MM-dd","7d",0L,"2020-05-06","2020-06-06")
                     )
-                ).executeQueryInfo();*/
+                ).executeQueryInfo();
 
         /**** TopData ***/
-        SearchResult searchResult = casiaEsSearch
+       /* SearchResult searchResult = casiaEsSearch
                 .setAggregations(
                         new AggsFieldBuider(
                                 new TopData(2).setAlias("top_list"),
                                 new TopData(2, Arrays.asList(new SortField("pubtime",SortOrder.ASC)))
                         )
-                ).executeAggsInfo();
+                ).executeAggsInfo();*/
 
         /**** GeoInfo ***/
         /*SearchResult searchResult = casiaEsSearch
@@ -266,20 +270,19 @@ public class CasiaEsSearchTest extends TestCase {
 
     }
     public void test() {
-        CasiaEsApi casiaEsApi = new CasiaEsApi("beihang");
-        casiaEsApi.search().setIndexName("event_mblog_ref_beihang","beihang_data");
-        casiaEsApi.search().
-                setFrom(0).
-                setSize(3).
-            setQueryKeyWords(
-                new KeywordsCombine(1,
-                        new KeyWordsBuider("blogger","天津日报",FieldOccurs.INCLUDES, QueriesLevel.Term)
+        CasiaEsApi casiaEsApi = new CasiaEsApi("all");
+        casiaEsApi.search().setIndexName("test","test_data");
+//                        casiaEsSearch.addSort(new SortField(sortField, SortOrder.DESC));
+        casiaEsApi.search().setRange(
+                new RangeField(FieldOccurs.INCLUDES,
+                        "pubtime",
+                        CasiaTimeUtil.addSubtractDateTime(CasiaTimeUtil.getNowDateTime(), CasiaTimeFormat.YYYY_MM_dd_HH_mm_ss,-30, ChronoUnit.MINUTES),
+                        CasiaTimeUtil.getNowDateTime()
                 )
-            );
-
-        SearchResult searchResult = casiaEsApi.search().setReturnField("i*","blogger","pubtime","title").executeQueryInfo();
-
+        );
+        SearchResult searchResult = casiaEsApi.search().executeQueryTotal();
         OutInfo.out(searchResult);
 
     }
+
 }

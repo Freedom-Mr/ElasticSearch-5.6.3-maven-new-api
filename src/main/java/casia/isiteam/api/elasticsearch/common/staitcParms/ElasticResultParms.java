@@ -18,12 +18,17 @@ public class ElasticResultParms extends JSONCompare {
     protected final static String BAKING = "baking";
     protected final static String _ID = "_id";
     protected final static String _UPDATE = "_update";
+    protected final static String _UPDATE_BY_QUERY = "_update_by_query";
     protected final static String INDEX = "index";
+    protected final static String SHARD = "shard";
+    protected final static String ALLOCATE = "allocate";
     protected final static String REMOVE = "remove";
     protected final static String ALIAS = "alias";
     protected final static String SOURCE = "source";
     protected final static String DEST = "dest";
     protected final static String DOC = "doc";
+    protected final static String INLINE = "inline";
+    protected final static String SCRIPT = "script";
     protected final static String _CAT = "_cat";
     protected final static String INDICES = "indices";
     protected final static String PROPERTIES = "properties";
@@ -147,5 +152,17 @@ public class ElasticResultParms extends JSONCompare {
     protected final static String ALIASES = "aliases";
     protected final static String ADD = "add";
     protected final static String ACTIONS = "actions";
+    protected final static String _CLUSTER = "_cluster";
+    protected final static String REROUTE = "reroute";
+    protected final static String FROM_NODE = "from_node";
+    protected final static String TO_NODE = "to_node";
+    protected final static String MOVE = "move";
+    protected final static String COMMANDS = "commands";
+    protected final static String _SETTINGS = "_settings";
+    protected final static String NUMBER_OF_REPLICAS = "number_of_replicas";
+    protected final static String NODE = "node";
+    protected final static String CANCEL = "cancel";
 
+
+    //String
 }

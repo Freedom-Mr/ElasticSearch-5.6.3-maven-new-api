@@ -85,7 +85,8 @@ public class IndexSearchBuilder extends ElasticResultParms {
 
     /****  query  ****/
     public JSONObject getQuery() {
-        return query;
+        info.put(BOOL,queryBigBool);
+        return info;
     }
 
 

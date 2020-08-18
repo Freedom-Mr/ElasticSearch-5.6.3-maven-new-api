@@ -3,6 +3,7 @@ package casia.isiteam.api.elasticsearch.controller;
 import casia.isiteam.api.toolutil.file.CasiaFileUtil;
 import casia.isiteam.api.toolutil.time.CasiaTimeFormat;
 import casia.isiteam.api.toolutil.time.CasiaTimeUtil;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import junit.framework.TestCase;
 
@@ -44,10 +45,8 @@ public class CasiaEsCreateTest extends TestCase {
         List<String> list = CasiaFileUtil.readAllLines("datas/test_data_list.d", StandardCharsets.UTF_8);
         List<JSONObject> datas = list.stream().map(x -> JSONObject.parseObject(x)).collect( Collectors.toList());
 
-        casiaEsCreate.setIndexName("test","test_data");
-
-//        boolean rs =  casiaEsCreate.writeData(datas,"id",null);
-//        System.out.println(rs);
+        CasiaEsCreate casiaEsCreate = new CasiaEsCreate("data");
+        casiaEsCreate.setIndexName("demo_test","test_data");
 
         Map<String,Object> rss =casiaEsCreate.writeDatas(datas,"id");
         rss.forEach((k,v)->{
@@ -92,13 +91,18 @@ public class CasiaEsCreateTest extends TestCase {
 //        String indexType = "monitor_caiji_preprocess";
 
         //小索引
-        String[] indexName = new String[]{"think_tank_small","video_info_small","forum_threads_small","instagram_thread_small","twitter_info_small","youtube_info_small","facebook_info_small","mblog_info_small","wechat_info_small","appdata_small","newspaper_small","news_small","blog_small","platform_info_small"};
-        String indexType = "monitor_caiji_small";
+//        String[] indexName = new String[]{"think_tank_small","video_info_small","forum_threads_small","instagram_thread_small","twitter_info_small","youtube_info_small","facebook_info_small","mblog_info_small","wechat_info_small","appdata_small","newspaper_small","news_small","blog_small","platform_info_small"};
+//        String indexType = "monitor_caiji_small";
+
+        //用户信息表
+        String[] indexName = new String[]{"mblog_userinfo","twitter_users"};
+        String indexType = "common_caiji";
+
 
 //        String[] filenames =new String[]{"topic_list","topic_size","at_list","at_size","communication_list","communication_size"};
 //        String[] types =new String[]{"keyword","integer","keyword","integer","keyword","integer"};
-        String[] filenames =new String[]{"pic_info","keywords_size","not_analyzed","mid","content_url","last_reply_author"};
-        String[] types =new String[]{"text","text","text","long","keyword","keyword"};
+        String[] filenames =new String[]{"location"};
+        String[] types =new String[]{"keyword"};
 //        String[] filenames =new String[]{"pretitle"};
 //        String[] types =new String[]{"text"};
 //        String[] filenames =new String[]{"last_reply_time"};
