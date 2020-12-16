@@ -22,7 +22,7 @@ public class CasiaEsDeleteTest extends TestCase {
     public void testDeleteIndexByName() {
 
         CasiaEsDelete casiaEsDelete = new CasiaEsDelete("data");
-        casiaEsDelete.setIndexName("test","");
+        casiaEsDelete.setIndexName("m-*","");
         System.out.println(casiaEsDelete.deleteIndexByName());
     }
 
@@ -30,15 +30,15 @@ public class CasiaEsDeleteTest extends TestCase {
     public void testDeleteDataByIds() {
 
         CasiaEsDelete casiaEsDelete = new CasiaEsDelete("data");
-        casiaEsDelete.setIndexName("test","test_data");
+        casiaEsDelete.setIndexName("aircraft_info","graph");
         System.out.println(casiaEsDelete.deleteDataByIds(Arrays.asList(new String[]{"123456789","1"})));
     }
 
     public void testDeleteDataById() {
 
         CasiaEsDelete casiaEsDelete = new CasiaEsDelete("data");
-        casiaEsDelete.setIndexName("test","test_data");
-        System.out.println(casiaEsDelete.deleteDataById("1"));
+        casiaEsDelete.setIndexName("aircraft_info","graph");
+        System.out.println(casiaEsDelete.deleteDataById("e9523544ae3d16eb2cd930ca89561dc2"));
     }
 
     public void testDeleteScrollByIds() {
@@ -63,15 +63,15 @@ public class CasiaEsDeleteTest extends TestCase {
     public void testDeleteDataByQuery() {
 
         CasiaEsDelete casiaEsDelete = new CasiaEsDelete("data");
-        casiaEsDelete.setIndexName("test","test_data");
+        casiaEsDelete.setIndexName("news_preprocess","monitor_caiji_preprocess");
         casiaEsDelete.setRange(
-                  new RangeField(FieldOccurs.INCLUDES,"pubtime","2020-05-09 07:36:00",null)
+                  new RangeField(FieldOccurs.INCLUDES,"pubtime",null,"2020-11-16 22:04:34")
         );
-        casiaEsDelete.setQueryKeyWords(
+        /*casiaEsDelete.setQueryKeyWords(
                 new KeywordsCombine(2,
                         new KeyWordsBuider("title","肺炎", FieldOccurs.INCLUDES, QueriesLevel.Term),
                         new KeyWordsBuider("title","病毒",FieldOccurs.INCLUDES, QueriesLevel.Term))
-        );
+        );*/
         int deleteTotal= casiaEsDelete.deleteDataByQuery();
         System.out.println(deleteTotal);
     }

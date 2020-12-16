@@ -15,7 +15,7 @@ public class CasiaEsQueryTest extends TestCase {
 
     public void testQueryIndexByName() {
         CasiaEsQuery casiaEsQuery = new CasiaEsQuery("data");
-        JSONObject info = casiaEsQuery.queryIndexByName("test");
+        JSONObject info = casiaEsQuery.queryIndexByName("wechat_users");
         System.out.println(info);
     }
 

@@ -151,7 +151,7 @@ public class CreateServer extends ElasticSearchApi implements ElasticSearchApi.C
      * @return true or false
      */
     @Override
-    public boolean insertField ( String fieldName, Map<String, String> map ){
+    public boolean insertField ( String fieldName, Object map ){
         if( !Validator.check( map ) ){
             logger.warn(LogUtil.compositionLogEmpty("field info"));
             return true;
@@ -161,9 +161,7 @@ public class CreateServer extends ElasticSearchApi implements ElasticSearchApi.C
         CasiaHttpUtil casiaHttpUtil = new CasiaHttpUtil();
         JSONObject parms =o(indexParmsStatus.getIndexType(),
                 o(PROPERTIES,
-                        o(fieldName,
-                           JSON.toJSON(map)
-                    )
+                        o(fieldName,map)
                 )
         );
         logger.debug(LogUtil.compositionLogCurl(curl,parms));

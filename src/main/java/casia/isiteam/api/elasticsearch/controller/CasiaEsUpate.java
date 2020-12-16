@@ -6,6 +6,7 @@ import casia.isiteam.api.elasticsearch.common.vo.field.search.KeywordsCombine;
 import casia.isiteam.api.elasticsearch.operation.interfaces.ElasticSearchApi;
 import casia.isiteam.api.elasticsearch.router.ApiRouter;
 import casia.isiteam.api.toolutil.Validator;
+import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,6 +60,13 @@ public class CasiaEsUpate {
     public Boolean updateParameterById(String _id ,Map< String, Object > parameters){
         return upadeApi.updateParameterById(_id,parameters);
     }
+    public boolean updateParameterById (String _id , JSONObject parameters){
+        return upadeApi.updateParameterById(_id,parameters);
+    };
+    public boolean upsertParameterById (String _id ,JSONObject update_parameters,JSONObject create_parameters){
+        return upadeApi.upsertParameterById(_id,update_parameters,create_parameters);
+    };
+
     public Map<String,Object> updateParameterByQuery(String field, Object newValue){
         return upadeApi.updateParameterByQuery(field,newValue);
     }

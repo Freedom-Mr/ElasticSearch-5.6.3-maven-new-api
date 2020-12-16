@@ -15,6 +15,7 @@ import casia.isiteam.api.elasticsearch.common.vo.field.RangeField;
 import casia.isiteam.api.elasticsearch.controller.api.CasiaEsApi;
 import casia.isiteam.api.elasticsearch.util.OutInfo;
 import casia.isiteam.api.toolutil.Validator;
+import casia.isiteam.api.toolutil.file.CasiaFileUtil;
 import casia.isiteam.api.toolutil.time.CasiaTimeFormat;
 import casia.isiteam.api.toolutil.time.CasiaTimeUtil;
 import com.alibaba.fastjson.JSON;
@@ -270,19 +271,137 @@ public class CasiaEsSearchTest extends TestCase {
 
     }
     public void test() {
-        CasiaEsApi casiaEsApi = new CasiaEsApi("all");
-        casiaEsApi.search().setIndexName("test","test_data");
-//                        casiaEsSearch.addSort(new SortField(sortField, SortOrder.DESC));
+        CasiaEsApi casiaEsApi = new CasiaEsApi("aliyun");
+        casiaEsApi.search().setIndexName("*_small","monitor_caiji_small");
+//        casiaEsApi.search().addSort(new SortField("pubtime", SortOrder.ASC));
         casiaEsApi.search().setRange(
                 new RangeField(FieldOccurs.INCLUDES,
                         "pubtime",
-                        CasiaTimeUtil.addSubtractDateTime(CasiaTimeUtil.getNowDateTime(), CasiaTimeFormat.YYYY_MM_dd_HH_mm_ss,-30, ChronoUnit.MINUTES),
-                        CasiaTimeUtil.getNowDateTime()
+                        null,
+                        CasiaTimeUtil.addSubtractDateTime(CasiaTimeUtil.getNowDateTime(), CasiaTimeFormat.YYYY_MM_dd_HH_mm_ss,-1, ChronoUnit.DAYS)
+//                        CasiaTimeUtil.getNowDateTime()
                 )
-        );
-        SearchResult searchResult = casiaEsApi.search().executeQueryTotal();
+        ).setSize(1);
+       /* casiaEsApi.search().setQueryKeyWords(
+                new KeywordsCombine(1,
+//                        new KeyWordsBuider("author","梅新育",FieldOccurs.INCLUDES, QueriesLevel.Term)
+                        new KeyWordsBuider("id","2115341614",FieldOccurs.INCLUDES, QueriesLevel.Term)
+                )
+        );*/
+
+        SearchResult searchResult = casiaEsApi.search().executeQueryInfo();
         OutInfo.out(searchResult);
 
     }
+    public void test2() {
+        CasiaEsApi casiaEsApi = new CasiaEsApi("xx5");
+        casiaEsApi.search().setIndexName("user_blog_ref,user_youtube_ref,user_wechat_ref,user_threads_ref,user_mblog_ref,user_instagram_ref,user_facebook_blog_ref","zdr_data");
+        casiaEsApi.search().addSort(new SortField("pubtime", SortOrder.DESC));
+        casiaEsApi.search().setRange(
+                new RangeField(FieldOccurs.INCLUDES,
+                        "pubtime",
+                        CasiaTimeUtil.addSubtractDateTime(CasiaTimeUtil.getNowDateTime(), CasiaTimeFormat.YYYY_MM_dd_HH_mm_ss,-7, ChronoUnit.DAYS),
+                        CasiaTimeUtil.getNowDateTime()
+                )
+        );
+        /*casiaEsApi.search().setQueryKeyWords(
+                new KeywordsCombine(1,
+                        new KeyWordsBuider("content_translation","习",FieldOccurs.INCLUDES, QueriesLevel.Term),
+                        new KeyWordsBuider("content","习",FieldOccurs.INCLUDES, QueriesLevel.Term)
+                )
+        );*/
 
+        String keyword = "习;共产党;共匪;共党";
+        String not_keyword = "";
+        String[] fields = new String[]{"content","content_translation","title","title_translation"};
+        //添加包含关键词
+        List<KeyWordsBuider> inkeys = new ArrayList<>();
+        if(keyword != null && !keyword.equals("")){
+            String[] includekeywords = keyword.split(";");
+            for(String mustKwd:includekeywords){
+                for(String field :fields){
+                    inkeys.add(new KeyWordsBuider(field,mustKwd,FieldOccurs.INCLUDES, QueriesLevel.Term));
+                }
+            }
+        }
+        //添加不包含关键词
+        List<KeyWordsBuider> exkeys = new ArrayList<>();
+        if(not_keyword != null && !not_keyword.equals("")){
+            String[] excludeKeywords = not_keyword.split(";");
+            for(String notKwd:excludeKeywords){
+                for(String field :fields){
+                    inkeys.add(new KeyWordsBuider(field,notKwd,FieldOccurs.EXCLUDES, QueriesLevel.Term));
+                }
+            }
+        }
+        KeywordsCombine keywordsCombine;
+        if( inkeys.size()>0 && exkeys.size()>0 ){
+            casiaEsApi.search().setQueryKeyWords(
+                    new KeywordsCombine(2,
+                            new KeyWordsBuider(
+                                    new KeywordsCombine(1,
+                                            inkeys
+                                    )
+                            ),
+                            new KeyWordsBuider(
+                                    new KeywordsCombine(1,
+                                            exkeys
+                                    )
+                            )
+                    )
+            );
+        }else if ( inkeys.size()>0 && exkeys.size()==0 ){
+            casiaEsApi.search().setQueryKeyWords(
+                    new KeywordsCombine(1,
+                            inkeys
+                    )
+            );
+        }else if ( inkeys.size()==0 && exkeys.size()>0 ){
+            casiaEsApi.search().setQueryKeyWords(
+                    new KeywordsCombine(1,
+                            exkeys
+                    )
+            );
+        }
+
+        SearchResult searchResult = casiaEsApi.search().executeQueryInfo();
+        OutInfo.out(searchResult);
+
+    }
+    public void test3() {
+        String indexname = "event_data_extract_result_v-202003";
+        String indexnameFile = indexname+".txt";
+        CasiaEsApi casiaEsApi = new CasiaEsApi("liangqun");
+        casiaEsApi.search().setIndexName(indexname, "analysis_data");
+        casiaEsApi.search().addSort(new SortField("pubtime", SortOrder.ASC)).setSize(9999);
+        /*casiaEsApi.search().setRange(
+                new RangeField(FieldOccurs.INCLUDES,
+                        "pubtime",
+//                        "2019-01-09 16:15:36",
+                        "2020-01-01 00:00:00",
+//                        "2020-01-01 00:00:00"
+                        CasiaTimeUtil.getNowDateTime()
+                )
+        );*/
+
+        SearchResult searchResult  = casiaEsApi.search().executeQueryInfo();
+        System.out.println(searchResult.getTotal_Doc());
+
+        StringBuffer sv = new StringBuffer();
+        searchResult.getQueryInfos().forEach(s->{
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.putAll(s.getField());
+
+            JSONObject jsonObject2  = new JSONObject();
+            jsonObject2.put("_id",s.getId());
+            JSONObject jsonObject1  = new JSONObject();
+            jsonObject1.put("index",jsonObject2);
+
+            sv.append(sv.length()>0?"\r\n":"").append(jsonObject1);
+            sv.append("\r\n"+jsonObject);
+        });
+
+        CasiaFileUtil.createFile(indexnameFile);
+        CasiaFileUtil.write(indexnameFile,sv.toString(),false);
+    };
 }

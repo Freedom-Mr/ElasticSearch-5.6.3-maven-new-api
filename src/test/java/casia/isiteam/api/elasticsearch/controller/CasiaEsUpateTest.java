@@ -22,7 +22,7 @@ public class CasiaEsUpateTest extends TestCase {
 
 
     public void testUpdateParameterById() {
-        CasiaEsUpate casiaEsQuery = new CasiaEsUpate("liangqun");
+        CasiaEsUpate casiaEsQuery = new CasiaEsUpate("data");
 
         Map<String, Object> map = new HashMap<String, Object>();
 
@@ -33,9 +33,12 @@ public class CasiaEsUpateTest extends TestCase {
 //        map.put("numbers", new String[]{"165542854"});
 
 //        casiaEsQuery.setIndexName("demo_test","test_data");
-        casiaEsQuery.setIndexName("all_data_v-202001","analysis_data");
+        casiaEsQuery.setIndexName("test5","graph");
 //        casiaEsQuery.setIndexName("event_data_extract_result_v-202001","analysis_data");
-        boolean boo = casiaEsQuery.updateParameterById("b4dbe540d92f0d12acd11eb65587af86",map);
+        JSONObject json = new JSONObject();
+        json.put("altitude",1234);
+//        boolean boo = casiaEsQuery.updateParameterById("9",json);
+        boolean boo = casiaEsQuery.upsertParameterById("9",json,json);
         System.out.println(boo);
     }
 

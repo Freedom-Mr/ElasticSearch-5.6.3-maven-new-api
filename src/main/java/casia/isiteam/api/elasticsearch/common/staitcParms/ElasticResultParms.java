@@ -27,6 +27,7 @@ public class ElasticResultParms extends JSONCompare {
     protected final static String SOURCE = "source";
     protected final static String DEST = "dest";
     protected final static String DOC = "doc";
+    protected final static String UPSERT = "upsert";
     protected final static String INLINE = "inline";
     protected final static String SCRIPT = "script";
     protected final static String _CAT = "_cat";

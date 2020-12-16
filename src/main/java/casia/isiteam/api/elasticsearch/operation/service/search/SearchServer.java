@@ -445,13 +445,15 @@ public class SearchServer extends ElasticSearchApi implements ElasticSearchApi.S
         }
         return keyString;
     }
+
+
     /**
      * execute query
      */
     @Override
     public SearchResult executeQueryInfo() {
         if( !Validator.check( indexSearchBuilder.getSearch() ) ){
-            logger.debug(LogUtil.compositionLogEmpty("query parms"));
+            logger.warn(LogUtil.compositionLogEmpty("query parms"));
         }
         String curl =curl(indexParmsStatus.getUrl(),indexParmsStatus.getIndexName(),indexParmsStatus.getIndexType(),_SEARCH);
         logger.debug(LogUtil.compositionLogCurl(curl,indexSearchBuilder.getSearch()) );

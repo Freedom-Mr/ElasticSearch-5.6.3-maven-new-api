@@ -9,6 +9,7 @@ import casia.isiteam.api.elasticsearch.common.vo.field.RangeField;
 import casia.isiteam.api.elasticsearch.common.vo.field.SortField;
 import casia.isiteam.api.elasticsearch.operation.security.EncapsulationInfo;
 import casia.isiteam.api.toolutil.Validator;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
@@ -59,7 +60,7 @@ public class ElasticSearchApi extends EncapsulationInfo {
         boolean creatIndex(String mapping);
         boolean writeData(List<JSONObject> datas , String uniqueKeyName ,String bakingName);
         Map<String,Object> writeDatas( List<JSONObject> datas , String uniqueKeyName ,String bakingName);
-        boolean insertField(String fieldName,Map<String, String> map);
+        boolean insertField(String fieldName, Object json);
         boolean closeIndex();
         boolean openIndex();
         boolean flushIndex();
@@ -102,6 +103,8 @@ public class ElasticSearchApi extends EncapsulationInfo {
         void config(List<String> ipPorts,String username,String password);
         void setIndexName(String indexName,String indexType);
         boolean updateParameterById (String _id ,Map< String, Object > parameters);
+        boolean updateParameterById (String _id ,JSONObject parameters);
+        boolean upsertParameterById (String _id ,JSONObject update_parameters,JSONObject create_parameters);
         Map<String,Object> updateParameterByQuery (String field, Object newValue);
         boolean moveShardRoute (int shard_id ,String from_node_name,String to_node_name);
         boolean cancelShardRoute (int shard_id ,String node_name);

@@ -2,6 +2,7 @@ package casia.isiteam.api.elasticsearch.controller;
 
 import casia.isiteam.api.elasticsearch.operation.interfaces.ElasticSearchApi;
 import casia.isiteam.api.elasticsearch.router.ApiRouter;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,7 +97,16 @@ public class CasiaEsCreate {
      * @return true or false
      */
     public Boolean insertField(String fieldName,Map<String, String> map){
-        return createApi.insertField(fieldName,map);
+        return createApi.insertField(fieldName,JSON.toJSON(map));
+    }
+    /**
+     * insert field to index
+     * @param fieldName field name
+     * @param json   field parms
+     * @return true or false
+     */
+    public Boolean insertField2 ( String fieldName, JSONObject json ){
+        return createApi.insertField(fieldName,json);
     }
     /**
      * close index

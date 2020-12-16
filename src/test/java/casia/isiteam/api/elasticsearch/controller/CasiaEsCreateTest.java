@@ -27,9 +27,17 @@ public class CasiaEsCreateTest extends TestCase {
      * 创建索引
      */
     public void testCreateIndex() {
-        System.out.println(casiaEsCreate.createIndex("a",mapping));
+        System.out.println(casiaEsCreate.createIndex("test",mapping));
     }
-
+    public void testCreateIndex22() {
+        CasiaEsCreate casiaEsCreatec = new CasiaEsCreate("data");
+        String mappings = CasiaFileUtil.readAllBytes("mapping/all.json");
+        String aa = "think_tank_all,video_info_all,forum_threads_all,instagram_thread_all,twitter_info_all,youtube_info_all,facebook_info_all,mblog_info_all,wechat_info_all,appdata_all,newspaper_all,news_all,blog_all,platform_info_all,news_channel_all";
+        String[] indexNames = aa.split(",");
+        for(String indexName:indexNames){
+            System.out.println(casiaEsCreatec.createIndex(indexName,mappings));
+        }
+    }
     /**
      * 创建索引
      */
@@ -46,16 +54,26 @@ public class CasiaEsCreateTest extends TestCase {
         List<JSONObject> datas = list.stream().map(x -> JSONObject.parseObject(x)).collect( Collectors.toList());
 
         CasiaEsCreate casiaEsCreate = new CasiaEsCreate("data");
-        casiaEsCreate.setIndexName("demo_test","test_data");
+        casiaEsCreate.setIndexName("test","test_data");
 
         Map<String,Object> rss =casiaEsCreate.writeDatas(datas,"id");
         rss.forEach((k,v)->{
             System.out.println(k+"\t"+v);
         });
     }
-
+    public void testInsertField2() {
+        CasiaEsCreate casiaEsCreate = new CasiaEsCreate("data");
+        Map<String, String> map = new HashMap<>();
+        map.put("type", "integer");
+//                map.put("analyzer", "standard");
+        map.put("index", "not_analyzed");
+//                map.put("format", "yyyy-MM-dd HH:mm:ss");
+        map.put("store", "true");
+        casiaEsCreate.setIndexName("youtube_info_zdr","zdr_caiji");
+        boolean rs = casiaEsCreate.insertField("is_contact",map);
+    }
     public void testInsertField() {
-        CasiaEsCreate casiaEsCreate = new CasiaEsCreate("aliyun");
+        CasiaEsCreate casiaEsCreate = new CasiaEsCreate("liangqun");
         // user_youtube_info_ref_zdr user_wechat_info_ref_zdr user_twitter_info_ref_zdr user_mblog_info_ref_zdr user_linkedin_thread_ref_zdr
         // user_instagram_thread_ref_zdr user_forum_threads_ref_zdr user_facebook_info_ref_zdr user_blog_ref_zdr
         // zdr_data
@@ -95,13 +113,14 @@ public class CasiaEsCreateTest extends TestCase {
 //        String indexType = "monitor_caiji_small";
 
         //用户信息表
-        String[] indexName = new String[]{"mblog_userinfo","twitter_users"};
-        String indexType = "common_caiji";
+        String[] indexName = new String[]{"event_data_extract_result_v-202011","event_data_extract_result_v-202003","event_data_extract_result_v-202001","event_data_extract_result_v-201912",
+        "event_data_extract_result_q-202011","event_data_extract_result_q-202001","event_data_extract_result_q-201912","all_data_v-202011","all_data_v-202003","all_data_v-202001","all_data_v-201912","all_data_q-202011","all_data_q-202001","all_data_q-201912"};
+        String indexType = "analysis_data";
 
 
 //        String[] filenames =new String[]{"topic_list","topic_size","at_list","at_size","communication_list","communication_size"};
 //        String[] types =new String[]{"keyword","integer","keyword","integer","keyword","integer"};
-        String[] filenames =new String[]{"location"};
+        String[] filenames =new String[]{"kngentity_list"};
         String[] types =new String[]{"keyword"};
 //        String[] filenames =new String[]{"pretitle"};
 //        String[] types =new String[]{"text"};
@@ -147,8 +166,8 @@ public class CasiaEsCreateTest extends TestCase {
     }
 
     public void testReIndex() {
-        CasiaEsCreate casiaEsCreate = new CasiaEsCreate("data");
-        Map<String,Object> map = casiaEsCreate.reIndex("demo_test","demo_test2");
+        CasiaEsCreate casiaEsCreate = new CasiaEsCreate("beihang");
+        Map<String,Object> map = casiaEsCreate.reIndex("event_news_ref_beihang1","event_news_ref_beihang");
         map.forEach((k,v)->{
             System.out.println(k+":"+v);
         });

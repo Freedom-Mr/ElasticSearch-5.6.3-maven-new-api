@@ -48,13 +48,56 @@ public class UpdateServer extends ElasticSearchApi implements ElasticSearchApi.U
         JSONObject js = o(DOC,o(JSON.toJSONString(parameters)));
         CasiaHttpUtil casiaHttpUtil = new CasiaHttpUtil();
         String resultStr = casiaHttpUtil.post( curl,indexParmsStatus.getHeards(),null, js.toString() );
-        boolean rs= JSONCompare.validationResult(resultStr,RESULT,UPDATE,UPDATED,NOOP);
+        boolean rs= JSONCompare.validationResult(resultStr,RESULT,UPDATE,UPDATED,NOOP,CREATED);
         if(!rs){
             logger.warn(resultStr);
         }
         return rs;
     }
+    /**
+     * update data info by _id
+     * @param _id PRIMARY KEY
+     * @param parameters parameters
+     */
+    public boolean updateParameterById (String _id ,JSONObject parameters){
+        if( !Validator.check(parameters) ){
+            logger.warn(LogUtil.compositionLogEmpty("updateParameterById parameters "));
+            return true;
+        }
+        String curl=curl(indexParmsStatus.getUrl(),indexParmsStatus.getIndexName(),indexParmsStatus.getIndexType(), _id , _UPDATE );
+        logger.debug(LogUtil.compositionLogCurl(curl));
+        JSONObject js = o(DOC,parameters);
+        CasiaHttpUtil casiaHttpUtil = new CasiaHttpUtil();
+        String resultStr = casiaHttpUtil.post( curl,indexParmsStatus.getHeards(),null, js.toString() );
+        boolean rs= JSONCompare.validationResult(resultStr,RESULT,UPDATE,UPDATED,NOOP,CREATED);
+        if(!rs){
+            logger.warn(resultStr);
+        }
+        return rs;
+    }
+    /**
+     * update OR create data info by _id
+     * @param _id PRIMARY KEY
+     * @param update_parameters update_parameters
+     * @param create_parameters create_parameters
+     */
+    public boolean upsertParameterById (String _id ,JSONObject update_parameters,JSONObject create_parameters){
+        if( !Validator.check(update_parameters) || !Validator.check(_id) || !Validator.check(create_parameters) ){
+            logger.warn(LogUtil.compositionLogEmpty(" parameters "));
+            return true;
+        }
 
+        String curl=curl(indexParmsStatus.getUrl(),indexParmsStatus.getIndexName(),indexParmsStatus.getIndexType(), _id , _UPDATE );
+        logger.debug(LogUtil.compositionLogCurl(curl));
+        JSONObject js = o(o(DOC,update_parameters),UPSERT,create_parameters);
+        CasiaHttpUtil casiaHttpUtil = new CasiaHttpUtil();
+        String resultStr = casiaHttpUtil.post( curl,indexParmsStatus.getHeards(),null, js.toString() );
+        boolean rs= JSONCompare.validationResult(resultStr,RESULT,UPDATE,UPDATED,NOOP,CREATED);
+        if(!rs){
+            logger.warn(resultStr);
+        }
+        return rs;
+    }
     /**
      * move shard to node
      * @param shard_id
@@ -70,6 +113,7 @@ public class UpdateServer extends ElasticSearchApi implements ElasticSearchApi.U
         String curl=curl(indexParmsStatus.getUrl(), _CLUSTER , REROUTE );
         logger.debug(LogUtil.compositionLogCurl(curl));
         JSONObject js = o(COMMANDS,a(MOVE,o(o(o(o(INDEX,indexParmsStatus.getIndexName()),SHARD,shard_id),FROM_NODE,from_node_name),TO_NODE,to_node_name)));
+        logger.debug(js.toString());
         CasiaHttpUtil casiaHttpUtil = new CasiaHttpUtil();
         String resultStr = casiaHttpUtil.post( curl,indexParmsStatus.getHeards(),null, js.toString() );
         boolean rs= JSONCompare.validationResult(resultStr,ACKNOWLEDGED);
