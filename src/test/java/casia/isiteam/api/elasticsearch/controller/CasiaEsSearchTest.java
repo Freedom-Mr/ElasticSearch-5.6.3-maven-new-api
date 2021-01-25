@@ -369,39 +369,17 @@ public class CasiaEsSearchTest extends TestCase {
 
     }
     public void test3() {
-        String indexname = "event_data_extract_result_v-202003";
-        String indexnameFile = indexname+".txt";
-        CasiaEsApi casiaEsApi = new CasiaEsApi("liangqun");
-        casiaEsApi.search().setIndexName(indexname, "analysis_data");
-        casiaEsApi.search().addSort(new SortField("pubtime", SortOrder.ASC)).setSize(9999);
-        /*casiaEsApi.search().setRange(
-                new RangeField(FieldOccurs.INCLUDES,
-                        "pubtime",
-//                        "2019-01-09 16:15:36",
-                        "2020-01-01 00:00:00",
-//                        "2020-01-01 00:00:00"
-                        CasiaTimeUtil.getNowDateTime()
-                )
-        );*/
+        CasiaEsApi casiaEsApi = new CasiaEsApi("data");
+        casiaEsApi.search().setIndexName("test", "test_data");
+        casiaEsApi.search().addSort(new SortField("pubtime", SortOrder.ASC));
+
+        /*casiaEsApi.search().setQueryKeyWords( new KeywordsCombine( 1,
+                new KeyWordsBuider("title","中国",FieldOccurs.INCLUDES, QueriesLevel.Term)
+        ));*/
 
         SearchResult searchResult  = casiaEsApi.search().executeQueryInfo();
         System.out.println(searchResult.getTotal_Doc());
 
-        StringBuffer sv = new StringBuffer();
-        searchResult.getQueryInfos().forEach(s->{
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.putAll(s.getField());
-
-            JSONObject jsonObject2  = new JSONObject();
-            jsonObject2.put("_id",s.getId());
-            JSONObject jsonObject1  = new JSONObject();
-            jsonObject1.put("index",jsonObject2);
-
-            sv.append(sv.length()>0?"\r\n":"").append(jsonObject1);
-            sv.append("\r\n"+jsonObject);
-        });
-
-        CasiaFileUtil.createFile(indexnameFile);
-        CasiaFileUtil.write(indexnameFile,sv.toString(),false);
+        OutInfo.out(searchResult);
     };
 }

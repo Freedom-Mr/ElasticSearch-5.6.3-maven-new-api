@@ -6,9 +6,12 @@ import casia.isiteam.api.elasticsearch.common.vo.result.AggsInfo;
 import casia.isiteam.api.elasticsearch.common.vo.result.LonLatInfo;
 import casia.isiteam.api.elasticsearch.common.vo.result.QueryInfo;
 import casia.isiteam.api.elasticsearch.common.vo.result.SearchResult;
+import casia.isiteam.api.elasticsearch.common.vo.security.RoleInfomation;
+import casia.isiteam.api.elasticsearch.common.vo.security.UserInfomation;
 import casia.isiteam.api.toolutil.Validator;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.sun.org.apache.regexp.internal.RE;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -378,5 +381,40 @@ public class ExecuteResult extends ShareParms {
         }
     }
 
+    public static List<UserInfomation> parseUserResult(JSONObject json){
+        List<UserInfomation> rs = new ArrayList<>();
+        if( json.containsKey(USERNAME) ){
+            rs.add(coverUser(json));
+        }else{
+            json.forEach((k,v)->{rs.add(coverUser(JSONObject.parseObject(v.toString())));});
+        }
+        return rs;
+    }
+    private static UserInfomation coverUser(JSONObject json){
+        UserInfomation userInfomation = new UserInfomation();
+        userInfomation.setUsername(json.getString(USERNAME));
+        userInfomation.setEmail(json.getString(EMAIL));
+        userInfomation.setEnabled(json.getBoolean(ENABLED));
+        userInfomation.setFull_name(json.getString(FULL_NAME));
+        userInfomation.setMetadata(json.getJSONObject(METADATA));
+        userInfomation.setRoles(JSONObject.parseArray(json.getJSONArray(ROLES).toJSONString(), String.class));
+        return userInfomation;
+    }
+
+    public static List<RoleInfomation> parserRoleResult(JSONObject jsonObject){
+        List<RoleInfomation> rs = new ArrayList<>();
+        jsonObject.forEach((k,v)->{
+            JSONObject json = jsonObject.getJSONObject(k);
+            RoleInfomation roleInfomation = new RoleInfomation();
+            roleInfomation.setRoleName(k);
+            roleInfomation.setCluster(json.getJSONArray(CLUSTER).toJavaList(String.class));
+            roleInfomation.setIndices(json.getJSONArray(INDICES).toJavaList(JSONObject.class));
+            roleInfomation.setRun_as(json.getJSONArray(RUN_AS).toJavaList(String.class));
+            roleInfomation.setMetadata(json.getJSONObject(METADATA));
+            roleInfomation.setTransientMetadata(json.getJSONObject(TRANSIENT_METADATA));
+            rs.add(roleInfomation);
+        });
+        return rs;
+    }
 
 }

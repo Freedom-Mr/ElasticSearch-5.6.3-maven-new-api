@@ -60,4 +60,9 @@ public class CasiaEsApi {
         if(!Validator.check(this.casiaEsSql)){this.casiaEsSql = Validator.check(driverName)?new CasiaEsSql(driverName):new CasiaEsSql(ipPorts,userName,password);}
         return this.casiaEsSql;
     }
+    private CasiaEsSecurity casiaEsSecurity;
+    public CasiaEsSecurity security(){
+        if(!Validator.check(this.casiaEsSecurity)){this.casiaEsSecurity = Validator.check(driverName)?new CasiaEsSecurity(driverName):new CasiaEsSecurity(ipPorts,userName,password);}
+        return this.casiaEsSecurity;
+    }
 }

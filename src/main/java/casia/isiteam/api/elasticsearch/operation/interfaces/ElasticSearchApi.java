@@ -7,6 +7,8 @@ import casia.isiteam.api.elasticsearch.common.vo.result.SearchResult;
 import casia.isiteam.api.elasticsearch.common.vo.field.search.KeywordsCombine;
 import casia.isiteam.api.elasticsearch.common.vo.field.RangeField;
 import casia.isiteam.api.elasticsearch.common.vo.field.SortField;
+import casia.isiteam.api.elasticsearch.common.vo.security.RoleInfomation;
+import casia.isiteam.api.elasticsearch.common.vo.security.UserInfomation;
 import casia.isiteam.api.elasticsearch.operation.security.EncapsulationInfo;
 import casia.isiteam.api.toolutil.Validator;
 import com.alibaba.fastjson.JSON;
@@ -67,6 +69,9 @@ public class ElasticSearchApi extends EncapsulationInfo {
         boolean refreshIndex();
         Map<String,Object> reIndexData(String oldIndexName,String newIndexName);
         boolean addIndexAlias(String alias);
+        boolean routingAllocation(boolean isEnable);
+        boolean routingRebalance(boolean isEnable);
+        boolean delayedNodeSettings(String delayedTime);
     }
     public interface QueryApi {
         void config(String driverName);
@@ -124,6 +129,24 @@ public class ElasticSearchApi extends EncapsulationInfo {
         void setQuerySql(String sql);
         SearchResult executeQueryInfo();
     }
+
+    public interface SecurityApi {
+        void config(String driverName);
+        void config(List<String> ipPorts);
+        void config(List<String> ipPorts,String username,String password);
+        void setIndexName(String indexName,String indexType);
+        UserInfomation searchAuthenticate();
+        List<UserInfomation> searchAllUser();
+        boolean resetPassword(String password);
+        boolean addUser(UserInfomation userInfomation);
+        boolean delUser(UserInfomation userInfomation);
+        boolean userState(boolean isEnable,String userName);
+        List<RoleInfomation> allRoles();
+        RoleInfomation getRoleInfo(String roleName);
+        boolean addRole(RoleInfomation roleInfomation);
+        boolean delRole(String roleName);
+    }
+
 
     public void addIndexName(String indexName,String indexType) {
         if(Validator.check(indexName)){indexParmsStatus.setIndexName(indexName);};

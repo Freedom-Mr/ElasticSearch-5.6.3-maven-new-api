@@ -72,6 +72,9 @@ public class EsDbUtil extends IndexAuthorStatus {
                     extractInfos.put(splits[3],hv);
                 }
             };
+            if( DEBUG_INFO.equals(key)){
+                IndexAuthorStatus.debugOut=Boolean.parseBoolean(String.valueOf(value));
+            }
         }catch (Exception E){
             logger.error(E.getMessage());
         }

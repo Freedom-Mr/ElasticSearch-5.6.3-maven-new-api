@@ -456,7 +456,10 @@ public class SearchServer extends ElasticSearchApi implements ElasticSearchApi.S
             logger.warn(LogUtil.compositionLogEmpty("query parms"));
         }
         String curl =curl(indexParmsStatus.getUrl(),indexParmsStatus.getIndexName(),indexParmsStatus.getIndexType(),_SEARCH);
-        logger.debug(LogUtil.compositionLogCurl(curl,indexSearchBuilder.getSearch()) );
+//        logger.debug(LogUtil.compositionLogCurl(curl,indexSearchBuilder.getSearch()) );
+        if(debugInfo()){
+            logger.info(LogUtil.compositionLogCurl(curl,indexSearchBuilder.getSearch()) );
+        }
         String resultStr = new CasiaHttpUtil().post(curl,indexParmsStatus.getHeards(),null,indexSearchBuilder.getSearch().toString() );
         return ExecuteResult.executeQueryResult(o(resultStr));
     }
@@ -476,7 +479,10 @@ public class SearchServer extends ElasticSearchApi implements ElasticSearchApi.S
         String curl =curlSymbol( curl(indexParmsStatus.getUrl(),!Validator.check(scroll_id)?indexParmsStatus.getIndexName():"",!Validator.check(scroll_id)?indexParmsStatus.getIndexType():"", _SEARCH),Validator.check(scroll_id)?SLASH:QUESTION  ,
         Validator.check(scroll_id)?SCROLL:SCROLL+EQUAL+scroll_time);
         String bodys=Validator.check(scroll_id)?o(o(SCROLL,scroll_time),SCROLL_ID,scroll_id).toString():indexSearchBuilder.getSearch().toString();
-        logger.debug(LogUtil.compositionLogCurl(curl,bodys));
+//        logger.debug(LogUtil.compositionLogCurl(curl,bodys));
+        if(debugInfo()){
+            logger.info(LogUtil.compositionLogCurl(curl,bodys) );
+        }
         String resultStr = new CasiaHttpUtil().post(curl,
                 indexParmsStatus.getHeards(),
                 null,bodys
@@ -490,7 +496,10 @@ public class SearchServer extends ElasticSearchApi implements ElasticSearchApi.S
     public SearchResult executeQueryTotal() {
         String curl=curl(indexParmsStatus.getUrl(),indexParmsStatus.getIndexName(),indexParmsStatus.getIndexType(),_COUNT);
         String bodys = os(QUERY,indexSearchBuilder.getQuery().toString());
-        logger.debug(LogUtil.compositionLogCurl(curl,bodys) );
+//        logger.debug(LogUtil.compositionLogCurl(curl,bodys) );
+        if(debugInfo()){
+            logger.info(LogUtil.compositionLogCurl(curl,bodys) );
+        }
         String resultStr = new CasiaHttpUtil().post(curl,indexParmsStatus.getHeards(),null,bodys);
         return ExecuteResult.executeQueryTotal(o(resultStr));
     }
@@ -507,7 +516,10 @@ public class SearchServer extends ElasticSearchApi implements ElasticSearchApi.S
             return searchResult;
         }
         String curl=curl(indexParmsStatus.getUrl(),indexParmsStatus.getIndexName(),indexParmsStatus.getIndexType(),_SEARCH);
-        logger.debug(LogUtil.compositionLogCurl(curl,indexSearchBuilder.getCount().toString() ) );
+//        logger.debug(LogUtil.compositionLogCurl(curl,indexSearchBuilder.getCount().toString() ) );
+        if(debugInfo()){
+            logger.info(LogUtil.compositionLogCurl(curl,indexSearchBuilder.getCount().toString()) );
+        }
         String resultStr = new CasiaHttpUtil().post(curl,indexParmsStatus.getHeards(),null,indexSearchBuilder.getCount().toString());
         return ExecuteResult.executeQueryResult(o(resultStr));
     }

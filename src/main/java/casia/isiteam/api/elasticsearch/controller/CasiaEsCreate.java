@@ -153,4 +153,28 @@ public class CasiaEsCreate {
     public boolean createIndexAlias(String alias){
         return createApi.addIndexAlias(alias);
     }
+
+    /**
+     * @param isEnable true OR false
+     * @return
+     */
+    public boolean routingAllocation(boolean isEnable){
+        return createApi.routingAllocation(isEnable);
+    };
+
+    /**
+     * @param isEnable true OR false
+     * @return
+     */
+    public boolean routingRebalance(boolean isEnable){
+        return createApi.routingRebalance(isEnable);
+    };
+
+    /**
+     * @param delayedTime 1s or 1m or 1h or 1d
+     * @return
+     */
+    public boolean delayedNodeSettings(String delayedTime){
+        return createApi.delayedNodeSettings(delayedTime);
+    };
 }

@@ -41,6 +41,9 @@ public class CreateServer extends ElasticSearchApi implements ElasticSearchApi.C
         }
         String curl=curl(indexParmsStatus.getUrl(),indexName);
         logger.debug(LogUtil.compositionLogCurl(curl,mapping));
+        if(debugInfo()){
+            logger.info(LogUtil.compositionLogCurl(curl,mapping) );
+        }
         String resultStr = new CasiaHttpUtil().put(curl,indexParmsStatus.getHeards(),null,mapping);
         return JSONCompare.validationResult(resultStr,ACKNOWLEDGED);
     }
@@ -57,6 +60,9 @@ public class CreateServer extends ElasticSearchApi implements ElasticSearchApi.C
         }
         String curl=curl(indexParmsStatus.getUrl(),indexParmsStatus.getIndexName());
         logger.debug(LogUtil.compositionLogCurl(curl,mapping));
+        if(debugInfo()){
+            logger.info(LogUtil.compositionLogCurl(curl,mapping) );
+        }
         String resultStr = new CasiaHttpUtil().put(curl,indexParmsStatus.getHeards(),null,mapping);
         return JSONCompare.validationResult(resultStr,ACKNOWLEDGED);
     }
@@ -165,6 +171,9 @@ public class CreateServer extends ElasticSearchApi implements ElasticSearchApi.C
                 )
         );
         logger.debug(LogUtil.compositionLogCurl(curl,parms));
+        if(debugInfo()){
+            logger.info(LogUtil.compositionLogCurl(curl,parms) );
+        }
         String queryResultStr = casiaHttpUtil.post( curl,indexParmsStatus.getHeards(),null, parms.toString() );
         return JSONCompare.validationResult(queryResultStr,ACKNOWLEDGED,UPDATE,TRUE);
     }
@@ -177,6 +186,9 @@ public class CreateServer extends ElasticSearchApi implements ElasticSearchApi.C
         }
         String curl=curl(indexParmsStatus.getUrl(),indexParmsStatus.getIndexName(), _CLOSE);
         logger.debug(LogUtil.compositionLogCurl(curl));
+        if(debugInfo()){
+            logger.info(LogUtil.compositionLogCurl(curl) );
+        }
         CasiaHttpUtil casiaHttpUtil = new CasiaHttpUtil();
         String queryResultStr = casiaHttpUtil.post( curl,indexParmsStatus.getHeards(),null, null );
         try {
@@ -194,6 +206,9 @@ public class CreateServer extends ElasticSearchApi implements ElasticSearchApi.C
         }
         String curl=curl(indexParmsStatus.getUrl(),indexParmsStatus.getIndexName(),_OPEN);
         logger.debug(LogUtil.compositionLogCurl(curl));
+        if(debugInfo()){
+            logger.info(LogUtil.compositionLogCurl(curl) );
+        }
         CasiaHttpUtil casiaHttpUtil = new CasiaHttpUtil();
         String queryResultStr = casiaHttpUtil.post( curl,indexParmsStatus.getHeards(),null, null );
         try {
@@ -263,6 +278,51 @@ public class CreateServer extends ElasticSearchApi implements ElasticSearchApi.C
         String queryResultStr = casiaHttpUtil.post( curl,indexParmsStatus.getHeards(),null, parms.toString() );
         try {
            return validationResult(queryResultStr,ACKNOWLEDGED,true);
+        }catch (Exception e){
+            logger.error("result：{}；error：",queryResultStr,e.getMessage());
+            return false;
+        }
+    }
+    @Override
+    public boolean routingAllocation(boolean isEnable) {
+        String curl=curl(indexParmsStatus.getUrl(),_CLUSTER,SETTINGS);
+        JSONObject parms =o(TRANSIENT,o(ALLOCATION_ENABLE,isEnable?ALL:_NONE));
+        CasiaHttpUtil casiaHttpUtil = new CasiaHttpUtil();
+        String queryResultStr = casiaHttpUtil.put( curl,indexParmsStatus.getHeards(),null, parms.toString() );
+        try {
+            return validationResult(queryResultStr,ACKNOWLEDGED,true);
+        }catch (Exception e){
+            logger.error("result：{}；error：",queryResultStr,e.getMessage());
+            return false;
+        }
+    }
+    @Override
+    public boolean routingRebalance(boolean isEnable) {
+        String curl=curlSymbol(curl(indexParmsStatus.getUrl(),_CLUSTER,SETTINGS),QUESTION,PRETTY);
+        JSONObject parms =o(TRANSIENT,o(REBALANCE_ENABLE,isEnable?ALL:_NONE));
+        CasiaHttpUtil casiaHttpUtil = new CasiaHttpUtil();
+        String queryResultStr = casiaHttpUtil.put( curl,indexParmsStatus.getHeards(),null, parms.toString() );
+        try {
+            return validationResult(queryResultStr,ACKNOWLEDGED,true);
+        }catch (Exception e){
+            logger.error("result：{}；error：",queryResultStr,e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     *
+     * @param delayedTime 1s OR 1m OR 1h or 1d
+     * @return
+     */
+    @Override
+    public boolean delayedNodeSettings(String delayedTime) {
+        String curl=curl(indexParmsStatus.getUrl(),_ALL,_SETTINGS);
+        JSONObject parms =o(SETTINGS,o(NODE_LEFT_DELAYED_TIMEOUT,delayedTime));
+        CasiaHttpUtil casiaHttpUtil = new CasiaHttpUtil();
+        String queryResultStr = casiaHttpUtil.put( curl,indexParmsStatus.getHeards(),null, parms.toString() );
+        try {
+            return validationResult(queryResultStr,ACKNOWLEDGED,true);
         }catch (Exception e){
             logger.error("result：{}；error：",queryResultStr,e.getMessage());
             return false;

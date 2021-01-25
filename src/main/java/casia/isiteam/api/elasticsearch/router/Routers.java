@@ -16,4 +16,5 @@ public class Routers {
     protected static ElasticSearchApi.SearchApi searchRouter;
     protected static ElasticSearchApi.DelApi deleteRouter;
     protected static ElasticSearchApi.SqlApi sqlRouter;
+    protected static ElasticSearchApi.SecurityApi securityRouter;
 }

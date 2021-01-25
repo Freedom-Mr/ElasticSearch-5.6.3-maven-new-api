@@ -20,8 +20,11 @@ public class CasiaEsQueryTest extends TestCase {
     }
 
     public void testQueryIndexNames() {
-        CasiaEsQuery casiaEsQuery = new CasiaEsQuery("data");
+        CasiaEsQuery casiaEsQuery = new CasiaEsQuery("cph");
         casiaEsQuery.queryIndexNames().forEach(System.out::println);
+
+        CasiaEsQuery casiaEsQuery2 = new CasiaEsQuery("cph");
+        casiaEsQuery2.queryIndexNames().forEach(System.out::println);
     }
 
     public void testQueryAlias() {

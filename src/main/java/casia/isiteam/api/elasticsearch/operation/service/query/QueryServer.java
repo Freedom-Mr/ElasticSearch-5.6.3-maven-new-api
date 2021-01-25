@@ -51,6 +51,7 @@ public class QueryServer extends ElasticSearchApi implements ElasticSearchApi.Qu
         List<String> list = new ArrayList<String>();
         String curl=curlSymbol( curl(indexParmsStatus.getUrl(),_CAT,INDICES),QUESTION,h+EQUAL+INDEX);
         logger.debug(LogUtil.compositionLogCurl(curl,""));
+        if(debugInfo()){logger.info(LogUtil.compositionLogCurl(curl,""));};
         CasiaHttpUtil casiaHttpUtil = new CasiaHttpUtil();
         String resultStr = casiaHttpUtil.get(curl,indexParmsStatus.getHeards());
         try {

@@ -181,4 +181,21 @@ public class CasiaEsCreateTest extends TestCase {
     }
 
 
+    public void testRoutingAllocation() {
+        CasiaEsCreate casiaEsCreate = new CasiaEsCreate("data");
+        boolean rs = casiaEsCreate.routingAllocation(true);
+        System.out.println(rs);
+    }
+
+    public void testRoutingRebalance() {
+        CasiaEsCreate casiaEsCreate = new CasiaEsCreate("data");
+        boolean rs = casiaEsCreate.routingRebalance(true);
+        System.out.println(rs);
+    }
+
+    public void testDelayedNodeSettings() {
+        CasiaEsCreate casiaEsCreate = new CasiaEsCreate("data");
+        boolean rs = casiaEsCreate.delayedNodeSettings("1m");
+        System.out.println(rs);
+    }
 }

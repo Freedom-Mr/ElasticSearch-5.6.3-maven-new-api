@@ -47,6 +47,7 @@ public class ElasticResultParms extends JSONCompare {
     protected final static String CREATED = "created";
     protected final static String BATCHES = "batches";
     protected final static String BATCHE = "batche";
+    protected final static String ROLENAME = "roleName";
     protected final static String CREATE = "create";
     protected final static String DELETE = "delete";
     protected final static String NOT_FOUND = "not_found";
@@ -163,7 +164,32 @@ public class ElasticResultParms extends JSONCompare {
     protected final static String NUMBER_OF_REPLICAS = "number_of_replicas";
     protected final static String NODE = "node";
     protected final static String CANCEL = "cancel";
-
+    protected final static String _XPACK = "_xpack";
+    protected final static String SECURITY = "security";
+    protected final static String _AUTHENTICATE = "_authenticate";
+    protected final static String USER = "user";
+    protected final static String ROLE = "role";
+    protected final static String ELASTIC = "elastic";
+    protected final static String _PASSWORD = "_password";
+    protected final static String PASSWORD = "password";
+    protected final static String EMAIL = "email";
+    protected final static String ENABLED = "enabled";
+    protected final static String FULL_NAME = "full_name";
+    protected final static String METADATA = "metadata";
+    protected final static String TRANSIENT_METADATA = "transient_metadata";
+    protected final static String ROLES = "roles";
+    protected final static String _ENABLE = "_enable";
+    protected final static String _DISABLE = "_disable";
+    protected final static String SETTINGS = "settings";
+    protected final static String TRANSIENT = "transient";
+    protected final static String _NONE = "none";
+    protected final static String OPEN = "open";
+    protected final static String ALLOCATION_ENABLE = "cluster.routing.allocation.enable";
+    protected final static String REBALANCE_ENABLE = "cluster.routing.rebalance.enable";
+    protected final static String NODE_LEFT_DELAYED_TIMEOUT = "index.unassigned.node_left.delayed_timeout";
+    protected final static String ALL = "all";
+    protected final static String CLUSTER = "cluster";
+    protected final static String RUN_AS = "run_as";
 
     //String
 }

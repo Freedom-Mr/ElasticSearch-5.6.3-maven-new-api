@@ -44,6 +44,9 @@ public class DeleteServer extends ElasticSearchApi implements ElasticSearchApi.D
         }
         String curl=curl(indexParmsStatus.getUrl(),indexParmsStatus.getIndexName());
         logger.debug(LogUtil.compositionLogCurl(curl,indexParmsStatus.getIndexName()));
+        if(debugInfo()){
+            logger.info(LogUtil.compositionLogCurl(curl,indexParmsStatus.getIndexName()) );
+        }
         String resultStr = new CasiaHttpUtil().delete(curl,indexParmsStatus.getHeards());
         return JSONCompare.validationResult(resultStr,ACKNOWLEDGED);
     }
@@ -60,6 +63,9 @@ public class DeleteServer extends ElasticSearchApi implements ElasticSearchApi.D
         }
         String curl= curl(indexParmsStatus.getUrl(),indexParmsStatus.getIndexName(),indexParmsStatus.getIndexType(),id) ;
         logger.debug(LogUtil.compositionLogCurl(curl));
+        if(debugInfo()){
+            logger.info(LogUtil.compositionLogCurl(curl) );
+        }
         String resultStr = new CasiaHttpUtil().delete(curl,indexParmsStatus.getHeards());
         return JSONCompare.validationResult(resultStr,RESULT,DELETED,NOT_FOUND);
     }

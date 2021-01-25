@@ -41,6 +41,9 @@ public class EncapsulationInfo extends EsDbUtil {
         List<Object> ipPort = CasiaRandomUtil.randomNumber(ipPorts.stream().collect(Collectors.toList()),1);
         return Validator.check(ipPort) ? HTTP+String.valueOf(ipPort.get(0)) : null;
     }
+    protected boolean debugInfo(){
+        return debugOut;
+    }
     protected Map<String, String> heards(String driverName){
         String key = CasiaBaseUtil.encrypt64(new StringBuffer().append(getDb(driverName).getUsername()).append(COLON).append(getDb(driverName).getPassword()).toString());
         Map<String, String> maps = new HashMap<>();

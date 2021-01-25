@@ -63,6 +63,7 @@ public class ShareParms extends ElasticResultParms{
     protected final static String IP_PORT = "ip-port";
     protected final static String USERNAME = "username";
     protected final static String PASSWORD = "password";
+    protected final static String DEBUG_INFO = "spring.log4j.elasticsearch.debug.open";
 
     /**
      * label
