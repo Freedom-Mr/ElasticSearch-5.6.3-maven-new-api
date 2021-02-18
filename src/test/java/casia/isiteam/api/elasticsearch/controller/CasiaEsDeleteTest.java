@@ -22,7 +22,7 @@ public class CasiaEsDeleteTest extends TestCase {
     public void testDeleteIndexByName() {
 
         CasiaEsDelete casiaEsDelete = new CasiaEsDelete("cph");
-        casiaEsDelete.setIndexName("m-all-*-2020-03","");
+        casiaEsDelete.setIndexName("c-all-*-2020-03","");
         System.out.println(casiaEsDelete.deleteIndexByName());
     }
 

@@ -62,7 +62,7 @@ public class EsDbUtil extends IndexAuthorStatus {
     }
     private static void extraction(Object key,Object value,Map<String,Map<String,Object>> extractInfos){
         try {
-            if( CasiaRegexUtil.isMatch(key.toString(),DB_KEY) ){
+            if( CasiaRegexUtil.isAllMatch(key.toString(),DB_KEY) ){
                 String[] splits = String.valueOf(key).split(DOT);
                 if( extractInfos.containsKey(splits[3]) ){
                     extractInfos.get(splits[3]).put(splits[4],value);

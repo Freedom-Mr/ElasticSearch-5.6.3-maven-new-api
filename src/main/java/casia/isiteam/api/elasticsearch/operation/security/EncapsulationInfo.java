@@ -11,6 +11,7 @@ import casia.isiteam.api.elasticsearch.common.vo.field.search.KeywordsCombine;
 import casia.isiteam.api.elasticsearch.common.vo.result.LonLatInfo;
 import casia.isiteam.api.elasticsearch.dbSource.EsDbUtil;
 import casia.isiteam.api.elasticsearch.util.JSONCompare;
+import casia.isiteam.api.elasticsearch.util.NumberUtil;
 import casia.isiteam.api.elasticsearch.util.StringAppend;
 import casia.isiteam.api.toolutil.Validator;
 import casia.isiteam.api.toolutil.random.CasiaRandomUtil;
@@ -107,6 +108,7 @@ public class EncapsulationInfo extends EsDbUtil {
      */
     protected JSONObject parsQueryKeyWords(JSONObject jsono, KeywordsCombine keywordsCombine){
         if( Validator.check(keywordsCombine) && Validator.check(keywordsCombine.getKeyWordsBuiders()) ){
+            boolean isReverse = keywordsCombine.getKeyWordsBuiders().stream().filter(s->s.getFieldOccurs().getIsMust().equals(MUST)).findFirst().isPresent();
             keywordsCombine.getKeyWordsBuiders().forEach(s->{
                 String SM = Validator.check(s.getFieldOccurs()) && s.getFieldOccurs().getIsMust().equals(MUST_NOT) ? MUST_NOT : SHOULD;
                 if( !Validator.check(s.getKeywordsCombines()) ){
@@ -173,8 +175,12 @@ public class EncapsulationInfo extends EsDbUtil {
                 }
             });
             if(jsono.containsKey(BOOL)){
+//                keywordsCombine.setMinimumMatch( keywordsCombine.getMinimumMatch()>0 && keywordsCombine.getMinimumMatch()<=jsono.getJSONObject(BOOL).getJSONArray(SHOULD).size() ?
+//                        ( isReverse ? keywordsCombine.getMinimumMatch() : NumberUtil.reverseNum( jsono.getJSONObject(BOOL).getJSONArray(SHOULD).size(),keywordsCombine.getMinimumMatch()) )
+//                        : ( isReverse ? jsono.getJSONObject(BOOL).getJSONArray(SHOULD).size() : 1 ));
                 keywordsCombine.setMinimumMatch( keywordsCombine.getMinimumMatch()>0 && keywordsCombine.getMinimumMatch()<=jsono.getJSONObject(BOOL).getJSONArray(SHOULD).size() ?
-                        keywordsCombine.getMinimumMatch() : jsono.getJSONObject(BOOL).getJSONArray(SHOULD).size() );
+                        keywordsCombine.getMinimumMatch()
+                        : jsono.getJSONObject(BOOL).getJSONArray(SHOULD).size());
                 jsono.getJSONObject(BOOL).put(MINIMUM_SHOULD_MATCH,keywordsCombine.getMinimumMatch());
             }
             return jsono;

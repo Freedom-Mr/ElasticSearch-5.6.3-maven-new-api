@@ -273,7 +273,7 @@ public class CasiaEsSearchTest extends TestCase {
     public void test() {
         CasiaEsApi casiaEsApi = new CasiaEsApi("aliyun");
         casiaEsApi.search().setIndexName("*_small","monitor_caiji_small");
-//        casiaEsApi.search().addSort(new SortField("pubtime", SortOrder.ASC));
+        casiaEsApi.search().addSort(new SortField("pubtime", SortOrder.ASC));
         casiaEsApi.search().setRange(
                 new RangeField(FieldOccurs.INCLUDES,
                         "pubtime",
@@ -369,14 +369,24 @@ public class CasiaEsSearchTest extends TestCase {
 
     }
     public void test3() {
-        CasiaEsApi casiaEsApi = new CasiaEsApi("data");
+        CasiaEsApi casiaEsApi = new CasiaEsApi("all");
         casiaEsApi.search().setIndexName("test", "test_data");
         casiaEsApi.search().addSort(new SortField("pubtime", SortOrder.ASC));
 
         /*casiaEsApi.search().setQueryKeyWords( new KeywordsCombine( 1,
-                new KeyWordsBuider("title","中国",FieldOccurs.INCLUDES, QueriesLevel.Term)
+                new KeyWordsBuider("url","http://finance.sina.com.cn/roll/2020-05-08/doc-iircuyvi2071041.shtml",FieldOccurs.INCLUDES, QueriesLevel.Term)
         ));*/
-
+        casiaEsApi.search().setQueryKeyWords(new KeywordsCombine(2,
+                new KeyWordsBuider("id","32669277",FieldOccurs.INCLUDES, QueriesLevel.Term),
+                new KeyWordsBuider(
+                       new KeywordsCombine(4,
+                               new KeyWordsBuider("title","标准",FieldOccurs.EXCLUDES, QueriesLevel.Phrase),
+                               new KeyWordsBuider("title","他们",FieldOccurs.EXCLUDES, QueriesLevel.Phrase),
+                               new KeyWordsBuider("title","我们",FieldOccurs.EXCLUDES, QueriesLevel.Phrase),
+                               new KeyWordsBuider("title","垫底",FieldOccurs.EXCLUDES, QueriesLevel.Phrase)
+                       )
+                )
+        ));
         SearchResult searchResult  = casiaEsApi.search().executeQueryInfo();
         System.out.println(searchResult.getTotal_Doc());
 
