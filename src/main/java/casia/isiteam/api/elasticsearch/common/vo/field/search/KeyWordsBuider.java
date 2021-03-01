@@ -27,6 +27,10 @@ public class KeyWordsBuider {
     private GeoQueryInfo geoQueryInfo;
     private GeoQueryLevel geoQueryLevel;
 
+    //range buider
+    private String gte;
+    private String lte;
+
     private List<KeywordsCombine> keywordsCombines = new ArrayList<>();
     /**
      * field alias
@@ -45,6 +49,13 @@ public class KeyWordsBuider {
         this.geoQueryInfo = geoQueryInfo;
         this.fieldOccurs = fieldOccurs;
         this.geoQueryLevel = geoQueryLevel;
+    }
+
+    public KeyWordsBuider(String field, String gte, String lte,FieldOccurs fieldOccurs) {
+        this.field = field;
+        this.gte = gte;
+        this.lte = lte;
+        this.fieldOccurs = fieldOccurs;
     }
 
     public KeyWordsBuider(List<KeywordsCombine> keywordsCombines) {
@@ -128,5 +139,11 @@ public class KeyWordsBuider {
         return geoQueryInfo;
     }
 
+    public String getGte() {
+        return gte;
+    }
 
+    public String getLte() {
+        return lte;
+    }
 }

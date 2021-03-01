@@ -42,7 +42,7 @@ public class CasiaEsSearchTest extends TestCase {
 
 
     public void testSetAggs() {
-        CasiaEsSearch casiaEsSearch = new CasiaEsSearch("web");
+        CasiaEsSearch casiaEsSearch = new CasiaEsSearch("all");
         casiaEsSearch.setIndexName("test","test_data");
         casiaEsSearch.setSize(0);
         AggsFieldBuider aggsFieldBuider = new AggsFieldBuider();
@@ -79,7 +79,7 @@ public class CasiaEsSearchTest extends TestCase {
                 ).executeAggsInfo();*/
 
         /**** OperationInfo ***/
-        /*SearchResult searchResult = casiaEsSearch
+        SearchResult searchResult = casiaEsSearch
                 .setAggregations(
                         new AggsFieldBuider(
                                 new OperationInfo(OperationLevel.Avg,"eid"),
@@ -89,10 +89,10 @@ public class CasiaEsSearchTest extends TestCase {
                                 addOperation( new OperationInfo(OperationLevel.Max,"eid")).
                                 addType(new TypeInfo("eid")
                         )
-                ).executeAggsInfo();*/
+                ).executeAggsInfo();
 
         /**** date ***/
-        SearchResult searchResult = casiaEsSearch.
+        /*SearchResult searchResult = casiaEsSearch.
                 setRange(new RangeField(FieldOccurs.INCLUDES,"pubtime","2020-05-06 00:00:00","2020-06-06 00:00:00"))
                 .setAggregations(
                     new AggsFieldBuider(
@@ -106,7 +106,7 @@ public class CasiaEsSearchTest extends TestCase {
                     new AggsFieldBuider(
                             new DateInfo("addtime","yyyy-MM-dd","7d",0L,"2020-05-06","2020-06-06")
                     )
-                ).executeQueryInfo();
+                ).executeQueryInfo();*/
 
         /**** TopData ***/
        /* SearchResult searchResult = casiaEsSearch
@@ -239,14 +239,14 @@ public class CasiaEsSearchTest extends TestCase {
 //                                        new LonLat(111.967240F,26.211238F)),FieldOccurs.INCLUDES, GeoQueryLevel.Box)
 //                               new KeyWordsBuider("lal",new GeoQueryInfo().addDistance(new LonLat(112.967240F,28.211238F),"100km"),FieldOccurs.INCLUDES, GeoQueryLevel.Distance)
 //                               new KeyWordsBuider("lal",new GeoQueryInfo().addBox(new LonLat(112.967240F,28.211238F),new LonLat(111.967240F,26.211238F)),FieldOccurs.INCLUDES, GeoQueryLevel.Box)
-//                               new KeyWordsBuider("lal",new GeoQueryInfo().addDistanceRange(new LonLat(112.967240F,28.211238F),"50km","100km"),FieldOccurs.INCLUDES, GeoQueryLevel.DistanceRange)
+                               ,new KeyWordsBuider("lal",new GeoQueryInfo().addDistanceRange(new LonLat(112.967240F,28.211238F),"50km","100km"),FieldOccurs.INCLUDES, GeoQueryLevel.DistanceRange)
                             /*   new KeyWordsBuider("lal",new GeoQueryInfo().addPolygon(
                                        new LonLat(112.967240F,28.211238F),
                                        new LonLat(115.967240F,28.211238F),
                                        new LonLat(116.967240F,30.211238F)
                                ),FieldOccurs.EXCLUDES, GeoQueryLevel.Polygon)*/
 //                               new KeyWordsBuider("site","新.*",FieldOccurs.INCLUDES, QueriesLevel.Regexp),
-                               /*new KeyWordsBuider(
+                               ,new KeyWordsBuider(
                                        new KeywordsCombine(1,
                                                new KeyWordsBuider("id","32677740",FieldOccurs.EXCLUDES, QueriesLevel.Term),
                                                new KeyWordsBuider("title","广告",FieldOccurs.EXCLUDES, QueriesLevel.Phrase),
@@ -254,7 +254,7 @@ public class CasiaEsSearchTest extends TestCase {
                                                        new KeywordsCombine(1,new KeyWordsBuider("content","武汉",FieldOccurs.INCLUDES, QueriesLevel.Phrase) )
                                                )
                                        )
-                               )*/
+                               )
                         )
                 ).
                 setExistsFilter("content","title").
@@ -369,27 +369,41 @@ public class CasiaEsSearchTest extends TestCase {
 
     }
     public void test3() {
-        CasiaEsApi casiaEsApi = new CasiaEsApi("all");
-        casiaEsApi.search().setIndexName("test", "test_data");
-        casiaEsApi.search().addSort(new SortField("pubtime", SortOrder.ASC));
+//        CasiaEsApi casiaEsApi = new CasiaEsApi("all");
+//        casiaEsApi.search().setIndexName("test-1*", "test_data");
+        CasiaEsApi casiaEsApi = new CasiaEsApi("nn");
+        casiaEsApi.search().setIndexName("scholar_google_paper_new", "zdr_data");
+//        casiaEsApi.search().addSort(new SortField("pubtime", SortOrder.ASC));
 
         /*casiaEsApi.search().setQueryKeyWords( new KeywordsCombine( 1,
                 new KeyWordsBuider("url","http://finance.sina.com.cn/roll/2020-05-08/doc-iircuyvi2071041.shtml",FieldOccurs.INCLUDES, QueriesLevel.Term)
         ));*/
-        casiaEsApi.search().setQueryKeyWords(new KeywordsCombine(2,
+        /*casiaEsApi.search().setQueryKeyWords(new KeywordsCombine(1,
                 new KeyWordsBuider("id","32669277",FieldOccurs.INCLUDES, QueriesLevel.Term),
                 new KeyWordsBuider(
-                       new KeywordsCombine(4,
-                               new KeyWordsBuider("title","标准",FieldOccurs.EXCLUDES, QueriesLevel.Phrase),
+                       new KeywordsCombine(3,
+//                               new KeyWordsBuider("title","标准",FieldOccurs.EXCLUDES, QueriesLevel.Phrase),
                                new KeyWordsBuider("title","他们",FieldOccurs.EXCLUDES, QueriesLevel.Phrase),
                                new KeyWordsBuider("title","我们",FieldOccurs.EXCLUDES, QueriesLevel.Phrase),
-                               new KeyWordsBuider("title","垫底",FieldOccurs.EXCLUDES, QueriesLevel.Phrase)
+                               new KeyWordsBuider("title","垫底",FieldOccurs.EXCLUDES, QueriesLevel.Phrase),
+                               new KeyWordsBuider("support_level","1","2",FieldOccurs.EXCLUDES),
+                               new KeyWordsBuider( new KeywordsCombine(1,
+                                       new KeyWordsBuider("title","广告",FieldOccurs.EXCLUDES, QueriesLevel.Phrase),
+                                       new KeyWordsBuider(
+                                               new KeywordsCombine(1,new KeyWordsBuider("content","观众",FieldOccurs.INCLUDES, QueriesLevel.Phrase) )
+                                       )
+                               ))
                        )
                 )
-        ));
+        ));*/
+        //单字段聚合：类型
+        casiaEsApi.search().setAggregations(
+                new AggsFieldBuider(new TypeInfo("blogger_id"))
+        );
         SearchResult searchResult  = casiaEsApi.search().executeQueryInfo();
         System.out.println(searchResult.getTotal_Doc());
 
         OutInfo.out(searchResult);
+
     };
 }

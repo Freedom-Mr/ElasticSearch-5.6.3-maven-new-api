@@ -45,7 +45,11 @@ public class CreateServer extends ElasticSearchApi implements ElasticSearchApi.C
             logger.info(LogUtil.compositionLogCurl(curl,mapping) );
         }
         String resultStr = new CasiaHttpUtil().put(curl,indexParmsStatus.getHeards(),null,mapping);
-        return JSONCompare.validationResult(resultStr,ACKNOWLEDGED);
+        boolean rs =  JSONCompare.validationResult(resultStr,ACKNOWLEDGED);
+        if( !rs && debugInfo() ){
+            logger.info(resultStr);
+        }
+        return rs;
     }
     /**
      * create index
@@ -64,7 +68,11 @@ public class CreateServer extends ElasticSearchApi implements ElasticSearchApi.C
             logger.info(LogUtil.compositionLogCurl(curl,mapping) );
         }
         String resultStr = new CasiaHttpUtil().put(curl,indexParmsStatus.getHeards(),null,mapping);
-        return JSONCompare.validationResult(resultStr,ACKNOWLEDGED);
+        boolean rs = JSONCompare.validationResult(resultStr,ACKNOWLEDGED);
+        if( !rs && debugInfo() ){
+            logger.info(resultStr);
+        }
+        return rs;
     }
     /**
      * write data to index
@@ -175,7 +183,11 @@ public class CreateServer extends ElasticSearchApi implements ElasticSearchApi.C
             logger.info(LogUtil.compositionLogCurl(curl,parms) );
         }
         String queryResultStr = casiaHttpUtil.post( curl,indexParmsStatus.getHeards(),null, parms.toString() );
-        return JSONCompare.validationResult(queryResultStr,ACKNOWLEDGED,UPDATE,TRUE);
+        boolean rs = JSONCompare.validationResult(queryResultStr,ACKNOWLEDGED,UPDATE,TRUE);
+        if( !rs && debugInfo() ){
+            logger.info(queryResultStr);
+        }
+        return rs;
     }
 
     @Override

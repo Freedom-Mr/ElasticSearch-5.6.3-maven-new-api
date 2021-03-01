@@ -108,13 +108,18 @@ public class EncapsulationInfo extends EsDbUtil {
      */
     protected JSONObject parsQueryKeyWords(JSONObject jsono, KeywordsCombine keywordsCombine){
         if( Validator.check(keywordsCombine) && Validator.check(keywordsCombine.getKeyWordsBuiders()) ){
-            boolean isReverse = keywordsCombine.getKeyWordsBuiders().stream().filter(s->s.getFieldOccurs().getIsMust().equals(MUST)).findFirst().isPresent();
+            boolean isReverse = keywordsCombine.getKeyWordsBuiders().stream().filter(s->Validator.check(s.getFieldOccurs())).findFirst().isPresent();
+            isReverse = isReverse ? keywordsCombine.getKeyWordsBuiders().stream().filter(s->Validator.check(s.getFieldOccurs()) && s.getFieldOccurs().getIsMust().equals(MUST)).findFirst().isPresent() : !isReverse;
             keywordsCombine.getKeyWordsBuiders().forEach(s->{
                 String SM = Validator.check(s.getFieldOccurs()) && s.getFieldOccurs().getIsMust().equals(MUST_NOT) ? MUST_NOT : SHOULD;
                 if( !Validator.check(s.getKeywordsCombines()) ){
                     JSONObject matchjson = o();
+                    //range
+                    if( !Validator.check(s.getQueriesLevel()) && !Validator.check(s.getGeoQueryLevel()) && (Validator.check(s.getGte()) || Validator.check(s.getLte()) ) ){
+                        matchjson.put( RANGE,o(s.getField(),o(o(GTE,s.getGte()),LTE,s.getLte()))) ;
+                    }
                     //keyword格式
-                    if( Validator.check(s.getQueriesLevel()) ){
+                    else if( Validator.check(s.getQueriesLevel()) ){
                         matchjson.put( s.getQueriesLevel().getLevel(),o(s.getField(),s.getKeyWord())) ;
                     }
                     //lal格式
@@ -175,12 +180,12 @@ public class EncapsulationInfo extends EsDbUtil {
                 }
             });
             if(jsono.containsKey(BOOL)){
-//                keywordsCombine.setMinimumMatch( keywordsCombine.getMinimumMatch()>0 && keywordsCombine.getMinimumMatch()<=jsono.getJSONObject(BOOL).getJSONArray(SHOULD).size() ?
-//                        ( isReverse ? keywordsCombine.getMinimumMatch() : NumberUtil.reverseNum( jsono.getJSONObject(BOOL).getJSONArray(SHOULD).size(),keywordsCombine.getMinimumMatch()) )
-//                        : ( isReverse ? jsono.getJSONObject(BOOL).getJSONArray(SHOULD).size() : 1 ));
                 keywordsCombine.setMinimumMatch( keywordsCombine.getMinimumMatch()>0 && keywordsCombine.getMinimumMatch()<=jsono.getJSONObject(BOOL).getJSONArray(SHOULD).size() ?
-                        keywordsCombine.getMinimumMatch()
-                        : jsono.getJSONObject(BOOL).getJSONArray(SHOULD).size());
+                        ( isReverse ? keywordsCombine.getMinimumMatch() : NumberUtil.reverseNum( jsono.getJSONObject(BOOL).getJSONArray(SHOULD).size(),keywordsCombine.getMinimumMatch()) )
+                        : ( isReverse ? jsono.getJSONObject(BOOL).getJSONArray(SHOULD).size() : 1 ));
+//                keywordsCombine.setMinimumMatch( keywordsCombine.getMinimumMatch()>0 && keywordsCombine.getMinimumMatch()<=jsono.getJSONObject(BOOL).getJSONArray(SHOULD).size() ?
+//                        keywordsCombine.getMinimumMatch()
+//                        : jsono.getJSONObject(BOOL).getJSONArray(SHOULD).size());
                 jsono.getJSONObject(BOOL).put(MINIMUM_SHOULD_MATCH,keywordsCombine.getMinimumMatch());
             }
             return jsono;
