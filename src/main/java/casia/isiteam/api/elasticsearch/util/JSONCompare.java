@@ -164,10 +164,19 @@ public class JSONCompare {
             JSONObject json = JSONObject.parseObject(result);
             return Validator.check(json) && json.containsKey(key) ? json.getInteger(key) :0;
         }catch (Exception e){
+            System.out.println(result);
             logger.error(e.getMessage());
             return 0;
         }
     }
-
+    public static String getResult(JSONObject json,String key){
+        try {
+            return Validator.check(json) && json.containsKey(key) ? json.getString(key) :null;
+        }catch (Exception e){
+            System.out.println(json);
+            logger.error(e.getMessage());
+            return null;
+        }
+    }
 
 }

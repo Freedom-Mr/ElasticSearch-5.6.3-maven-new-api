@@ -46,4 +46,12 @@ public class CasiaEsQueryTest extends TestCase {
             System.out.println(k+":"+v);
         });
     }
+
+    public void testQueryTask() {
+        CasiaEsApi casiaEsApi = new CasiaEsApi("data");
+
+        //无参数
+        JSONObject jsonObject =casiaEsApi.query().queryTask("g6sjsH8eT-6VKFxrHzjepQ:1094326");
+        System.out.println(jsonObject);
+    }
 }

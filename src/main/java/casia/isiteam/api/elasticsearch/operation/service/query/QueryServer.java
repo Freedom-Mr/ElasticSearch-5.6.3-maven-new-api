@@ -102,4 +102,18 @@ public class QueryServer extends ElasticSearchApi implements ElasticSearchApi.Qu
         }
         return map;
     }
+    /**
+     * search task info
+     * @return map
+     */
+    public JSONObject queryTask(String taskId){
+        if( !Validator.check(taskId) ){
+            logger.warn(LogUtil.compositionLogEmpty("taskId"));
+            return null;
+        }
+        String curl = curl(indexParmsStatus.getUrl(),_TASKS,taskId);
+        CasiaHttpUtil casiaHttpUtil = new CasiaHttpUtil();
+        String resultStr = casiaHttpUtil.get(curl,indexParmsStatus.getHeards());
+        return JSONObject.parseObject(resultStr);
+    }
 }

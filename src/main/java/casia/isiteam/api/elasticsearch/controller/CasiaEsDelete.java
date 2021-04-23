@@ -113,6 +113,42 @@ public class CasiaEsDelete {
         return delApi.deleteDataByQuery();
     }
     /**
+     * delete data Scroll by query String
+     * @return task id
+     */
+    public String deleteDataScrollByQuery(){
+        return delApi.deleteDataScrollByQuery();
+    }
+    /**
+     * fl
+     * @param refresh  wait_for
+     */
+    public void setRefresh(String refresh){
+        delApi.setRefresh(refresh);
+    };
+    /**
+     *
+     * @param conflicts proceed
+     */
+    public void setConflicts(String conflicts){
+        delApi.setConflicts(conflicts);
+    };
+    /**
+     *
+     * @param wait_for_completion   false
+     */
+    public void setWaitForCompletion(boolean wait_for_completion){
+        delApi.setWaitForCompletion(wait_for_completion);
+    };
+    /**
+     *
+     * @param scrollSize long size
+     */
+    public void setScrollSize(long scrollSize){
+        delApi.setScrollSize(scrollSize);
+    };
+
+    /**
      * set filed range
      * @param rangeFields
      * @return

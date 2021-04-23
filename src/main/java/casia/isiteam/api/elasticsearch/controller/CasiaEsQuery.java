@@ -80,4 +80,13 @@ public class CasiaEsQuery {
     public Map<String,List<String>> queryAlias(){
         return queryApi.queryIndexAlias(null);
     }
+
+    /**
+     * query task info by task id
+     * @param taskId
+     * @return
+     */
+    public JSONObject queryTask(String taskId){
+        return queryApi.queryTask(taskId);
+    }
 }

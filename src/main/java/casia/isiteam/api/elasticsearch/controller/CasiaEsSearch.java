@@ -193,6 +193,15 @@ public class CasiaEsSearch {
         return this;
     }
     /**
+     * open return Scroll info
+     * @param scroll_time : active time, 2m
+     * @return
+     */
+    public CasiaEsSearch setScroll(String scroll_time){
+        searchApi.openScroll(scroll_time);
+        return this;
+    }
+    /**
      * set filed range
      * @param rangeFields
      * @return

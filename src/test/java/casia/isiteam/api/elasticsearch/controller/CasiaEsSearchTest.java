@@ -371,39 +371,30 @@ public class CasiaEsSearchTest extends TestCase {
     public void test3() {
 //        CasiaEsApi casiaEsApi = new CasiaEsApi("all");
 //        casiaEsApi.search().setIndexName("test-1*", "test_data");
-        CasiaEsApi casiaEsApi = new CasiaEsApi("nn");
-        casiaEsApi.search().setIndexName("scholar_google_paper_new", "zdr_data");
+        CasiaEsApi casiaEsApi = new CasiaEsApi("data");
+        casiaEsApi.search().setIndexName("ddd", "test_data");
 //        casiaEsApi.search().addSort(new SortField("pubtime", SortOrder.ASC));
 
-        /*casiaEsApi.search().setQueryKeyWords( new KeywordsCombine( 1,
-                new KeyWordsBuider("url","http://finance.sina.com.cn/roll/2020-05-08/doc-iircuyvi2071041.shtml",FieldOccurs.INCLUDES, QueriesLevel.Term)
-        ));*/
-        /*casiaEsApi.search().setQueryKeyWords(new KeywordsCombine(1,
-                new KeyWordsBuider("id","32669277",FieldOccurs.INCLUDES, QueriesLevel.Term),
-                new KeyWordsBuider(
-                       new KeywordsCombine(3,
-//                               new KeyWordsBuider("title","标准",FieldOccurs.EXCLUDES, QueriesLevel.Phrase),
-                               new KeyWordsBuider("title","他们",FieldOccurs.EXCLUDES, QueriesLevel.Phrase),
-                               new KeyWordsBuider("title","我们",FieldOccurs.EXCLUDES, QueriesLevel.Phrase),
-                               new KeyWordsBuider("title","垫底",FieldOccurs.EXCLUDES, QueriesLevel.Phrase),
-                               new KeyWordsBuider("support_level","1","2",FieldOccurs.EXCLUDES),
-                               new KeyWordsBuider( new KeywordsCombine(1,
-                                       new KeyWordsBuider("title","广告",FieldOccurs.EXCLUDES, QueriesLevel.Phrase),
-                                       new KeyWordsBuider(
-                                               new KeywordsCombine(1,new KeyWordsBuider("content","观众",FieldOccurs.INCLUDES, QueriesLevel.Phrase) )
-                                       )
-                               ))
-                       )
-                )
-        ));*/
-        //单字段聚合：类型
-        casiaEsApi.search().setAggregations(
-                new AggsFieldBuider(new TypeInfo("blogger_id"))
+//        casiaEsApi.search().setQueryKeyWords( new KeywordsCombine( 1,
+//                new KeyWordsBuider("title","南斯拉夫使馆",FieldOccurs.INCLUDES, QueriesLevel.Phrase)
+//        )); new RangeField(FieldOccurs.INCLUDES,"ALTITUDKM",null,600)
+        casiaEsApi.search().setRange(
+                new RangeField(FieldOccurs.INCLUDES,"ALTITUDKM",null,600), new RangeField(FieldOccurs.INCLUDES,"pubtime","2021-04-16 05:00:00","2021-04-16 20:00:00")
         );
+        casiaEsApi.search().setQueryKeyWords(new KeywordsCombine(1,
+                new KeyWordsBuider("localtion_point",new GeoQueryInfo().addDistance(new LonLat(86.2554F,41.3410F),"30km"),FieldOccurs.INCLUDES, GeoQueryLevel.Distance)
+
+        ));
+        casiaEsApi.search().setAggregations(
+                new AggsFieldBuider( new TermInfo("NORADID",20, SortOrder.DESC) )
+        );
+        casiaEsApi.search().setScroll("2m");
         SearchResult searchResult  = casiaEsApi.search().executeQueryInfo();
         System.out.println(searchResult.getTotal_Doc());
 
         OutInfo.out(searchResult);
 
+        SearchResult searchResult2  = casiaEsApi.search().executeScrollInfo("2m",searchResult.getScrollId());
+        OutInfo.out(searchResult2);
     };
 }

@@ -25,6 +25,11 @@ public class IndexSearchBuilder extends ElasticResultParms {
     private JSONObject user = new JSONObject();
     private JSONObject info = new JSONObject();
     private JSONObject threads = new JSONObject();
+    private String scrollTime = null;
+    private String refresh = null;//wait_for
+    private Long scrollSize = null;
+    private String conflicts = null;//proceed
+    private Boolean waitForCompletion = null;//false
 
     /****  search  ****/
     public JSONObject getDelSearch() {
@@ -89,9 +94,43 @@ public class IndexSearchBuilder extends ElasticResultParms {
         return info;
     }
 
+    /****  Scroll  ****/
+    public IndexSearchBuilder putScrollTime(String scroll_time) {
+        scrollTime=scroll_time;
+        return this;
+    }
+    public String getScrollTime() {
+        return scrollTime;
+    }
 
-
-
+    public IndexSearchBuilder putRefresh(String refresh) {
+        this.refresh = refresh;
+        return this;
+    }
+    public String getRefresh() {
+        return refresh;
+    }
+    public IndexSearchBuilder putScrollSize(long scrollSize) {
+        this.scrollSize = scrollSize;
+        return this;
+    }
+    public Long getScrollSize() {
+        return scrollSize;
+    }
+    public IndexSearchBuilder putConflicts(String conflicts) {
+        this.conflicts = conflicts;
+        return this;
+    }
+    public String getConflicts() {
+        return conflicts;
+    }
+    public Boolean getWaitForCompletion() {
+        return waitForCompletion;
+    }
+    public IndexSearchBuilder putWaitForCompletion(Boolean wait_for_completion) {
+        this.waitForCompletion = wait_for_completion;
+        return this;
+    }
 
     /****  queryBigBoolBuilder  ****/
     public JSONObject getQueryBigBool() {

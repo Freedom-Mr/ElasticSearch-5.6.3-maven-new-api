@@ -111,9 +111,10 @@ public class UpdateServer extends ElasticSearchApi implements ElasticSearchApi.U
             return true;
         }
         String curl=curl(indexParmsStatus.getUrl(), _CLUSTER , REROUTE );
-        logger.debug(LogUtil.compositionLogCurl(curl));
         JSONObject js = o(COMMANDS,a(MOVE,o(o(o(o(INDEX,indexParmsStatus.getIndexName()),SHARD,shard_id),FROM_NODE,from_node_name),TO_NODE,to_node_name)));
-        logger.debug(js.toString());
+        if( debugInfo() ){
+            logger.info(LogUtil.compositionLogCurl(curl,js));
+        }
         CasiaHttpUtil casiaHttpUtil = new CasiaHttpUtil();
         String resultStr = casiaHttpUtil.post( curl,indexParmsStatus.getHeards(),null, js.toString() );
         boolean rs= JSONCompare.validationResult(resultStr,ACKNOWLEDGED);

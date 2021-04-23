@@ -190,6 +190,12 @@ public class ElasticResultParms extends JSONCompare {
     protected final static String ALL = "all";
     protected final static String CLUSTER = "cluster";
     protected final static String RUN_AS = "run_as";
+    protected final static String REFRESH = "refresh";
+    protected final static String SCROLL_SIZE = "scroll_size";
+    protected final static String CONFLICTS = "conflicts";
+    protected final static String WAIT_FOR_COMPLETION = "wait_for_completion";
+    protected final static String TASK = "task";
+    protected final static String _TASKS = "_tasks";
 
     //String
 }

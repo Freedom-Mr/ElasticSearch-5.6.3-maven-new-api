@@ -20,18 +20,23 @@ import java.util.stream.Collectors;
  * Email: zhiyou_wang@foxmail.com
  */
 public class CasiaEsCreateTest extends TestCase {
-    CasiaEsCreate casiaEsCreate = new CasiaEsCreate("all");
-    String mapping = CasiaFileUtil.readAllBytes("mapping/test_mapping.txt");
+    CasiaEsCreate casiaEsCreate = new CasiaEsCreate("os");
+    String mapping = CasiaFileUtil.readAllBytes("mapping/all.json");
 
     /**
      * 创建索引
      */
     public void testCreateIndex() {
-        System.out.println(casiaEsCreate.createIndex("test",mapping));
+//        String[] indexNames = {"all-m-news-2021-03","all-m-blog-2021-03","all-m-mblog-2021-03","all-m-video-2021-03","all-m-app-2021-03","all-m-forum-2021-03","all-m-subscriptions-2021-03","all-m-chat-2021-03"};
+        String[] indexNames = {"all-s-news","all-s-blog","all-s-mblog","all-s-video","all-s-app","all-s-forum","all-s-subscriptions","all-s-chat"};
+        for(String indexName:indexNames){
+            System.out.println(casiaEsCreate.createIndex(indexName,mapping));
+        }
+
     }
     public void testCreateIndex22() {
         CasiaEsCreate casiaEsCreatec = new CasiaEsCreate("data");
-        String mappings = CasiaFileUtil.readAllBytes("mapping/all.json");
+        String mappings = CasiaFileUtil.readAllBytes("mapping/all2.json");
         String aa = "think_tank_all,video_info_all,forum_threads_all,instagram_thread_all,twitter_info_all,youtube_info_all,facebook_info_all,mblog_info_all,wechat_info_all,appdata_all,newspaper_all,news_all,blog_all,platform_info_all,news_channel_all";
         String[] indexNames = aa.split(",");
         for(String indexName:indexNames){
@@ -54,7 +59,7 @@ public class CasiaEsCreateTest extends TestCase {
         List<JSONObject> datas = list.stream().map(x -> JSONObject.parseObject(x)).collect( Collectors.toList());
 
         CasiaEsCreate casiaEsCreate = new CasiaEsCreate("data");
-        casiaEsCreate.setIndexName("test","test_data");
+        casiaEsCreate.setIndexName("ddd","test_data");
 
         Map<String,Object> rss =casiaEsCreate.writeDatas(datas,"id");
         rss.forEach((k,v)->{
@@ -166,7 +171,7 @@ public class CasiaEsCreateTest extends TestCase {
     }
 
     public void testReIndex() {
-        CasiaEsCreate casiaEsCreate = new CasiaEsCreate("beihang");
+        CasiaEsCreate casiaEsCreate = new CasiaEsCreate("data");
         Map<String,Object> map = casiaEsCreate.reIndex("event_news_ref_beihang1","event_news_ref_beihang");
         map.forEach((k,v)->{
             System.out.println(k+":"+v);

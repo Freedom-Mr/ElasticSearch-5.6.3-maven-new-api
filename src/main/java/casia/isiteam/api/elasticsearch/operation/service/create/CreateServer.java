@@ -262,7 +262,9 @@ public class CreateServer extends ElasticSearchApi implements ElasticSearchApi.C
         String curl=curl(indexParmsStatus.getUrl(),_REINDEX);
         JSONObject parms =o(o(SOURCE,o(INDEX,oldIndexName)),DEST,o(INDEX,newIndexName));
         logger.info("start reindex {} by {}",newIndexName,oldIndexName);
-        System.out.println(parms);
+        if(debugInfo()){
+            logger.info(LogUtil.compositionLogCurl(curl,parms) );
+        }
         CasiaHttpUtil casiaHttpUtil = new CasiaHttpUtil();
         String queryResultStr = casiaHttpUtil.post( curl,indexParmsStatus.getHeards(),null, parms.toString() );
         try {
@@ -299,6 +301,9 @@ public class CreateServer extends ElasticSearchApi implements ElasticSearchApi.C
     public boolean routingAllocation(boolean isEnable) {
         String curl=curl(indexParmsStatus.getUrl(),_CLUSTER,SETTINGS);
         JSONObject parms =o(TRANSIENT,o(ALLOCATION_ENABLE,isEnable?ALL:_NONE));
+        if(debugInfo()){
+            logger.info(LogUtil.compositionLogCurl(curl,parms) );
+        }
         CasiaHttpUtil casiaHttpUtil = new CasiaHttpUtil();
         String queryResultStr = casiaHttpUtil.put( curl,indexParmsStatus.getHeards(),null, parms.toString() );
         try {
@@ -312,6 +317,9 @@ public class CreateServer extends ElasticSearchApi implements ElasticSearchApi.C
     public boolean routingRebalance(boolean isEnable) {
         String curl=curlSymbol(curl(indexParmsStatus.getUrl(),_CLUSTER,SETTINGS),QUESTION,PRETTY);
         JSONObject parms =o(TRANSIENT,o(REBALANCE_ENABLE,isEnable?ALL:_NONE));
+        if(debugInfo()){
+            logger.info(LogUtil.compositionLogCurl(curl,parms) );
+        }
         CasiaHttpUtil casiaHttpUtil = new CasiaHttpUtil();
         String queryResultStr = casiaHttpUtil.put( curl,indexParmsStatus.getHeards(),null, parms.toString() );
         try {

@@ -21,8 +21,8 @@ public class CasiaEsDeleteTest extends TestCase {
 
     public void testDeleteIndexByName() {
 
-        CasiaEsDelete casiaEsDelete = new CasiaEsDelete("cph");
-        casiaEsDelete.setIndexName("c-all-*-2020-03","");
+        CasiaEsDelete casiaEsDelete = new CasiaEsDelete("os");
+        casiaEsDelete.setIndexName("all-s-*","");
         System.out.println(casiaEsDelete.deleteIndexByName());
     }
 
@@ -63,7 +63,7 @@ public class CasiaEsDeleteTest extends TestCase {
     public void testDeleteDataByQuery() {
 
         CasiaEsDelete casiaEsDelete = new CasiaEsDelete("data");
-        casiaEsDelete.setIndexName("news_preprocess","monitor_caiji_preprocess");
+        casiaEsDelete.setIndexName("arr_adsa-2021-04-22","graph");
         casiaEsDelete.setRange(
                   new RangeField(FieldOccurs.INCLUDES,"pubtime",null,"2020-11-16 22:04:34")
         );
@@ -75,7 +75,25 @@ public class CasiaEsDeleteTest extends TestCase {
         int deleteTotal= casiaEsDelete.deleteDataByQuery();
         System.out.println(deleteTotal);
     }
+    public void testDeleteDataScrollByQuery() {
 
+        CasiaEsDelete casiaEsDelete = new CasiaEsDelete("data");
+        casiaEsDelete.setIndexName("arr_adsa-2021-04-22","graph");
+        casiaEsDelete.setRange(
+                new RangeField(FieldOccurs.INCLUDES,"pubtime",null,"2020-11-16 22:04:34")
+        );
+        /*casiaEsDelete.setQueryKeyWords(
+                new KeywordsCombine(2,
+                        new KeyWordsBuider("title","肺炎", FieldOccurs.INCLUDES, QueriesLevel.Term),
+                        new KeyWordsBuider("title","病毒",FieldOccurs.INCLUDES, QueriesLevel.Term))
+        );*/
+        casiaEsDelete.setConflicts("proceed");
+        casiaEsDelete.setRefresh("wait_for");
+        casiaEsDelete.setWaitForCompletion(false);
+        casiaEsDelete.setScrollSize(1);
+        String task = casiaEsDelete.deleteDataScrollByQuery();
+        System.out.println(task);
+    }
     public void testDeleteIndexAlias() {
         CasiaEsDelete casiaEsDelete = new CasiaEsDelete("data");
         casiaEsDelete.setIndexName("demo_test","test_data");

@@ -41,6 +41,7 @@ public class ElasticSearchApi extends EncapsulationInfo {
         void setHighlight(String pre_tags,String post_tags,String ... fileds);
         void setMinScore(Float min_score);
         void openProfile();
+        void openScroll(String scroll_time);
         void setRange(RangeField ... rangeFields);
         void setFieldExistsFilter(FieldOccurs fieldOccurs,String ... fileds);
         void setQueryKeyWords(KeywordsCombine... keywordsCombines);
@@ -80,7 +81,8 @@ public class ElasticSearchApi extends EncapsulationInfo {
         void setIndexName(String indexName,String indexType);
         JSONObject queryIndexByName(String indexName);
         List<String> queryIndexNames();
-        public Map<String,List<String>> queryIndexAlias(String wildcard);
+        Map<String,List<String>> queryIndexAlias(String wildcard);
+        JSONObject queryTask(String taskId);
     }
     public interface DelApi {
         void config(String driverName);
@@ -95,10 +97,15 @@ public class ElasticSearchApi extends EncapsulationInfo {
         boolean clearCache();
 
         void reset();
+        void setRefresh(String refresh);
+        void setConflicts(String conflicts);
+        void setWaitForCompletion(boolean wait_for_completion);
+        void setScrollSize(long scrollSize);
         void setQueryKeyWords(KeywordsCombine... keywordsCombines);
         void setRange(RangeField ... rangeFields);
         void setFieldExistsFilter(FieldOccurs fieldOccurs,String ... fileds);
         int deleteDataByQuery();
+        String deleteDataScrollByQuery();
         boolean delIndexAlias(String alias);
     }
 

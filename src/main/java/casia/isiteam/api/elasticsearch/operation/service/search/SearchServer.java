@@ -110,6 +110,9 @@ public class SearchServer extends ElasticSearchApi implements ElasticSearchApi.S
         indexSearchBuilder.putSearchCover(PROFILE,true);
         indexSearchBuilder.putCountCover(PROFILE,true);
     }
+    public void openScroll(String scroll_time){
+        indexSearchBuilder.putScrollTime(scroll_time);
+    };
     @Override
     public void setRange(RangeField ... rangeFields) {
         for(RangeField filed : rangeFields ){
@@ -456,6 +459,9 @@ public class SearchServer extends ElasticSearchApi implements ElasticSearchApi.S
             logger.warn(LogUtil.compositionLogEmpty("query parms"));
         }
         String curl =curl(indexParmsStatus.getUrl(),indexParmsStatus.getIndexName(),indexParmsStatus.getIndexType(),_SEARCH);
+        if( Validator.check(indexSearchBuilder.getScrollTime()) ){
+            curl =curlSymbol(curlSymbol(curlSymbol(curl,QUESTION,PRETTY),AND,SCROLL),EQUAL,indexSearchBuilder.getScrollTime());
+        }
 //        logger.debug(LogUtil.compositionLogCurl(curl,indexSearchBuilder.getSearch()) );
         if(debugInfo()){
             logger.info(LogUtil.compositionLogCurl(curl,indexSearchBuilder.getSearch()) );
@@ -495,6 +501,9 @@ public class SearchServer extends ElasticSearchApi implements ElasticSearchApi.S
     @Override
     public SearchResult executeQueryTotal() {
         String curl=curl(indexParmsStatus.getUrl(),indexParmsStatus.getIndexName(),indexParmsStatus.getIndexType(),_COUNT);
+        if( Validator.check(indexSearchBuilder.getScrollTime()) ){
+            curl =curlSymbol(curlSymbol(curlSymbol(curl,QUESTION,PRETTY),AND,SCROLL),EQUAL,indexSearchBuilder.getScrollTime());
+        }
         String bodys = os(QUERY,indexSearchBuilder.getQuery().toString());
 //        logger.debug(LogUtil.compositionLogCurl(curl,bodys) );
         if(debugInfo()){
@@ -517,6 +526,9 @@ public class SearchServer extends ElasticSearchApi implements ElasticSearchApi.S
         }
         String curl=curl(indexParmsStatus.getUrl(),indexParmsStatus.getIndexName(),indexParmsStatus.getIndexType(),_SEARCH);
 //        logger.debug(LogUtil.compositionLogCurl(curl,indexSearchBuilder.getCount().toString() ) );
+        if( Validator.check(indexSearchBuilder.getScrollTime()) ){
+            curl =curlSymbol(curlSymbol(curlSymbol(curl,QUESTION,PRETTY),AND,SCROLL),EQUAL,indexSearchBuilder.getScrollTime());
+        }
         if(debugInfo()){
             logger.info(LogUtil.compositionLogCurl(curl,indexSearchBuilder.getCount().toString()) );
         }
