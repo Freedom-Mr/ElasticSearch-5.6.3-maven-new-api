@@ -55,27 +55,47 @@ public class CasiaEsCreateTest extends TestCase {
      * 写入数据
      */
     public void testWriteData() {
-        List<String> list = CasiaFileUtil.readAllLines("datas/test_data_list.d", StandardCharsets.UTF_8);
-        List<JSONObject> datas = list.stream().map(x -> JSONObject.parseObject(x)).collect( Collectors.toList());
+//        List<String> list = CasiaFileUtil.readAllLines("datas/test_data_list.d", StandardCharsets.UTF_8);
+//        List<JSONObject> datas = list.stream().map(x -> JSONObject.parseObject(x)).collect( Collectors.toList());
 
-        CasiaEsCreate casiaEsCreate = new CasiaEsCreate("data");
-        casiaEsCreate.setIndexName("ddd","test_data");
+        CasiaEsCreate casiaEsCreate = new CasiaEsCreate("os1");
+//        casiaEsCreate.setIndexName("ddd","test_data");
+        List<JSONObject> c= new ArrayList<>();
+//        c.add(datas.get(0));
+//        Map<String,Object> rss =casiaEsCreate.writeDatas( c,"id");
+//        rss.forEach((k,v)->{
+//            System.out.println(k+"\t"+v);
+//        });
 
-        Map<String,Object> rss =casiaEsCreate.writeDatas(datas,"id");
-        rss.forEach((k,v)->{
+        casiaEsCreate.setIndexName("toutiao-news-2021-07","toutiao");
+        JSONObject object = new JSONObject();
+        object.put("id",425128);
+        object.put("eid",0);
+        c.add(object);
+        Map<String,Object> a = casiaEsCreate.writeDatas(c,"id");
+        a.forEach((k,v)->{
             System.out.println(k+"\t"+v);
         });
     }
     public void testInsertField2() {
-        CasiaEsCreate casiaEsCreate = new CasiaEsCreate("data");
-        Map<String, String> map = new HashMap<>();
+        CasiaEsQuery casiaEsQuery = new CasiaEsQuery("os1");
+        casiaEsQuery.queryIndexNames().forEach(s->{
+            if(!s.equals(".tasks")){
+                CasiaEsCreate casiaEsCreate = new CasiaEsCreate("os1");
+                Map<String, String> map = new HashMap<>();
         map.put("type", "integer");
+//                map.put("type", "short");
 //                map.put("analyzer", "standard");
-        map.put("index", "not_analyzed");
+                map.put("index", "not_analyzed");
 //                map.put("format", "yyyy-MM-dd HH:mm:ss");
-        map.put("store", "true");
-        casiaEsCreate.setIndexName("youtube_info_zdr","zdr_caiji");
-        boolean rs = casiaEsCreate.insertField("is_contact",map);
+//        map.put("store", "true");
+                casiaEsCreate.setIndexName(s,"toutiao");
+                boolean rs = casiaEsCreate.insertField("user_id",map);
+                System.out.println(rs);
+            }
+            }
+        );
+
     }
     public void testInsertField() {
         CasiaEsCreate casiaEsCreate = new CasiaEsCreate("liangqun");

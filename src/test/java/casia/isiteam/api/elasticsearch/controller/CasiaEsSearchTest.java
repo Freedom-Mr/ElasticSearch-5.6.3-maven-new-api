@@ -42,8 +42,8 @@ public class CasiaEsSearchTest extends TestCase {
 
 
     public void testSetAggs() {
-        CasiaEsSearch casiaEsSearch = new CasiaEsSearch("all");
-        casiaEsSearch.setIndexName("test","test_data");
+        CasiaEsSearch casiaEsSearch = new CasiaEsSearch("os1");
+        casiaEsSearch.setIndexName("toutiao-*", "toutiao");
         casiaEsSearch.setSize(0);
         AggsFieldBuider aggsFieldBuider = new AggsFieldBuider();
 
@@ -58,28 +58,41 @@ public class CasiaEsSearchTest extends TestCase {
                                 new TypeInfo("domain"),
                                 new TypeInfo("site","site2")
                         )
-                ).executeAggsInfo();*/
-
+                ).executeAggsInfo();
+        casiaEsApi.search().setQueryKeyWords( new KeywordsCombine( 1,
+//                new KeyWordsBuider("content"," 普京批准新国家战略 俄媒：中俄永远做兄弟 与塔利班交火后 超过1000名阿富汗政府军撤入塔吉克斯坦 汾酒·凤凰军机处|黑海对峙罗生门  韩国成功测试潜射导弹 新威慑体系究竟瞄准了谁？",FieldOccurs.INCLUDES, QueriesLevel.Wildcard)
+//                new KeyWordsBuider("title","疫苗",FieldOccurs.INCLUDES, QueriesLevel.Keywords)
+//                ,new KeyWordsBuider("title","辉瑞",FieldOccurs.INCLUDES, QueriesLevel.Keywords)
+//                ,new KeyWordsBuider("title","提升",FieldOccurs.INCLUDES, QueriesLevel.Keywords)
+//                ,new KeyWordsBuider("title","授权",FieldOccurs.INCLUDES, QueriesLevel.Keywords)
+//                ,new KeyWordsBuider("title","生物",FieldOccurs.INCLUDES, QueriesLevel.Keywords)
+                new KeyWordsBuider("channel_name","凤凰网_军事_军情热点",FieldOccurs.INCLUDES, QueriesLevel.Term)
+        ));
         /**** Term ***/
-        /*SearchResult searchResult = casiaEsSearch
+        SearchResult searchResult = casiaEsSearch
                 .setAggregations(
+//                        new AggsFieldBuider(
+//                                new TermInfo("domain",2).setAggsFieldBuider(
+//                                        new AggsFieldBuider(
+//                                                new TypeInfo("site"),
+//                                                new TypeInfo("eid")
+//                                        )
+//                                ),
+//                                new TermInfo("site",2)
+//                        ),
                         new AggsFieldBuider(
-                                new TermInfo("domain",2).setAggsFieldBuider(
-                                        new AggsFieldBuider(
-                                                new TypeInfo("site"),
-                                                new TypeInfo("eid")
+                                new TermInfo("channel_name",10).setSortOrder(SortOrder.DESC)
+                                        .setAggsFieldBuider(
+                                                new AggsFieldBuider(
+                                                        new TopData(1, Arrays.asList(new SortField("pubtime",SortOrder.DESC)))
+                                                )
                                         )
-                                ),
-                                new TermInfo("site",2)
-                        ),
-                        new AggsFieldBuider(
-                                new TermInfo("eid",2).setSortOrder(SortOrder.ASC),
-                                new TermInfo("eid",2,"eid2").setSortOrder(SortOrder.DESC)
+//                                new TermInfo("eid",2,"eid2").setSortOrder(SortOrder.DESC)
                         )
-                ).executeAggsInfo();*/
+                ).executeAggsInfo();
 
         /**** OperationInfo ***/
-        SearchResult searchResult = casiaEsSearch
+       /* SearchResult searchResult = casiaEsSearch
                 .setAggregations(
                         new AggsFieldBuider(
                                 new OperationInfo(OperationLevel.Avg,"eid"),
@@ -89,7 +102,7 @@ public class CasiaEsSearchTest extends TestCase {
                                 addOperation( new OperationInfo(OperationLevel.Max,"eid")).
                                 addType(new TypeInfo("eid")
                         )
-                ).executeAggsInfo();
+                ).executeAggsInfo();*/
 
         /**** date ***/
         /*SearchResult searchResult = casiaEsSearch.
@@ -174,31 +187,40 @@ public class CasiaEsSearchTest extends TestCase {
                 ).executeAggsInfo();*/
 
         /**** KeyWords ***/
-        /*SearchResult searchResult = casiaEsSearch
-                .setAggregations(
-                        new AggsFieldBuider(
-                                new KeywordsCombine(2,
-                                        new KeyWordsBuider("domain","ifeng.com",FieldOccurs.INCLUDES, QueriesLevel.Term),
-                                        new KeyWordsBuider().setKeywordsCombines(
-                                                    new KeywordsCombine(1,
-                                                            new KeyWordsBuider("domain","hkbtv.cn",FieldOccurs.INCLUDES, QueriesLevel.Term),
-                                                            new KeyWordsBuider("domain","tt.cn",FieldOccurs.INCLUDES, QueriesLevel.Term)
-                                                    )
-                                            )
-                                ),
-                                new KeywordsCombine(1,
-                                        new KeyWordsBuider("domain","hkbtv.cn",FieldOccurs.INCLUDES, QueriesLevel.Term),
-                                        new KeyWordsBuider("domain","epochtimes.com",FieldOccurs.INCLUDES, QueriesLevel.Term),
-                                        new KeyWordsBuider("lal",new GeoQueryInfo().addBox(
-                                                new LonLat(112.967240F,28.211238F),
-                                                new LonLat(111.967240F,26.211238F)),FieldOccurs.INCLUDES, GeoQueryLevel.Box)
-                                ).setAggsFieldBuider(
-                                        new AggsFieldBuider(
-                                                new DateInfo("pubtime","yyyy-MM","1M",1L).setAlias("pub")
-                                        )
-                                )
-                        )
-                ).executeAggsInfo();*/
+//        SearchResult searchResult = casiaEsSearch
+//                .setAggregations(
+//                        new AggsFieldBuider(
+//                                new KeywordsCombine(1,
+//                                        new KeyWordsBuider("content","北京",FieldOccurs.INCLUDES, QueriesLevel.Phrase),
+//                                        new KeyWordsBuider("title","北京",FieldOccurs.INCLUDES, QueriesLevel.Phrase)
+//                                ),
+//                                new KeywordsCombine(1,
+//                                        new KeyWordsBuider("content","上海",FieldOccurs.INCLUDES, QueriesLevel.Phrase),
+//                                        new KeyWordsBuider("title","上海",FieldOccurs.INCLUDES, QueriesLevel.Phrase)
+//                                )
+//                                new KeywordsCombine(2,
+//                                        new KeyWordsBuider("domain","ifeng.com",FieldOccurs.INCLUDES, QueriesLevel.Term),
+//                                        new KeyWordsBuider().setKeywordsCombines(
+//                                                    new KeywordsCombine(1,
+//                                                            new KeyWordsBuider("domain","hkbtv.cn",FieldOccurs.INCLUDES, QueriesLevel.Term),
+//                                                            new KeyWordsBuider("domain","tt.cn",FieldOccurs.INCLUDES, QueriesLevel.Term)
+//                                                    )
+//                                            )
+//                                ),
+//                                new KeywordsCombine(1,
+//                                        new KeyWordsBuider("domain","hkbtv.cn",FieldOccurs.INCLUDES, QueriesLevel.Term),
+//                                        new KeyWordsBuider("domain","epochtimes.com",FieldOccurs.INCLUDES, QueriesLevel.Term),
+//                                        new KeyWordsBuider("lal",new GeoQueryInfo().addBox(
+//                                                new LonLat(112.967240F,28.211238F),
+//                                                new LonLat(111.967240F,26.211238F)),FieldOccurs.INCLUDES, GeoQueryLevel.Box)
+//                                ).setAggsFieldBuider(
+//                                        new AggsFieldBuider(
+//                                                new DateInfo("pubtime","yyyy-MM","1M",1L).setAlias("pub")
+//                                        )
+//                                )
+
+//                        )
+//                ).executeAggsInfo();
 
         /**** Matrix ***/
         /*SearchResult searchResult = casiaEsSearch
@@ -371,30 +393,49 @@ public class CasiaEsSearchTest extends TestCase {
     public void test3() {
 //        CasiaEsApi casiaEsApi = new CasiaEsApi("all");
 //        casiaEsApi.search().setIndexName("test-1*", "test_data");
-        CasiaEsApi casiaEsApi = new CasiaEsApi("data");
-        casiaEsApi.search().setIndexName("ddd", "test_data");
-//        casiaEsApi.search().addSort(new SortField("pubtime", SortOrder.ASC));
+        CasiaEsApi casiaEsApi = new CasiaEsApi("os1");
+        casiaEsApi.search().setIndexName("toutiao-news-*", "toutiao");
+        casiaEsApi.search().addSort(
+                new SortField("pubtime" , SortOrder.DESC)
+//                ,new SortField("eid" , SortOrder.DESC)
+//                ,new SortField("_score", SortOrder.DESC)
+        );
 
 //        casiaEsApi.search().setQueryKeyWords( new KeywordsCombine( 1,
-//                new KeyWordsBuider("title","南斯拉夫使馆",FieldOccurs.INCLUDES, QueriesLevel.Phrase)
-//        )); new RangeField(FieldOccurs.INCLUDES,"ALTITUDKM",null,600)
-        casiaEsApi.search().setRange(
-                new RangeField(FieldOccurs.INCLUDES,"ALTITUDKM",null,600), new RangeField(FieldOccurs.INCLUDES,"pubtime","2021-04-16 05:00:00","2021-04-16 20:00:00")
-        );
-        casiaEsApi.search().setQueryKeyWords(new KeywordsCombine(1,
-                new KeyWordsBuider("localtion_point",new GeoQueryInfo().addDistance(new LonLat(86.2554F,41.3410F),"30km"),FieldOccurs.INCLUDES, GeoQueryLevel.Distance)
+//                new KeyWordsBuider("is_dup" ,"0",FieldOccurs.INCLUDES, QueriesLevel.Term)
+//                ,new KeyWordsBuider("image_info" ,"",FieldOccurs.EXCLUDES, QueriesLevel.Term)
+//                ,new KeyWordsBuider("direction_type" ,"政治",FieldOccurs.INCLUDES, QueriesLevel.Term)
 
+//                ,new KeyWordsBuider("gid","news165029",FieldOccurs.EXCLUDES, QueriesLevel.Term)
+//        ));
+        casiaEsApi.search().setQueryKeyWords( new KeywordsCombine( 1,
+//                new KeyWordsBuider("content"," 普京批准新国家战略 俄媒：中俄永远做兄弟 与塔利班交火后 超过1000名阿富汗政府军撤入塔吉克斯坦 汾酒·凤凰军机处|黑海对峙罗生门  韩国成功测试潜射导弹 新威慑体系究竟瞄准了谁？",FieldOccurs.INCLUDES, QueriesLevel.Wildcard)
+//                new KeyWordsBuider("title","疫苗",FieldOccurs.INCLUDES, QueriesLevel.Keywords)
+//                ,new KeyWordsBuider("title","辉瑞",FieldOccurs.INCLUDES, QueriesLevel.Keywords)
+//                ,new KeyWordsBuider("title","提升",FieldOccurs.INCLUDES, QueriesLevel.Keywords)
+//                ,new KeyWordsBuider("title","授权",FieldOccurs.INCLUDES, QueriesLevel.Keywords)
+//                ,new KeyWordsBuider("title","生物",FieldOccurs.INCLUDES, QueriesLevel.Keywords)
+                new KeyWordsBuider("channel_name","凤凰网_军事_军情热点",FieldOccurs.INCLUDES, QueriesLevel.Term)
         ));
-        casiaEsApi.search().setAggregations(
-                new AggsFieldBuider( new TermInfo("NORADID",20, SortOrder.DESC) )
-        );
-        casiaEsApi.search().setScroll("2m");
+//          casiaEsApi.search().setExistsFilter("image_info");
+//        new RangeField(FieldOccurs.INCLUDES,"pubtime","2021-06-26 10:39:30","2021-06-29 10:39:30");
+//        casiaEsApi.search().setRange(
+//                new RangeField(FieldOccurs.INCLUDES,"addtime","2021-07-27 01:32:23",null)
+//        );
+//        casiaEsApi.search().setQueryKeyWords(new KeywordsCombine(1,
+//                new KeyWordsBuider("localtion_point",new GeoQueryInfo().addDistance(new LonLat(86.2554F,41.3410F),"30km"),FieldOccurs.INCLUDES, GeoQueryLevel.Distance)
+//
+//        ));
+//        casiaEsApi.search().setAggregations(
+//                new AggsFieldBuider( new TermInfo("channel_name",20, SortOrder.DESC) )
+//        );
+//        casiaEsApi.search().setScroll("2m");
+        casiaEsApi.search().setSize(20);
+        casiaEsApi.search().setReturnField("pubtime","addtime","gid","score","eid","title");
         SearchResult searchResult  = casiaEsApi.search().executeQueryInfo();
         System.out.println(searchResult.getTotal_Doc());
 
         OutInfo.out(searchResult);
 
-        SearchResult searchResult2  = casiaEsApi.search().executeScrollInfo("2m",searchResult.getScrollId());
-        OutInfo.out(searchResult2);
     };
 }

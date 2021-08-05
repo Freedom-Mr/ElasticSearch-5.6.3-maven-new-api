@@ -268,7 +268,7 @@ public class SearchServer extends ElasticSearchApi implements ElasticSearchApi.S
                     JSONArray sorts = a();
                     s.getSortFields().stream().forEach(c->{
                         JSONObject json =o(c.getField(), o(ORDER,c.getSortOrder().getSymbolValue()));
-                        if( sorts.contains(json) ){
+                        if( !sorts.contains(json) ){
                             sorts.add(json);
                         }
                     });

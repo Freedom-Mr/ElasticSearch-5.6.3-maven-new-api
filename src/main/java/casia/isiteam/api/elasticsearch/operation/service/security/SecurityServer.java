@@ -55,6 +55,8 @@ public class SecurityServer extends ElasticSearchApi implements ElasticSearchApi
     }
     public boolean addUser(UserInfomation userInfomation){
         String curl=curl(indexParmsStatus.getUrl(),_XPACK,SECURITY,USER,userInfomation.getUsername());
+        System.out.println(curl);
+        System.out.println(o(JSONObject.toJSONString(userInfomation)).toString());
         String resultStr = new CasiaHttpUtil().post(curl, indexParmsStatus.getHeards(),null,o(JSONObject.toJSONString(userInfomation)).toString());
         return JSONCompare.validationResult(o(resultStr).getString(CREATED),CREATED);
     }
@@ -85,11 +87,14 @@ public class SecurityServer extends ElasticSearchApi implements ElasticSearchApi
         String jsonObject = JSON.toJSONString(roleInfomation);
         JSONObject body = JSONObject.parseObject(jsonObject);
         body.remove(ROLENAME);
+        System.out.println(curl);
+        System.out.println(body.toString());
         String resultStr = new CasiaHttpUtil().post(curl, indexParmsStatus.getHeards(),null,body.toString());
         return  JSONCompare.validationResult(o(resultStr).getString(ROLE),CREATED);
     }
     public boolean delRole(String roleName){
         String curl=curl(indexParmsStatus.getUrl(),_XPACK,SECURITY,ROLE,roleName);
+        System.out.println(curl);
         String resultStr = new CasiaHttpUtil().delete(curl, indexParmsStatus.getHeards());
         return  JSONCompare.validationResult(resultStr,FOUND);
     }

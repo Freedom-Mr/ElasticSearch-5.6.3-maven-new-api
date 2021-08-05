@@ -1,0 +1,165 @@
+{
+  "settings": {
+    "number_of_replicas": 1,
+    "number_of_shards": 2,
+    "refresh_interval": "5s",
+    "translog": {
+      "flush_threshold_size": "1.5gb"
+    },
+    "merge": {
+      "scheduler": {
+        "max_thread_count": "3"
+      }
+    },
+    "analysis": {
+      "normalizer": {
+        "my_normalizer": {
+          "type": "custom",
+          "char_filter": [],
+          "filter": [
+            "lowercase",
+            "asciifolding"
+          ]
+        }
+      }
+    }
+  },
+  "mappings": {
+    "all": {
+      "dynamic": "false",
+      "properties": {
+        "md5": {
+          "index": "not_analyzed",
+          "store": true,
+          "type": "keyword"
+        },
+        "it": {
+          "index": "not_analyzed",
+          "store": true,
+          "type": "keyword"
+        },
+        "media_type": {
+          "index": "not_analyzed",
+          "type": "short"
+        },
+        "title": {
+          "analyzer": "standard",
+          "type": "text"
+        },
+        "title_translation": {
+          "analyzer": "standard",
+          "type": "text"
+        },
+        "content": {
+          "analyzer": "standard",
+          "type": "text"
+        },
+        "content_translation": {
+          "analyzer": "standard",
+          "type": "text"
+        },
+        "url": {
+          "index": "not_analyzed",
+          "type": "keyword"
+        },
+        "domain": {
+          "index": "not_analyzed",
+          "type": "keyword"
+        },
+        "host": {
+          "index": "not_analyzed",
+          "type": "keyword"
+        },
+        "site_id": {
+          "index": "not_analyzed",
+          "type": "keyword"
+        },
+        "site_name": {
+          "analyzer": "standard",
+          "store": true,
+          "type": "text"
+        },
+        "author_id": {
+          "index": "not_analyzed",
+          "type": "text"
+        },
+        "author_account": {
+          "index": "not_analyzed",
+          "type": "text"
+        },
+        "author_name": {
+          "analyzer": "standard",
+          "store": true,
+          "type": "text"
+        },
+        "ip": {
+          "type": "ip"
+        },
+        "rtt_count": {
+          "index": "not_analyzed",
+          "type": "integer"
+        },
+        "cmt_count": {
+          "index": "not_analyzed",
+          "type": "integer"
+        },
+        "play_count": {
+          "index": "not_analyzed",
+          "type": "integer"
+        },
+        "geo_info": {
+          "type": "geo_point"
+        },
+        "data_source": {
+          "index": "not_analyzed",
+          "type": "integer"
+        },
+        "nation_category": {
+          "index": "not_analyzed",
+          "type": "short"
+        },
+        "area_info": {
+          "index": "not_analyzed",
+          "type": "keyword"
+        },
+        "repub_source": {
+          "index": "not_analyzed",
+          "type": "keyword"
+        },
+        "media_path": {
+          "index": "not_analyzed",
+          "type": "keyword"
+        },
+        "support_level": {
+          "index": "not_analyzed",
+          "type": "short"
+        },
+        "is_spam": {
+          "index": "not_analyzed",
+          "type": "short"
+        },
+        "pubtime": {
+          "format": "yyyy-MM-dd HH:mm:ss",
+          "store": true,
+          "type": "date"
+        },
+        "addtime": {
+          "format": "yyyy-MM-dd HH:mm:ss",
+          "type": "date"
+        },
+        "caitime": {
+          "format": "yyyy-MM-dd HH:mm:ss",
+          "type": "date"
+        },
+        "instime": {
+          "index": "not_analyzed",
+          "type": "long"
+        },
+        "updtime": {
+          "format": "yyyy-MM-dd HH:mm:ss",
+          "type": "date"
+        }
+      }
+    }
+  }
+}
