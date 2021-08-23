@@ -1,6 +1,7 @@
 package casia.isiteam.api.elasticsearch.operation.security;
 
 import casia.isiteam.api.elasticsearch.common.enums.GeoQueryLevel;
+import casia.isiteam.api.elasticsearch.common.enums.QueriesLevel;
 import casia.isiteam.api.elasticsearch.common.staitcParms.HttpHeader;
 import casia.isiteam.api.elasticsearch.common.staitcParms.ShareParms;
 import casia.isiteam.api.elasticsearch.common.status.IndexParmsStatus;
@@ -120,7 +121,7 @@ public class EncapsulationInfo extends EsDbUtil {
                     }
                     //keyword格式
                     else if( Validator.check(s.getQueriesLevel()) ){
-                        matchjson.put( s.getQueriesLevel().getLevel(),o(s.getField(),s.getKeyWord())) ;
+                        matchjson.put( s.getQueriesLevel().getLevel(),s.getQueriesLevel().getLevel()== QueriesLevel.All.getLevel() ? o() : o(s.getField(),s.getKeyWord())) ;
                     }
                     //lal格式
                     else if( Validator.check(s.getGeoQueryLevel()) && Validator.check(s.getGeoQueryInfo()) ){

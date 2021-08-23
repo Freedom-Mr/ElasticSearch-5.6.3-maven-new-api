@@ -43,7 +43,6 @@ public class KeyWordsBuider {
         this.fieldOccurs = fieldOccurs;
         this.queriesLevel = queriesLevel;
     }
-
     public KeyWordsBuider(String field, GeoQueryInfo geoQueryInfo, FieldOccurs fieldOccurs, GeoQueryLevel geoQueryLevel) {
         this.field = field;
         this.geoQueryInfo = geoQueryInfo;

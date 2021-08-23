@@ -42,7 +42,7 @@ public class CasiaEsSearchTest extends TestCase {
 
 
     public void testSetAggs() {
-        CasiaEsSearch casiaEsSearch = new CasiaEsSearch("os1");
+        CasiaEsSearch casiaEsSearch = new CasiaEsSearch("os");
         casiaEsSearch.setIndexName("toutiao-*", "toutiao");
         casiaEsSearch.setSize(0);
         AggsFieldBuider aggsFieldBuider = new AggsFieldBuider();
@@ -58,8 +58,8 @@ public class CasiaEsSearchTest extends TestCase {
                                 new TypeInfo("domain"),
                                 new TypeInfo("site","site2")
                         )
-                ).executeAggsInfo();
-        casiaEsApi.search().setQueryKeyWords( new KeywordsCombine( 1,
+                ).executeAggsInfo();*/
+        casiaEsSearch.setQueryKeyWords( new KeywordsCombine( 1,
 //                new KeyWordsBuider("content"," 普京批准新国家战略 俄媒：中俄永远做兄弟 与塔利班交火后 超过1000名阿富汗政府军撤入塔吉克斯坦 汾酒·凤凰军机处|黑海对峙罗生门  韩国成功测试潜射导弹 新威慑体系究竟瞄准了谁？",FieldOccurs.INCLUDES, QueriesLevel.Wildcard)
 //                new KeyWordsBuider("title","疫苗",FieldOccurs.INCLUDES, QueriesLevel.Keywords)
 //                ,new KeyWordsBuider("title","辉瑞",FieldOccurs.INCLUDES, QueriesLevel.Keywords)
@@ -69,8 +69,8 @@ public class CasiaEsSearchTest extends TestCase {
                 new KeyWordsBuider("channel_name","凤凰网_军事_军情热点",FieldOccurs.INCLUDES, QueriesLevel.Term)
         ));
         /**** Term ***/
-        SearchResult searchResult = casiaEsSearch
-                .setAggregations(
+//        SearchResult searchResult = casiaEsSearch
+//                .setAggregations(
 //                        new AggsFieldBuider(
 //                                new TermInfo("domain",2).setAggsFieldBuider(
 //                                        new AggsFieldBuider(
@@ -80,16 +80,16 @@ public class CasiaEsSearchTest extends TestCase {
 //                                ),
 //                                new TermInfo("site",2)
 //                        ),
-                        new AggsFieldBuider(
-                                new TermInfo("channel_name",10).setSortOrder(SortOrder.DESC)
-                                        .setAggsFieldBuider(
-                                                new AggsFieldBuider(
-                                                        new TopData(1, Arrays.asList(new SortField("pubtime",SortOrder.DESC)))
-                                                )
-                                        )
+//                        new AggsFieldBuider(
+//                                new TermInfo("channel_name",10).setSortOrder(SortOrder.DESC)
+//                                        .setAggsFieldBuider(
+//                                                new AggsFieldBuider(
+//                                                        new TopData(1, Arrays.asList(new SortField("pubtime",SortOrder.DESC)))
+//                                                )
+//                                        )
 //                                new TermInfo("eid",2,"eid2").setSortOrder(SortOrder.DESC)
-                        )
-                ).executeAggsInfo();
+//                        )
+//                ).executeAggsInfo();
 
         /**** OperationInfo ***/
        /* SearchResult searchResult = casiaEsSearch
@@ -105,21 +105,21 @@ public class CasiaEsSearchTest extends TestCase {
                 ).executeAggsInfo();*/
 
         /**** date ***/
-        /*SearchResult searchResult = casiaEsSearch.
-                setRange(new RangeField(FieldOccurs.INCLUDES,"pubtime","2020-05-06 00:00:00","2020-06-06 00:00:00"))
+        SearchResult searchResult = casiaEsSearch.
+                setRange(new RangeField(FieldOccurs.INCLUDES,"pubtime","2021-08-01 00:00:00","2021-08-03 00:00:00"))
                 .setAggregations(
+//                    new AggsFieldBuider(
+//                            new DateInfo("pubtime","yyyy-MM-dd","7d",0L,"2020-05-06","2020-06-06").
+//                                    setAggsFieldBuider(
+//                                            new AggsFieldBuider(
+//                                                    new TypeInfo("eid")
+//                                            )
+//                                    )
+//                    ),
                     new AggsFieldBuider(
-                            new DateInfo("pubtime","yyyy-MM-dd","7d",0L,"2020-05-06","2020-06-06").
-                                    setAggsFieldBuider(
-                                            new AggsFieldBuider(
-                                                    new TypeInfo("eid")
-                                            )
-                                    )
-                    ),
-                    new AggsFieldBuider(
-                            new DateInfo("addtime","yyyy-MM-dd","7d",0L,"2020-05-06","2020-06-06")
+                            new DateInfo("addtime","yyyy-MM-dd","7d",0L,"2021-08-01","2021-08-03")
                     )
-                ).executeQueryInfo();*/
+                ).executeQueryInfo();
 
         /**** TopData ***/
        /* SearchResult searchResult = casiaEsSearch
@@ -395,11 +395,11 @@ public class CasiaEsSearchTest extends TestCase {
 //        casiaEsApi.search().setIndexName("test-1*", "test_data");
         CasiaEsApi casiaEsApi = new CasiaEsApi("os1");
         casiaEsApi.search().setIndexName("toutiao-news-*", "toutiao");
-        casiaEsApi.search().addSort(
-                new SortField("pubtime" , SortOrder.DESC)
-//                ,new SortField("eid" , SortOrder.DESC)
+//        casiaEsApi.search().addSort(
+//                new SortField("pubdate" , SortOrder.DESC)
+////                ,new SortField("eid" , SortOrder.DESC)
 //                ,new SortField("_score", SortOrder.DESC)
-        );
+//        );
 
 //        casiaEsApi.search().setQueryKeyWords( new KeywordsCombine( 1,
 //                new KeyWordsBuider("is_dup" ,"0",FieldOccurs.INCLUDES, QueriesLevel.Term)
@@ -408,20 +408,25 @@ public class CasiaEsSearchTest extends TestCase {
 
 //                ,new KeyWordsBuider("gid","news165029",FieldOccurs.EXCLUDES, QueriesLevel.Term)
 //        ));
-        casiaEsApi.search().setQueryKeyWords( new KeywordsCombine( 1,
+//        casiaEsApi.search().setQueryKeyWords(
+//                new KeywordsCombine(1,
+//                        new KeyWordsBuider("title","疫苗",FieldOccurs.INCLUDES, QueriesLevel.Keywords),
+//                        new KeyWordsBuider("title","生物",FieldOccurs.INCLUDES, QueriesLevel.Keywords),
+//                        new KeyWordsBuider("title",null,FieldOccurs.INCLUDES, QueriesLevel.All)
+//                new KeywordsCombine( 1,
 //                new KeyWordsBuider("content"," 普京批准新国家战略 俄媒：中俄永远做兄弟 与塔利班交火后 超过1000名阿富汗政府军撤入塔吉克斯坦 汾酒·凤凰军机处|黑海对峙罗生门  韩国成功测试潜射导弹 新威慑体系究竟瞄准了谁？",FieldOccurs.INCLUDES, QueriesLevel.Wildcard)
-//                new KeyWordsBuider("title","疫苗",FieldOccurs.INCLUDES, QueriesLevel.Keywords)
+//                new KeyWordsBuider("title","致友",FieldOccurs.INCLUDES, QueriesLevel.Keywords)
 //                ,new KeyWordsBuider("title","辉瑞",FieldOccurs.INCLUDES, QueriesLevel.Keywords)
 //                ,new KeyWordsBuider("title","提升",FieldOccurs.INCLUDES, QueriesLevel.Keywords)
 //                ,new KeyWordsBuider("title","授权",FieldOccurs.INCLUDES, QueriesLevel.Keywords)
 //                ,new KeyWordsBuider("title","生物",FieldOccurs.INCLUDES, QueriesLevel.Keywords)
-                new KeyWordsBuider("channel_name","凤凰网_军事_军情热点",FieldOccurs.INCLUDES, QueriesLevel.Term)
-        ));
+//                new KeyWordsBuider("channel_name","凤凰网_军事_军情热点",FieldOccurs.INCLUDES, QueriesLevel.Term)
+//        ));
 //          casiaEsApi.search().setExistsFilter("image_info");
 //        new RangeField(FieldOccurs.INCLUDES,"pubtime","2021-06-26 10:39:30","2021-06-29 10:39:30");
-//        casiaEsApi.search().setRange(
-//                new RangeField(FieldOccurs.INCLUDES,"addtime","2021-07-27 01:32:23",null)
-//        );
+        casiaEsApi.search().setRange(
+                new RangeField(FieldOccurs.INCLUDES,"pubtime","2021-08-11 17:22:23",null)
+        );
 //        casiaEsApi.search().setQueryKeyWords(new KeywordsCombine(1,
 //                new KeyWordsBuider("localtion_point",new GeoQueryInfo().addDistance(new LonLat(86.2554F,41.3410F),"30km"),FieldOccurs.INCLUDES, GeoQueryLevel.Distance)
 //
