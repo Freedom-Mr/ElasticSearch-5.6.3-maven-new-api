@@ -74,8 +74,9 @@ public class DeleteServer extends ElasticSearchApi implements ElasticSearchApi.D
             return false;
         }
         String curl=curlSymbol( curl(indexParmsStatus.getUrl(),indexParmsStatus.getIndexName(),indexParmsStatus.getIndexType(),_QUERY),QUESTION,PRETTY  );
-        logger.debug(LogUtil.compositionLogCurl(curl));
         JSONObject body = o(QUERY,o(MATCH,o(ID, _ids)));
+        logger.debug(LogUtil.compositionLogCurl(curl));
+        logger.debug(body.toString());
         String resultStr = new CasiaHttpUtil().delete(curl,indexParmsStatus.getHeards(),null,body.toString());
         return JSONCompare.validationResult(resultStr,RESULT,DELETED,NOT_FOUND);
     }
@@ -139,6 +140,91 @@ public class DeleteServer extends ElasticSearchApi implements ElasticSearchApi.D
         String resultStr = new CasiaHttpUtil().post(curl,indexParmsStatus.getHeards(),null,body.toString());
         return JSONCompare.getResult(resultStr,DELETED);
     }
+<<<<<<< Updated upstream
+=======
+    /**
+     * delete data Scroll by query String
+     * @return
+     */
+    public String deleteDataScrollByQuery(){
+        if( !Validator.check(indexSearchBuilder.getDelSearch()) ){
+            logger.warn(LogUtil.compositionLogEmpty("query string ") );
+            return null;
+        }
+        String curl=curl(indexParmsStatus.getUrl(),indexParmsStatus.getIndexName(),indexParmsStatus.getIndexType(),_DELETE_BY_QUERY);
+        if( Validator.check(indexSearchBuilder.getRefresh()) ){
+            curl = curlSymbol(curlSymbol(curl, curl.contains("?")?AND: QUESTION,REFRESH),EQUAL,indexSearchBuilder.getRefresh());
+        }
+        if( Validator.check(indexSearchBuilder.getScrollSize()) ){
+            curl = curlSymbol(curlSymbol(curl, curl.contains("?")?AND: QUESTION,SCROLL_SIZE),EQUAL,indexSearchBuilder.getScrollSize()+"");
+        }
+        if( Validator.check(indexSearchBuilder.getConflicts()) ){
+            curl = curlSymbol(curlSymbol(curl, curl.contains("?")?AND: QUESTION,CONFLICTS),EQUAL,indexSearchBuilder.getConflicts());
+        }
+        if( Validator.check(indexSearchBuilder.getWaitForCompletion()) ){
+            curl = curlSymbol(curlSymbol(curl, curl.contains("?")?AND: QUESTION,WAIT_FOR_COMPLETION),EQUAL,indexSearchBuilder.getWaitForCompletion()+"");
+        }
+        logger.debug(LogUtil.compositionLogCurl(curl,indexSearchBuilder.getDelSearch()));
+        JSONObject body = o(QUERY,indexSearchBuilder.getDelSearch());
+        logger.info(curl);
+        logger.info(body.toString());
+        String resultStr = new CasiaHttpUtil().post(curl,indexParmsStatus.getHeards(),null,body.toString());
+        return JSONCompare.getResult(JSONObject.parseObject(resultStr),TASK);
+    }
+    @Override
+    public boolean delIndexAlias(String alias) {
+        String curl=curl(indexParmsStatus.getUrl(),_ALIASES);
+        JSONObject parms =o( ACTIONS, a( o(REMOVE,o(o(INDEX,indexParmsStatus.getIndexName()),ALIAS,alias) ) ) );
+        CasiaHttpUtil casiaHttpUtil = new CasiaHttpUtil();
+        String queryResultStr = casiaHttpUtil.post( curl,indexParmsStatus.getHeards(),null, parms.toString() );
+        try {
+            return validationResult(queryResultStr,ACKNOWLEDGED,true);
+        }catch (Exception e){
+            e.printStackTrace();
+            logger.error("result：{}；error：",queryResultStr,e.getMessage());
+            return false;
+        }
+    }
+
+
+    /***************Query******************/
+    /**
+     * clearn query parms
+     */
+    @Override
+    public void reset(){
+        indexSearchBuilder = new IndexSearchBuilder();
+    };
+
+    /**
+     *
+     * @param refresh  wait_for
+     */
+    public void setRefresh(String refresh){
+        indexSearchBuilder.putRefresh(refresh);
+    };
+    /**
+     *
+     * @param conflicts   proceed
+     */
+    public void setConflicts(String conflicts){
+        indexSearchBuilder.putConflicts(conflicts);
+    };
+    /**
+     *
+     * @param wait_for_completion boolean
+     */
+    public void setWaitForCompletion(boolean wait_for_completion){
+        indexSearchBuilder.putWaitForCompletion(wait_for_completion);
+    };
+    /**
+     *
+     * @param scrollSize long
+     */
+    public void setScrollSize(long scrollSize){
+        indexSearchBuilder.putScrollSize(scrollSize);
+    };
+>>>>>>> Stashed changes
 
     public void setRange(RangeField... rangeFields) {
         for(RangeField filed : rangeFields ){

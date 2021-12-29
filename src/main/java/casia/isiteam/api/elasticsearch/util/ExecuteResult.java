@@ -69,6 +69,7 @@ public class ExecuteResult extends ShareParms {
         Set<String> keys = json.keySet();
         AggsInfo aggsInfo = new AggsInfo();
         for(String key:keys){
+<<<<<<< Updated upstream
             String v = json.getString(key);
             if( OperationLevels.stream().filter(s->key.startsWith(QUESTION+ s+QUESTION)).findFirst().isPresent() ){
                 if( json.containsKey(KEY) ){
@@ -83,6 +84,24 @@ public class ExecuteResult extends ShareParms {
                     );
                     if( !aggsInfos.contains(cc) ){
                         aggsInfos.add(cc);
+=======
+            Optional<AggsLevel> aggsLevel = aggsList.stream().filter(s->key.startsWith(QUESTION+ s.getLevel()+QUESTION)).findFirst();
+            if( aggsLevel.isPresent()){
+
+                //Term
+                 if( key.startsWith(QUESTION+ AggsLevel.Term.getLevel()+QUESTION ) ){
+                    JSONObject os = json.getJSONObject(key);
+                    AggsInfo info = new AggsInfo(AggsLevel.Term.getName(),key.replaceAll(AGGS_FIELD,NONE),-1,-1);
+                    if( os.containsKey(BUCKETS) ){
+                        for(Object s : os.getJSONArray(BUCKETS)){
+                            JSONObject object = JSONObject.parseObject(s.toString());
+                            AggsInfo infoc =  new AggsInfo(AggsLevel.Term.getName(),object.getString(KEY),object.containsKey(KEY_AS_STRING)?object.getString(KEY_AS_STRING):null,object.getLong(DOC_COUNT),-1);
+                            object.keySet().stream().filter(c->levelList.stream().filter(t->c.startsWith(QUESTION+ t+QUESTION)).findFirst().isPresent() ).forEach(c->{
+                                parseAggesResult( infoc.getChildren(), j(c,object.get(c)));
+                            });
+                            info.getChildren().add(infoc);
+                        }
+>>>>>>> Stashed changes
                     }
                 }
                 continue;

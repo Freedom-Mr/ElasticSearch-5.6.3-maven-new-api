@@ -76,7 +76,9 @@ public class ElasticResultParms extends JSONCompare {
     protected final static String RANGE = "range";
     protected final static String RANGES = "ranges";
     protected final static String GTE = "gte";
+    protected final static String GT = "gt";
     protected final static String LTE = "lte";
+    protected final static String LT = "lt";
     protected final static String EXISTS = "exists";
     protected final static String FIELD = "field";
     protected final static String MINIMUM_SHOULD_MATCH = "minimum_should_match";

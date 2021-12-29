@@ -4,7 +4,11 @@
 
 	<groupId>casia.isiteam</groupId>
 	<artifactId>casia-elasticsearch</artifactId>
+<<<<<<< Updated upstream
 	<version>5.6.3.1.10</version>
+=======
+	<version>5.6.3.1.22</version>
+>>>>>>> Stashed changes
 	<packaging>jar</packaging>
 
 	<properties>

@@ -56,6 +56,7 @@ public class OutInfo {
         for(AggsInfo s:aggsInfos){
             System.out.print(sb+(childrens>0?"┗━":"")+"{field："+s.getField());
             System.out.print("}，{type："+s.getType());
+            System.out.print("}，{keyAsString："+s.getKeyAsString());
             System.out.print("}，{total_doc："+s.getTotal_Doc());
             System.out.print("}，{total_Operation："+s.getTotal_Operation());
             System.out.println("}");

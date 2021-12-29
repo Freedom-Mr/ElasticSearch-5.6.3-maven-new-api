@@ -12,6 +12,7 @@ import java.util.List;
  */
 public class AggsInfo {
     private String field;
+    private String keyAsString;
     private long total_Doc=-1;
     private float total_Operation=-1;
     private String type;
@@ -29,7 +30,13 @@ public class AggsInfo {
         this.total_Doc = total_Doc;
         this.total_Operation = total_Operation;
     }
-
+    public AggsInfo(String type,String field,String keyAsString ,long total_Doc, float total_Operation) {
+        this.type = type;
+        this.field = field;
+        this.keyAsString = keyAsString;
+        this.total_Doc = total_Doc;
+        this.total_Operation = total_Operation;
+    }
     public AggsInfo(String type,String field, long total_Doc,float total_Operation, List<AggsInfo> children) {
         this.type = type;
         this.field = field;
@@ -120,6 +127,15 @@ public class AggsInfo {
             this.lonLatInfos.add(info);
         }
 
+        return this;
+    }
+
+    public String getKeyAsString() {
+        return keyAsString;
+    }
+
+    public AggsInfo setKeyAsString(String keyAsString) {
+        this.keyAsString = keyAsString;
         return this;
     }
 }

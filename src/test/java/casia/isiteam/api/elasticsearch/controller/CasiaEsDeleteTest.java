@@ -62,4 +62,32 @@ public class CasiaEsDeleteTest extends TestCase {
         int deleteTotal= casiaEsDelete.deleteDataByQuery();
         System.out.println(deleteTotal);
     }
+<<<<<<< Updated upstream
+=======
+    public void testDeleteDataScrollByQuery() {
+
+        CasiaEsDelete casiaEsDelete = new CasiaEsDelete("data");
+        casiaEsDelete.setIndexName("arr_adsa-2021-04-22","graph");
+//        casiaEsDelete.setRange(
+//                new RangeField(FieldOccurs.INCLUDES,"pubtime",null,"2020-11-16 22:04:34")
+//        );
+        casiaEsDelete.setQueryKeyWords(
+                new KeywordsCombine(1,
+//                        new KeyWordsBuider("title","肺炎", FieldOccurs.INCLUDES, QueriesLevel.Term),
+                        new KeyWordsBuider("title","张高丽",FieldOccurs.INCLUDES, QueriesLevel.Phrase))
+        );
+        casiaEsDelete.setConflicts("proceed");
+        casiaEsDelete.setRefresh("wait_for");
+        casiaEsDelete.setWaitForCompletion(false);
+        casiaEsDelete.setScrollSize(1);
+        String task = casiaEsDelete.deleteDataScrollByQuery();
+        System.out.println(task);
+    }
+    public void testDeleteIndexAlias() {
+        CasiaEsDelete casiaEsDelete = new CasiaEsDelete("data");
+        casiaEsDelete.setIndexName("demo_test","test_data");
+        Boolean rs= casiaEsDelete.deleteIndexAlias("wu");
+        System.out.println(rs);
+    }
+>>>>>>> Stashed changes
 }

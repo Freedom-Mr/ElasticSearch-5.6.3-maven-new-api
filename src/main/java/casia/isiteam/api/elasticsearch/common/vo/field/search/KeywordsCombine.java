@@ -12,6 +12,7 @@ import java.util.List;
  */
 public class KeywordsCombine {
     private int minimumMatch = 1;
+    private String keyName = "";
     private List<KeyWordsBuider> keyWordsBuiders = new ArrayList<>();
 
     public KeywordsCombine(int minimumMatch, List<KeyWordsBuider> keyWordsBuiders) {
@@ -26,7 +27,13 @@ public class KeywordsCombine {
             this.keyWordsBuiders.add(keyWordsBuider);
         }
     }
-
+    public KeywordsCombine(int minimumMatch,String keyName, KeyWordsBuider ... keyWordsBuiders) {
+        this.minimumMatch = minimumMatch;
+        this.keyName = keyName;
+        for(KeyWordsBuider keyWordsBuider: keyWordsBuiders){
+            this.keyWordsBuiders.add(keyWordsBuider);
+        }
+    }
     public int getMinimumMatch() {
         return minimumMatch;
     }
@@ -52,4 +59,20 @@ public class KeywordsCombine {
         }
         return this;
     }
+<<<<<<< Updated upstream
+=======
+
+    public AggsFieldBuider getAggsFieldBuider() {
+        return aggsFieldBuider;
+    }
+
+    public KeywordsCombine setAggsFieldBuider(AggsFieldBuider aggsFieldBuider) {
+        this.aggsFieldBuider = aggsFieldBuider;
+        return this;
+    }
+    public String getKeyName() {
+        return keyName;
+    }
+
+>>>>>>> Stashed changes
 }

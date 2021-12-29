@@ -109,7 +109,8 @@ public class SearchServer extends ElasticSearchApi implements ElasticSearchApi.S
     @Override
     public void setRange(RangeField ... rangeFields) {
         for(RangeField filed : rangeFields ){
-            JSONObject rangefiled = o(RANGE,o(filed.getField(),o(o(GTE,filed.getGte()),LTE,filed.getLte())));
+            JSONObject rangefiled = o(RANGE,o(filed.getField(),o(o(
+                    filed.getIncludeLower()?GTE:GT,filed.getGte()),filed.getIncludeUpper()?LTE:LT,filed.getLte())));
             if( !indexSearchBuilder.addQueryBigBoolKeyArray(filed.getFieldOccurs().getIsMust()).
                     getQueryBigBool().getJSONArray(filed.getFieldOccurs().getIsMust()).stream().filter(s ->
                     JSONObject.parseObject(s.toString()).containsKey(RANGE) &&  JSONObject.parseObject(s.toString()).getString(RANGE) .equals(
@@ -481,6 +482,56 @@ public class SearchServer extends ElasticSearchApi implements ElasticSearchApi.S
                 }
             });
         }
+<<<<<<< Updated upstream
+=======
+        //KeywordsCombines
+        if( Validator.check(aggsFieldBuider.getKeywordsCombines()) ){
+            aggsFieldBuider.getKeywordsCombines().forEach(s->{
+                JSONObject newShould = parsQueryKeyWords(o(),s);
+                if( Validator.check(newShould) ){
+                    String keyName=s.getKeyName();
+                    if( !Validator.check(s.getKeyName()) ){
+                        for(KeyWordsBuider keyWordsBuider:s.getKeyWordsBuiders()){
+                            keyName=keyName+ (Validator.check(keyName)?BLANK:NONE)+getKeyString(keyWordsBuider);
+                        };
+                    }
+                    String newField = StringAppend.aggsFieldAppend(AggsLevel.KeyWord,keyName);
+                    if( !object.containsKey( newField) ){
+                        object.put( newField ,o(AggsLevel.KeyWord.getLevel(),o(AggsLevel.KeyWord.getLevel(),o(keyName,newShould))));
+                    }
+                    if( Validator.check(s.getAggsFieldBuider()) ){
+                        o( object.getJSONObject(newField),AGGS,o());
+                        pareAggsFieldBuider(s.getAggsFieldBuider(),object.getJSONObject(newField).getJSONObject(AGGS));
+                    }
+                }
+            });
+        }
+        //Matrix Info
+        if( Validator.check(aggsFieldBuider.getMatrixInfos()) ){
+            aggsFieldBuider.getMatrixInfos().forEach(s->{
+                String newField = StringAppend.aggsFieldAppend(AggsLevel.Matrix,MATRIXINFO);
+                if( !object.containsKey(newField) ){
+                    object.put( newField , o(MATRIX_STATS,o(o(FIELDS,a(s.getFields())),Validator.check(s.getMissing()) ? MISSING :NONE,o(INCOME,s.getMissing()))) );
+                }
+            });
+        }
+    }
+    private String getKeyString(KeyWordsBuider keyWordsBuider){
+        String keyString = NONE;
+        if( Validator.check(keyWordsBuider.getKeywordsCombines() )){
+            for(KeywordsCombine s:keyWordsBuider.getKeywordsCombines()){
+                if( Validator.check(s.getKeyWordsBuiders()) ){
+                    for(KeyWordsBuider c:s.getKeyWordsBuiders()){
+                        keyString =keyString+ (Validator.check(keyString)?BLANK:NONE)+getKeyString(c);
+                    }
+                }
+            }
+        }else{
+            keyString=keyString+(Validator.check(keyString)?BLANK:NONE)+ keyWordsBuider.getFieldOccurs().getIsExist()+
+                    keyWordsBuider.getField()+COLON+keyWordsBuider.getKeyWord();
+        }
+        return keyString;
+>>>>>>> Stashed changes
     }
 
     /**
