@@ -1,7 +1,7 @@
 {
     "settings": {
         "number_of_shards": 1,
-        "number_of_replicas": 1,
+        "number_of_replicas": 0,
         "refresh_interval": "5s",
         "translog": {
           "flush_threshold_size": "3gb"
@@ -41,21 +41,7 @@
                 },
                 "title": {
                     "analyzer": "standard",
-                    "type": "text",
-                    "fielddata": true
-                },
-                "note": {
-                     "type": "nested",
-                      "properties": {
-                          "t1":{
-                            "analyzer": "standard",
-                            "type": "text"
-                          },
-                         "t2":{
-                            "analyzer": "standard",
-                             "type": "text"
-                          }
-                      }
+                    "type": "text"
                 },
                 "content": {
                     "analyzer": "ik_max_word",
