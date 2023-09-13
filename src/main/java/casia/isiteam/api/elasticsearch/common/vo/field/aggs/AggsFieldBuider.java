@@ -1,6 +1,7 @@
 package casia.isiteam.api.elasticsearch.common.vo.field.aggs;
 
 import casia.isiteam.api.elasticsearch.common.enums.GeoLevel;
+import casia.isiteam.api.elasticsearch.common.vo.field.search.KeywordsCombine;
 import casia.isiteam.api.toolutil.Validator;
 
 import java.util.ArrayList;
@@ -24,6 +25,8 @@ public class AggsFieldBuider {
     private List<PriceInfo> priceInfos = new ArrayList<>();
     private List<IpRangeInfo> ipRangeInfos = new ArrayList<>();
     private List<GridInfo> gridInfos = new ArrayList<>();
+    private List<KeywordsCombine> keywordsCombines = new ArrayList<>();
+    private List<MatrixInfo> matrixInfos = new ArrayList<>();
 
     public AggsFieldBuider(){
 
@@ -344,6 +347,66 @@ public class AggsFieldBuider {
         return this;
     }
 
+    public AggsFieldBuider(KeywordsCombine ... keywordsCombine){
+        if( Validator.check(keywordsCombine) ){
+            for(KeywordsCombine info:keywordsCombine){
+                if( !this.keywordsCombines.contains(info) ){
+                    this.keywordsCombines.add(info);
+                }
+            }
+        }
+    }
+    public AggsFieldBuider addKeywordsCombines(KeywordsCombine ... keywordsCombine){
+        if( Validator.check(keywordsCombine) ){
+            for(KeywordsCombine info:keywordsCombine){
+                if( !this.keywordsCombines.contains(info) ){
+                    this.keywordsCombines.add(info);
+                }
+            }
+        }
+        return this;
+    }
+    public AggsFieldBuider addKeywordsCombines(List<KeywordsCombine> keywordsCombine){
+        if( Validator.check(keywordsCombine) ){
+            for(KeywordsCombine info:keywordsCombine){
+                if( !this.keywordsCombines.contains(info) ){
+                    this.keywordsCombines.add(info);
+                }
+            }
+        }
+        return this;
+    }
+
+    public AggsFieldBuider(MatrixInfo ... matrixInfo){
+        if( Validator.check(matrixInfo) ){
+            for(MatrixInfo info:matrixInfo){
+                if( !this.matrixInfos.contains(info) ){
+                    this.matrixInfos.add(info);
+                }
+            }
+        }
+    }
+    public AggsFieldBuider addMatrixInfos(MatrixInfo ... matrixInfo){
+        if( Validator.check(matrixInfo) ){
+            for(MatrixInfo info:matrixInfo){
+                if( !this.matrixInfos.contains(info) ){
+                    this.matrixInfos.add(info);
+                }
+            }
+        }
+        return this;
+    }
+    public AggsFieldBuider addMatrixInfos(List<MatrixInfo> matrixInfo){
+        if( Validator.check(matrixInfo) ){
+            for(MatrixInfo info:matrixInfo){
+                if( !this.matrixInfos.contains(info) ){
+                    this.matrixInfos.add(info);
+                }
+            }
+        }
+        return this;
+    }
+
     public List<TypeInfo> getCardinalitys() {
         return cardinalitys;
     }
@@ -377,5 +440,13 @@ public class AggsFieldBuider {
 
     public List<GridInfo> getGridInfos() {
         return gridInfos;
+    }
+
+    public List<KeywordsCombine> getKeywordsCombines() {
+        return keywordsCombines;
+    }
+
+    public List<MatrixInfo> getMatrixInfos() {
+        return matrixInfos;
     }
 }

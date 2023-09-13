@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * ClassName: CasiaEsQuery
@@ -34,12 +35,29 @@ public class CasiaEsQuery {
         queryApi.config(ipPorts,username,password);
     }
     /**
+     * set indexName and indexType
+     * @param indexName
+     * @param indexType
+     */
+    public void setIndexName(String indexName,String indexType) {
+        queryApi.setIndexName(indexName,indexType);
+    }
+    public void setIndexName(String indexName) {
+        queryApi.setIndexName(indexName,null);
+    }
+    public void setIndexType(String indexType) {
+        queryApi.setIndexName(null,indexType);
+    }
+    /**
      * 查询索引信息根据索引名
      * @param indexName 索引名称
      * @return JSONObject 索引JSON结构
      */
     public JSONObject queryIndexByName (String indexName){
         return queryApi.queryIndexByName(indexName);
+    }
+    public JSONObject queryIndexByName (){
+        return queryApi.queryIndexByName(null);
     }
     /**
      * 查询索引名列表
@@ -48,5 +66,27 @@ public class CasiaEsQuery {
     public List<String> queryIndexNames (){
         return queryApi.queryIndexNames();
     }
+    /**
+     * query all Alias
+     * or
+     * query all Alias by indexName
+     * or
+     * query all Alias by wildcard
+     * @return map
+     */
+    public Map<String,List<String>> queryAlias(String wildcard){
+        return queryApi.queryIndexAlias(wildcard);
+    }
+    public Map<String,List<String>> queryAlias(){
+        return queryApi.queryIndexAlias(null);
+    }
 
+    /**
+     * query task info by task id
+     * @param taskId
+     * @return
+     */
+    public JSONObject queryTask(String taskId){
+        return queryApi.queryTask(taskId);
+    }
 }

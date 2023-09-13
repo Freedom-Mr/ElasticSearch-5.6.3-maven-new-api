@@ -1,0 +1,324 @@
+{
+  "mappings": {
+    "monitor_caiji_all": {
+      "dynamic": "false",
+      "_source": {
+        "enabled": true
+      },
+      "properties": {
+        "id": {
+          "index": "not_analyzed",
+          "store": true,
+          "type": "long"
+        },
+        "it": {
+          "index": "not_analyzed",
+          "store": true,
+          "type": "keyword"
+        },
+        "gid": {
+          "index": "not_analyzed",
+          "store": true,
+          "type": "keyword"
+        },
+        "title": {
+          "analyzer": "standard",
+          "store": true,
+          "type": "text"
+        },
+        "content": {
+          "analyzer": "standard",
+          "store": true,
+          "type": "text"
+        },
+        "contact_info": {
+          "index": "not_analyzed",
+          "store": true,
+          "type": "keyword"
+        },
+        "is_contact": {
+          "index": "not_analyzed",
+          "store": true,
+          "type": "integer"
+        },
+        "summary": {
+          "analyzer": "standard",
+          "store": true,
+          "type": "text"
+        },
+        "url": {
+          "index": "not_analyzed",
+          "store": true,
+          "type": "keyword"
+        },
+        "domain": {
+          "index": "not_analyzed",
+          "store": true,
+          "type": "keyword"
+        },
+        "host": {
+          "index": "not_analyzed",
+          "store": true,
+          "type": "keyword"
+        },
+        "pubtime": {
+          "format": "yyyy-MM-dd HH:mm:ss",
+          "store": true,
+          "type": "date"
+        },
+        "author": {
+          "index": "not_analyzed",
+          "store": true,
+          "type": "keyword"
+        },
+        "site": {
+          "index": "not_analyzed",
+          "store": true,
+          "type": "keyword"
+        },
+        "source_type": {
+          "index": "not_analyzed",
+          "store": true,
+          "type": "keyword"
+        },
+        "nation_category": {
+          "index": "not_analyzed",
+          "store": true,
+          "type": "integer"
+        },
+        "genus": {
+          "index": "not_analyzed",
+          "store": true,
+          "type": "keyword"
+        },
+        "insert_time": {
+          "format": "yyyy-MM-dd HH:mm:ss",
+          "store": true,
+          "type": "date"
+        },
+        "area_list": {
+          "index": "not_analyzed",
+          "store": true,
+          "type": "keyword"
+        },
+        "repub": {
+          "index": "not_analyzed",
+          "store": true,
+          "type": "keyword"
+        },
+        "keywords": {
+          "index": "not_analyzed",
+          "store": true,
+          "type": "keyword"
+        },
+        "picture": {
+          "index": "not_analyzed",
+          "store": true,
+          "type": "keyword"
+        },
+        "language": {
+          "index": "not_analyzed",
+          "store": true,
+          "type": "integer"
+        },
+        "blogger_id": {
+          "index": "not_analyzed",
+          "store": true,
+          "type": "keyword"
+        },
+        "rttcount": {
+          "index": "not_analyzed",
+          "store": true,
+          "type": "long"
+        },
+        "commtcount": {
+          "index": "not_analyzed",
+          "store": true,
+          "type": "long"
+        },
+        "favcount": {
+          "index": "not_analyzed",
+          "store": true,
+          "type": "long"
+        },
+        "reviewcount": {
+          "index": "not_analyzed",
+          "store": true,
+          "type": "long"
+        },
+        "tag_info": {
+          "index": "not_analyzed",
+          "store": true,
+          "type": "keyword"
+        },
+        "playcount": {
+          "index": "not_analyzed",
+          "store": true,
+          "type": "long"
+        },
+        "board_name": {
+          "index": "not_analyzed",
+          "store": true,
+          "type": "keyword"
+        },
+        "md5": {
+          "index": "not_analyzed",
+          "store": true,
+          "type": "keyword"
+        },
+        "step_count": {
+          "index": "not_analyzed",
+          "store": true,
+          "type": "long"
+        },
+        "channel_url": {
+          "index": "not_analyzed",
+          "store": true,
+          "type": "keyword"
+        },
+        "channel_md5": {
+          "index": "not_analyzed",
+          "store": true,
+          "type": "keyword"
+        },
+        "related_md5": {
+          "index": "not_analyzed",
+          "store": true,
+          "type": "keyword"
+        },
+        "source": {
+          "index": "not_analyzed",
+          "store": true,
+          "type": "keyword"
+        },
+        "index_time": {
+          "format": "yyyy-MM-dd HH:mm:ss",
+          "store": true,
+          "type": "date"
+        },
+        "user_url": {
+          "index": "not_analyzed",
+          "store": true,
+          "type": "keyword"
+        },
+        "url_short": {
+          "index": "not_analyzed",
+          "store": true,
+          "type": "keyword"
+        },
+        "crawler_time": {
+          "format": "yyyy-MM-dd HH:mm:ss",
+          "store": true,
+          "type": "date"
+        },
+        "pic_info": {
+          "index": "not_analyzed",
+          "store": true,
+          "type": "text"
+        },
+        "video_info": {
+          "index": "not_analyzed",
+          "store": true,
+          "type": "text"
+        },
+        "file_info": {
+          "index": "not_analyzed",
+          "store": true,
+          "type": "text"
+        },
+        "pretitle": {
+          "analyzer": "standard",
+          "store": true,
+          "type": "text"
+        },
+        "mid": {
+          "index": "not_analyzed",
+          "store": true,
+          "type": "long"
+        },
+        "content_url": {
+          "index": "not_analyzed",
+          "store": true,
+          "type": "keyword"
+        },
+        "last_reply_author": {
+          "index": "not_analyzed",
+          "store": true,
+          "type": "keyword"
+        },
+        "last_reply_time": {
+          "format": "yyyy-MM-dd HH:mm:ss",
+          "store": true,
+          "type": "date"
+        },
+        "update_time": {
+          "format": "yyyy-MM-dd HH:mm:ss",
+          "store": true,
+          "type": "date"
+        },
+        "location_info": {
+          "index": "not_analyzed",
+          "store": true,
+          "type": "text"
+        },
+        "mention_id_list": {
+          "index": "not_analyzed",
+          "store": true,
+          "type": "text"
+        },
+        "tweet_type": {
+          "index": "not_analyzed",
+          "store": true,
+          "type": "integer"
+        },
+        "mention_users": {
+          "index": "not_analyzed",
+          "store": true,
+          "type": "text"
+        },
+        "subchannel_name": {
+          "index": "not_analyzed",
+          "store": true,
+          "type": "text"
+        },
+        "reprint_from_url": {
+          "index": "not_analyzed",
+          "store": true,
+          "type": "keyword"
+        },
+        "user_profile_img_url": {
+          "index": "not_analyzed",
+          "store": true,
+          "type": "keyword"
+        },
+        "user_description": {
+          "index": "not_analyzed",
+          "store": true,
+          "type": "text"
+        }
+      }
+    }
+  },
+  "settings": {
+    "number_of_replicas": 0,
+    "number_of_shards": 6,
+    "refresh_interval": "5s",
+    "translog": {
+      "flush_threshold_size": "1.6gb"
+    },
+    "merge": {
+      "scheduler": {
+        "max_thread_count": "1"
+      }
+    },
+    "index": {
+      "routing": {
+        "allocation": {
+          "total_shards_per_node": "1"
+        }
+      }
+    }
+  }
+}
+
+

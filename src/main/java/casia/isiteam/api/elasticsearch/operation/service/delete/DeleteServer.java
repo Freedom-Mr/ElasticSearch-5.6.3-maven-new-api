@@ -2,6 +2,7 @@ package casia.isiteam.api.elasticsearch.operation.service.delete;
 
 import casia.isiteam.api.elasticsearch.common.enums.FieldOccurs;
 import casia.isiteam.api.elasticsearch.common.enums.GeoQueryLevel;
+import casia.isiteam.api.elasticsearch.common.status.IndexSearchBuilder;
 import casia.isiteam.api.elasticsearch.common.vo.field.RangeField;
 import casia.isiteam.api.elasticsearch.common.vo.field.search.KeywordsCombine;
 import casia.isiteam.api.elasticsearch.operation.interfaces.ElasticSearchApi;
@@ -30,6 +31,7 @@ public class DeleteServer extends ElasticSearchApi implements ElasticSearchApi.D
     public void setIndexName(String indexName,String indexType) {
         addIndexName(indexName,indexType);
     }
+
     /**
      * delete index by indexName
      * @return true or false
@@ -42,6 +44,9 @@ public class DeleteServer extends ElasticSearchApi implements ElasticSearchApi.D
         }
         String curl=curl(indexParmsStatus.getUrl(),indexParmsStatus.getIndexName());
         logger.debug(LogUtil.compositionLogCurl(curl,indexParmsStatus.getIndexName()));
+        if(debugInfo()){
+            logger.info(LogUtil.compositionLogCurl(curl,indexParmsStatus.getIndexName()) );
+        }
         String resultStr = new CasiaHttpUtil().delete(curl,indexParmsStatus.getHeards());
         return JSONCompare.validationResult(resultStr,ACKNOWLEDGED);
     }
@@ -58,6 +63,9 @@ public class DeleteServer extends ElasticSearchApi implements ElasticSearchApi.D
         }
         String curl= curl(indexParmsStatus.getUrl(),indexParmsStatus.getIndexName(),indexParmsStatus.getIndexType(),id) ;
         logger.debug(LogUtil.compositionLogCurl(curl));
+        if(debugInfo()){
+            logger.info(LogUtil.compositionLogCurl(curl) );
+        }
         String resultStr = new CasiaHttpUtil().delete(curl,indexParmsStatus.getHeards());
         return JSONCompare.validationResult(resultStr,RESULT,DELETED,NOT_FOUND);
     }
@@ -74,8 +82,9 @@ public class DeleteServer extends ElasticSearchApi implements ElasticSearchApi.D
             return false;
         }
         String curl=curlSymbol( curl(indexParmsStatus.getUrl(),indexParmsStatus.getIndexName(),indexParmsStatus.getIndexType(),_QUERY),QUESTION,PRETTY  );
-        logger.debug(LogUtil.compositionLogCurl(curl));
         JSONObject body = o(QUERY,o(MATCH,o(ID, _ids)));
+        logger.debug(LogUtil.compositionLogCurl(curl));
+        logger.debug(body.toString());
         String resultStr = new CasiaHttpUtil().delete(curl,indexParmsStatus.getHeards(),null,body.toString());
         return JSONCompare.validationResult(resultStr,RESULT,DELETED,NOT_FOUND);
     }
@@ -121,9 +130,6 @@ public class DeleteServer extends ElasticSearchApi implements ElasticSearchApi.D
         return o(resultStr).containsKey(_SHARDS);
     }
 
-
-
-
     /**
      * delete data by query String
      * @return
@@ -139,6 +145,88 @@ public class DeleteServer extends ElasticSearchApi implements ElasticSearchApi.D
         String resultStr = new CasiaHttpUtil().post(curl,indexParmsStatus.getHeards(),null,body.toString());
         return JSONCompare.getResult(resultStr,DELETED);
     }
+    /**
+     * delete data Scroll by query String
+     * @return
+     */
+    public String deleteDataScrollByQuery(){
+        if( !Validator.check(indexSearchBuilder.getDelSearch()) ){
+            logger.warn(LogUtil.compositionLogEmpty("query string ") );
+            return null;
+        }
+        String curl=curl(indexParmsStatus.getUrl(),indexParmsStatus.getIndexName(),indexParmsStatus.getIndexType(),_DELETE_BY_QUERY);
+        if( Validator.check(indexSearchBuilder.getRefresh()) ){
+            curl = curlSymbol(curlSymbol(curl, curl.contains("?")?AND: QUESTION,REFRESH),EQUAL,indexSearchBuilder.getRefresh());
+        }
+        if( Validator.check(indexSearchBuilder.getScrollSize()) ){
+            curl = curlSymbol(curlSymbol(curl, curl.contains("?")?AND: QUESTION,SCROLL_SIZE),EQUAL,indexSearchBuilder.getScrollSize()+"");
+        }
+        if( Validator.check(indexSearchBuilder.getConflicts()) ){
+            curl = curlSymbol(curlSymbol(curl, curl.contains("?")?AND: QUESTION,CONFLICTS),EQUAL,indexSearchBuilder.getConflicts());
+        }
+        if( Validator.check(indexSearchBuilder.getWaitForCompletion()) ){
+            curl = curlSymbol(curlSymbol(curl, curl.contains("?")?AND: QUESTION,WAIT_FOR_COMPLETION),EQUAL,indexSearchBuilder.getWaitForCompletion()+"");
+        }
+        logger.debug(LogUtil.compositionLogCurl(curl,indexSearchBuilder.getDelSearch()));
+        JSONObject body = o(QUERY,indexSearchBuilder.getDelSearch());
+        logger.info(curl);
+        logger.info(body.toString());
+        String resultStr = new CasiaHttpUtil().post(curl,indexParmsStatus.getHeards(),null,body.toString());
+        return JSONCompare.getResult(JSONObject.parseObject(resultStr),TASK);
+    }
+    @Override
+    public boolean delIndexAlias(String alias) {
+        String curl=curl(indexParmsStatus.getUrl(),_ALIASES);
+        JSONObject parms =o( ACTIONS, a( o(REMOVE,o(o(INDEX,indexParmsStatus.getIndexName()),ALIAS,alias) ) ) );
+        CasiaHttpUtil casiaHttpUtil = new CasiaHttpUtil();
+        String queryResultStr = casiaHttpUtil.post( curl,indexParmsStatus.getHeards(),null, parms.toString() );
+        try {
+            return validationResult(queryResultStr,ACKNOWLEDGED,true);
+        }catch (Exception e){
+            e.printStackTrace();
+            logger.error("result：{}；error：",queryResultStr,e.getMessage());
+            return false;
+        }
+    }
+
+
+    /***************Query******************/
+    /**
+     * clearn query parms
+     */
+    @Override
+    public void reset(){
+        indexSearchBuilder = new IndexSearchBuilder();
+    };
+
+    /**
+     *
+     * @param refresh  wait_for
+     */
+    public void setRefresh(String refresh){
+        indexSearchBuilder.putRefresh(refresh);
+    };
+    /**
+     *
+     * @param conflicts   proceed
+     */
+    public void setConflicts(String conflicts){
+        indexSearchBuilder.putConflicts(conflicts);
+    };
+    /**
+     *
+     * @param wait_for_completion boolean
+     */
+    public void setWaitForCompletion(boolean wait_for_completion){
+        indexSearchBuilder.putWaitForCompletion(wait_for_completion);
+    };
+    /**
+     *
+     * @param scrollSize long
+     */
+    public void setScrollSize(long scrollSize){
+        indexSearchBuilder.putScrollSize(scrollSize);
+    };
 
     public void setRange(RangeField... rangeFields) {
         for(RangeField filed : rangeFields ){
@@ -153,7 +241,6 @@ public class DeleteServer extends ElasticSearchApi implements ElasticSearchApi.D
             }
         }
     }
-
     public void setFieldExistsFilter(FieldOccurs fieldOccurs, String ... fileds) {
         for(String filed : fileds ){
             JSONObject existsFiled = o(EXISTS,o(FIELD,filed));
@@ -178,89 +265,7 @@ public class DeleteServer extends ElasticSearchApi implements ElasticSearchApi.D
             }
         }
     }
-    /**
-     * pars translate query build keyword
-     * @param jsono
-     * @param keywordsCombine
-     * @return
-     */
-    private JSONObject parsQueryKeyWords(JSONObject jsono,KeywordsCombine keywordsCombine){
-        if( Validator.check(keywordsCombine) && Validator.check(keywordsCombine.getKeyWordsBuiders()) ){
-            keywordsCombine.getKeyWordsBuiders().forEach(s->{
-                String SM = Validator.check(s.getFieldOccurs()) && s.getFieldOccurs().getIsMust().equals(MUST_NOT) ? MUST_NOT : SHOULD;
-                if( !Validator.check(s.getKeywordsCombines()) ){
-                    JSONObject matchjson = o();
 
-                    //关键词格式
-                    if( Validator.check(s.getQueriesLevel()) ){
-                        matchjson.put( s.getQueriesLevel().getLevel(),o(s.getField(),s.getKeyWord())) ;
-                    }
-                    //地理位置格式
-                    else if( Validator.check(s.getGeoQueryLevel()) && Validator.check(s.getGeoQueryInfo()) ){
-                        if( s.getGeoQueryLevel().getLevel() .equals(GeoQueryLevel.Polygon.getLevel()) ){
-                            JSONArray jsonArray =a();
-                            s.getGeoQueryInfo().getPolygon().forEach(lal->jsonArray.add(o(o(LAT,lal.getLat()),LON,lal.getLon())));
-                            matchjson.put(s.getGeoQueryLevel().getLevel(),o(s.getField(),o(POINTS,jsonArray) ));
-                        }else if( s.getGeoQueryLevel().getLevel() .equals(GeoQueryLevel.Box.getLevel()) ){
-                            matchjson.put(s.getGeoQueryLevel().getLevel(),o(s.getField(),o()));
-                            s.getGeoQueryInfo().getBox().forEach((k,v)->{
-                                matchjson.getJSONObject(s.getGeoQueryLevel().getLevel()).getJSONObject(s.getField()).put(k,o(o(LAT,v.getLat()),LON,v.getLon()));
-                            });
-                        }else if( s.getGeoQueryLevel().getLevel() .equals(GeoQueryLevel.Distance.getLevel()) ){
-                            matchjson.put(s.getGeoQueryLevel().getLevel(),o());
-                            matchjson.getJSONObject(s.getGeoQueryLevel().getLevel()).put(DISTANCE, s.getGeoQueryInfo().getDistance() );
-                            matchjson.getJSONObject(s.getGeoQueryLevel().getLevel()).put(s.getField(),o(o(LAT,s.getGeoQueryInfo().getDistanceGeo().getLat()),LON,s.getGeoQueryInfo().getDistanceGeo().getLon()));
-                        }else if( s.getGeoQueryLevel().getLevel() .equals(GeoQueryLevel.DistanceRange.getLevel()) ){
-                            matchjson.put(s.getGeoQueryLevel().getLevel(),o());
-                            matchjson.getJSONObject(s.getGeoQueryLevel().getLevel()).put(FROM, s.getGeoQueryInfo().getFrom() );
-                            matchjson.getJSONObject(s.getGeoQueryLevel().getLevel()).put(TO, s.getGeoQueryInfo().getTo() );
-                            matchjson.getJSONObject(s.getGeoQueryLevel().getLevel()).put(s.getField(),o(o(LAT,s.getGeoQueryInfo().getDistanceGeo().getLat()),LON,s.getGeoQueryInfo().getDistanceGeo().getLon()));
-                        }
-                    }
-                    //其他
-                    else{
-                        return;
-                    }
 
-                    //组装
-                    if( keywordsCombine.getKeyWordsBuiders().size() == 1 && !SM.equals(MUST_NOT) ){
-                        jsono.putAll(matchjson);
-                        return;
-                    }
-                    oAddoKey(jsono,BOOL);
-                    if( SM.equals(MUST_NOT) ){
-                        oAddaKey(jsono.getJSONObject(BOOL),SHOULD);
-                        JSONObject js = o(BOOL,o(MUST_NOT,matchjson));
-                        if( !jsono.getJSONObject(BOOL).getJSONArray(SHOULD).stream().filter(a->
-                                a.toString() .equals( js.toString() ) ).findFirst().isPresent()
-                        ){
-                            jsono.getJSONObject(BOOL).getJSONArray(SHOULD).add( js );
-                        }
-                    }else{
-                        oAddaKey(jsono.getJSONObject(BOOL),SM);
-                        if( !jsono.getJSONObject(BOOL).getJSONArray(SM).stream().filter(a->
-                                a.toString() .equals( matchjson.toString() ) ).findFirst().isPresent()
-                        ){
-                            jsono.getJSONObject(BOOL).getJSONArray(SM).add( matchjson );
-                        }
-                    }
-                }else {
-                    s.getKeywordsCombines().forEach(d->{
-                        oAddoKey(jsono,BOOL);
-                        oAddaKey(jsono.getJSONObject(BOOL),SHOULD);
-                        jsono.getJSONObject(BOOL).getJSONArray(SHOULD).add(0,o());
-                        parsQueryKeyWords(jsono.getJSONObject(BOOL).getJSONArray(SHOULD).getJSONObject(0),d);
-                    });
-                }
-            });
-            if(jsono.containsKey(BOOL)){
-                keywordsCombine.setMinimumMatch( keywordsCombine.getMinimumMatch()>0 && keywordsCombine.getMinimumMatch()<=jsono.getJSONObject(BOOL).getJSONArray(SHOULD).size() ?
-                        keywordsCombine.getMinimumMatch() : jsono.getJSONObject(BOOL).getJSONArray(SHOULD).size() );
-                jsono.getJSONObject(BOOL).put(MINIMUM_SHOULD_MATCH,keywordsCombine.getMinimumMatch());
-            }
-            return jsono;
-        }else{
-            return o();
-        }
-    }
+
 }

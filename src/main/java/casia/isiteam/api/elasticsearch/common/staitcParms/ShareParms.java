@@ -15,6 +15,7 @@ public class ShareParms extends ElasticResultParms{
      * symbol
      */
     public final static String DOT = "\\.";
+    public final static String DOT2 = ".";
     public final static String COMMA = ",";
     public final static String COLON = ":";
     public final static String SEMICOLON = ";";
@@ -30,6 +31,9 @@ public class ShareParms extends ElasticResultParms{
     public final static String RN = "\r\n";
     public final static String CROSS = "-";
     public final static String STAR = "*";
+    public final static String PLUS = "+";
+    public final static String AND = "&";
+    public final static String SIGN = "#";
 
 
     public final static String COMMA_OR_SEMICOLON = COMMA+LINE+SEMICOLON;
@@ -62,6 +66,7 @@ public class ShareParms extends ElasticResultParms{
     protected final static String IP_PORT = "ip-port";
     protected final static String USERNAME = "username";
     protected final static String PASSWORD = "password";
+    protected final static String DEBUG_INFO = "spring.log4j.elasticsearch.debug.open";
 
     /**
      * label

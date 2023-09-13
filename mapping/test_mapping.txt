@@ -40,9 +40,22 @@
                     "type": "integer"
                 },
                 "title": {
-                    "analyzer": "ik_max_word",
-                    "search_analyzer": "ik_max_word",
-                    "type": "text"
+                    "analyzer": "standard",
+                    "type": "text",
+                    "fielddata": true
+                },
+                "note": {
+                     "type": "nested",
+                      "properties": {
+                          "t1":{
+                            "analyzer": "standard",
+                            "type": "text"
+                          },
+                         "t2":{
+                            "analyzer": "standard",
+                             "type": "text"
+                          }
+                      }
                 },
                 "content": {
                     "analyzer": "ik_max_word",

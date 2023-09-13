@@ -44,6 +44,12 @@ public class CasiaEsDelete {
     public void setIndexName(String indexName,String indexType) {
         delApi.setIndexName(indexName,indexType);
     }
+    public void setIndexName(String indexName) {
+        delApi.setIndexName(indexName,null);
+    }
+    public void setIndexType(String indexType) {
+        delApi.setIndexName(null,indexType);
+    }
     /**
      * 根据索引名删除索引信息
      * @return true or false
@@ -90,7 +96,14 @@ public class CasiaEsDelete {
     public boolean clearCache(){
         return delApi.clearCache();
     }
-
+    /**
+     * delete index alias by indexName
+     * @param alias
+     * @return
+     */
+    public boolean deleteIndexAlias(String alias){
+        return delApi.delIndexAlias(alias);
+    }
 
     /**
      * delete data by query String
@@ -99,6 +112,42 @@ public class CasiaEsDelete {
     public int deleteDataByQuery(){
         return delApi.deleteDataByQuery();
     }
+    /**
+     * delete data Scroll by query String
+     * @return task id
+     */
+    public String deleteDataScrollByQuery(){
+        return delApi.deleteDataScrollByQuery();
+    }
+    /**
+     * fl
+     * @param refresh  wait_for
+     */
+    public void setRefresh(String refresh){
+        delApi.setRefresh(refresh);
+    };
+    /**
+     *
+     * @param conflicts proceed
+     */
+    public void setConflicts(String conflicts){
+        delApi.setConflicts(conflicts);
+    };
+    /**
+     *
+     * @param wait_for_completion   false
+     */
+    public void setWaitForCompletion(boolean wait_for_completion){
+        delApi.setWaitForCompletion(wait_for_completion);
+    };
+    /**
+     *
+     * @param scrollSize long size
+     */
+    public void setScrollSize(long scrollSize){
+        delApi.setScrollSize(scrollSize);
+    };
+
     /**
      * set filed range
      * @param rangeFields
@@ -143,4 +192,5 @@ public class CasiaEsDelete {
         }
         return this;
     }
+
 }

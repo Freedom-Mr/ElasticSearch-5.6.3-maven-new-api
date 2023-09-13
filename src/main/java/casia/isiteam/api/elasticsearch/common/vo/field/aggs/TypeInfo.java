@@ -16,16 +16,31 @@ public class TypeInfo {
      * 精度，默认3000，最大40000
      */
     private Integer precision;
+    /**
+     * field alias
+     */
+    private String alias;
 
-
-
+    public TypeInfo() {
+    }
     public TypeInfo(String field) {
         this.field = field;
+    }
+
+    public TypeInfo(String field, String alias) {
+        this.field = field;
+        this.alias = alias;
     }
 
     public TypeInfo(String field, Integer precision) {
         this.field = field;
         this.precision = precision;
+    }
+
+    public TypeInfo(String field, Integer precision, String alias) {
+        this.field = field;
+        this.precision = precision;
+        this.alias = alias;
     }
 
     public String getField() {
@@ -46,4 +61,12 @@ public class TypeInfo {
         return this;
     }
 
+    public String getAlias() {
+        return alias;
+    }
+
+    public TypeInfo setAlias(String alias) {
+        this.alias = alias;
+        return this;
+    }
 }

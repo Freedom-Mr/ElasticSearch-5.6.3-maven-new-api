@@ -27,7 +27,11 @@ public class PriceInfo {
      *
      */
     private AggsFieldBuider aggsFieldBuider;
-
+    /**
+     * field alias
+     */
+    private String alias;
+    public PriceInfo() { }
     public PriceInfo(String field, List<String> ranges) {
         this.field = field;
         if(Validator.check(ranges)){
@@ -38,6 +42,19 @@ public class PriceInfo {
             });
         }
     }
+
+    public PriceInfo(String field, List<String> ranges, String alias) {
+        this.field = field;
+        if(Validator.check(ranges)){
+            ranges.forEach(s->{
+                if( !this.ranges.contains(s) ){
+                    this.ranges.add(s);
+                }
+            });
+        }
+        this.alias = alias;
+    }
+
     public PriceInfo(String field, List<String> ranges, AggsFieldBuider aggsFieldBuider) {
         this.field = field;
         if(Validator.check(ranges)){
@@ -49,6 +66,20 @@ public class PriceInfo {
         }
         this.aggsFieldBuider=aggsFieldBuider;
     }
+
+    public PriceInfo(String field, List<String> ranges, AggsFieldBuider aggsFieldBuider, String alias) {
+        this.field = field;
+        if(Validator.check(ranges)){
+            ranges.forEach(s->{
+                if( !this.ranges.contains(s) ){
+                    this.ranges.add(s);
+                }
+            });
+        }
+        this.aggsFieldBuider = aggsFieldBuider;
+        this.alias = alias;
+    }
+
     public PriceInfo(String field, String ... range) {
         this.field = field;
         if(Validator.check(range)){
@@ -59,6 +90,16 @@ public class PriceInfo {
             }
         }
     }
+
+
+    public String getAlias() {
+        return alias;
+    }
+
+    public void setAlias(String alias) {
+        this.alias = alias;
+    }
+
     public String getField() {
         return field;
     }

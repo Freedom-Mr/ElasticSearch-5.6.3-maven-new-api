@@ -32,17 +32,39 @@ public class TopData {
      * not return field
      */
     private List<String> excludesFields = new ArrayList<>();
+    /**
+     * field alias
+     */
+    private String alias;
 
-    public TopData( Integer size) {
+    public TopData() {
+    }
+
+    public TopData(String alias) {
+        this.alias = alias;
+    }
+
+    public TopData(Integer size) {
         this.size = size;
     }
 
-    public TopData( Integer size, List<SortField> sortFields) {
+    public TopData(Integer size, String alias) {
+        this.size = size;
+        this.alias = alias;
+    }
+
+    public TopData(Integer size, List<SortField> sortFields) {
         this.size = size;
         this.sortFields = sortFields;
     }
 
-    public TopData( Integer size, List<SortField> sortFields, FieldOccurs fieldOccurs, String ... fields ) {
+    public TopData(Integer size, List<SortField> sortFields, String alias) {
+        this.size = size;
+        this.sortFields = sortFields;
+        this.alias = alias;
+    }
+
+    public TopData(Integer size, List<SortField> sortFields, FieldOccurs fieldOccurs, String ... fields ) {
         this.size = size;
         this.sortFields = sortFields;
         setReturnField(fieldOccurs,fields);
@@ -62,6 +84,15 @@ public class TopData {
                 }
             }
         }
+        return this;
+    }
+
+    public String getAlias() {
+        return alias;
+    }
+
+    public TopData setAlias(String alias) {
+        this.alias = alias;
         return this;
     }
 

@@ -9,6 +9,10 @@ package casia.isiteam.api.elasticsearch.common.enums;
  */
 public enum QueriesLevel {
     /**
+     * 查询全部
+     */
+    All("match_all"),
+    /**
      * 会进行分词(词组)，查询的时候，只要字段内容分词结果中 包含 词组中的任意一个 即可命中
      * 例如： elasticsearch 会对字段内容进行分词，"hello world"会被分成 hello 和 world ，
      * 查询"hello"时，会命中。

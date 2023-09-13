@@ -47,6 +47,12 @@ public class CasiaEsSearch {
     public void setIndexName(String indexName,String indexType) {
         searchApi.setIndexName(indexName,indexType);
     }
+    public void setIndexName(String indexName) {
+        searchApi.setIndexName(indexName,null);
+    }
+    public void setIndexType(String indexType) {
+        searchApi.setIndexName(null,indexType);
+    }
     /**
      * reset query
      */
@@ -184,6 +190,15 @@ public class CasiaEsSearch {
      */
     public CasiaEsSearch openProfile(){
         searchApi.openProfile();
+        return this;
+    }
+    /**
+     * open return Scroll info
+     * @param scroll_time : active time, 2m
+     * @return
+     */
+    public CasiaEsSearch setScroll(String scroll_time){
+        searchApi.openScroll(scroll_time);
         return this;
     }
     /**

@@ -2,6 +2,7 @@ package casia.isiteam.api.elasticsearch.controller;
 
 import casia.isiteam.api.elasticsearch.operation.interfaces.ElasticSearchApi;
 import casia.isiteam.api.elasticsearch.router.ApiRouter;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +44,12 @@ public class CasiaEsCreate {
     public void setIndexName(String indexName,String indexType) {
         createApi.setIndexName(indexName,indexType);
     }
+    public void setIndexName(String indexName) {
+        createApi.setIndexName(indexName,null);
+    }
+    public void setIndexType(String indexType) {
+        createApi.setIndexName(null,indexType);
+    }
     /**
      * 创建索引
      * @param indexName 索引名称
@@ -52,7 +59,9 @@ public class CasiaEsCreate {
     public Boolean createIndex(String indexName,String mapping){
         return createApi.creatIndex(indexName,mapping);
     }
-
+    public Boolean createIndex(String mapping){
+        return createApi.creatIndex(mapping);
+    }
     /**
      * write data to index
      * @param datas
@@ -88,7 +97,16 @@ public class CasiaEsCreate {
      * @return true or false
      */
     public Boolean insertField(String fieldName,Map<String, String> map){
-        return createApi.insertField(fieldName,map);
+        return createApi.insertField(fieldName,JSON.toJSON(map));
+    }
+    /**
+     * insert field to index
+     * @param fieldName field name
+     * @param json   field parms
+     * @return true or false
+     */
+    public Boolean insertField2 ( String fieldName, JSONObject json ){
+        return createApi.insertField(fieldName,json);
     }
     /**
      * close index
@@ -118,4 +136,45 @@ public class CasiaEsCreate {
     public Boolean refreshIndex(){
         return createApi.refreshIndex();
     }
+    /**
+     * old index reindex to new index
+     * @param oldIndexName old indexName
+     * @param newIndexName new indexName
+     * @return true or false
+     */
+    public Map<String,Object> reIndex(String oldIndexName,String newIndexName){
+        return createApi.reIndexData(oldIndexName,newIndexName);
+    }
+    /**
+     * create index alias by indexName
+     * @param alias
+     * @return
+     */
+    public boolean createIndexAlias(String alias){
+        return createApi.addIndexAlias(alias);
+    }
+
+    /**
+     * @param isEnable true OR false
+     * @return
+     */
+    public boolean routingAllocation(boolean isEnable){
+        return createApi.routingAllocation(isEnable);
+    };
+
+    /**
+     * @param isEnable true OR false
+     * @return
+     */
+    public boolean routingRebalance(boolean isEnable){
+        return createApi.routingRebalance(isEnable);
+    };
+
+    /**
+     * @param delayedTime 1s or 1m or 1h or 1d
+     * @return
+     */
+    public boolean delayedNodeSettings(String delayedTime){
+        return createApi.delayedNodeSettings(delayedTime);
+    };
 }

@@ -18,4 +18,5 @@ import java.util.Map;
 public class IndexAuthorStatus extends ShareParms {
     private Logger logger = LoggerFactory.getLogger( this.getClass());
     protected static Map<String, _Entity_Db> elasticDb = new HashMap<>();
+    protected static Boolean debugOut = false;
 }

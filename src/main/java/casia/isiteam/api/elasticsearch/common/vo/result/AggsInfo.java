@@ -12,7 +12,9 @@ import java.util.List;
  */
 public class AggsInfo {
     private String field;
+    private String keyAsString;
     private long total_Doc=-1;
+    private long total_Sum_Other_Doc=-1;
     private float total_Operation=-1;
     private String type;
     private List<AggsInfo> children = new ArrayList<>();
@@ -22,14 +24,43 @@ public class AggsInfo {
     public AggsInfo() {
 
     }
-
+    public AggsInfo(String type,String field) {
+        this.type = type;
+        this.field = field;
+    }
+    public AggsInfo(String type,String field, long total_Doc) {
+        this.type = type;
+        this.field = field;
+        this.total_Doc = total_Doc;
+    }
     public AggsInfo(String type,String field, long total_Doc, float total_Operation) {
         this.type = type;
         this.field = field;
         this.total_Doc = total_Doc;
         this.total_Operation = total_Operation;
     }
-
+    public AggsInfo(String type,String field, long total_Doc, float total_Operation,long total_Sum_Other_Doc) {
+        this.type = type;
+        this.field = field;
+        this.total_Doc = total_Doc;
+        this.total_Operation = total_Operation;
+        this.total_Sum_Other_Doc = total_Sum_Other_Doc;
+    }
+    public AggsInfo(String type,String field,String keyAsString ,long total_Doc, float total_Operation) {
+        this.type = type;
+        this.field = field;
+        this.keyAsString = keyAsString;
+        this.total_Doc = total_Doc;
+        this.total_Operation = total_Operation;
+    }
+    public AggsInfo(String type,String field,String keyAsString ,long total_Doc, float total_Operation,long total_Sum_Other_Doc) {
+        this.type = type;
+        this.field = field;
+        this.keyAsString = keyAsString;
+        this.total_Doc = total_Doc;
+        this.total_Operation = total_Operation;
+        this.total_Sum_Other_Doc = total_Sum_Other_Doc;
+    }
     public AggsInfo(String type,String field, long total_Doc,float total_Operation, List<AggsInfo> children) {
         this.type = type;
         this.field = field;
@@ -37,7 +68,14 @@ public class AggsInfo {
         this.total_Operation = total_Operation;
         this.children = children;
     }
-
+    public AggsInfo(String type,String field, long total_Doc,float total_Operation,long total_Sum_Other_Doc, List<AggsInfo> children) {
+        this.type = type;
+        this.field = field;
+        this.total_Doc = total_Doc;
+        this.total_Operation = total_Operation;
+        this.children = children;
+        this.total_Sum_Other_Doc = total_Sum_Other_Doc;
+    }
     public AggsInfo(String field, long total_Doc, float total_Operation, String type, List<AggsInfo> children, List<QueryInfo> queryInfos) {
         this.field = field;
         this.total_Doc = total_Doc;
@@ -46,7 +84,15 @@ public class AggsInfo {
         this.children = children;
         this.queryInfos = queryInfos;
     }
-
+    public AggsInfo(String field, long total_Doc, float total_Operation, String type,long total_Sum_Other_Doc, List<AggsInfo> children, List<QueryInfo> queryInfos) {
+        this.field = field;
+        this.total_Doc = total_Doc;
+        this.total_Operation = total_Operation;
+        this.type = type;
+        this.children = children;
+        this.queryInfos = queryInfos;
+        this.total_Sum_Other_Doc = total_Sum_Other_Doc;
+    }
     public AggsInfo(String field, long total_Doc, float total_Operation, String type, List<AggsInfo> children, List<QueryInfo> queryInfos, List<LonLatInfo> lonLatInfos) {
         this.field = field;
         this.total_Doc = total_Doc;
@@ -56,7 +102,16 @@ public class AggsInfo {
         this.queryInfos = queryInfos;
         this.lonLatInfos = lonLatInfos;
     }
-
+    public AggsInfo(String field, long total_Doc, float total_Operation, String type,long total_Sum_Other_Doc, List<AggsInfo> children, List<QueryInfo> queryInfos, List<LonLatInfo> lonLatInfos) {
+        this.field = field;
+        this.total_Doc = total_Doc;
+        this.total_Operation = total_Operation;
+        this.type = type;
+        this.children = children;
+        this.queryInfos = queryInfos;
+        this.lonLatInfos = lonLatInfos;
+        this.total_Sum_Other_Doc = total_Sum_Other_Doc;
+    }
     public List<QueryInfo> getQueryInfos() {
         return queryInfos;
     }
@@ -121,5 +176,22 @@ public class AggsInfo {
         }
 
         return this;
+    }
+
+    public String getKeyAsString() {
+        return keyAsString;
+    }
+
+    public AggsInfo setKeyAsString(String keyAsString) {
+        this.keyAsString = keyAsString;
+        return this;
+    }
+
+    public long getTotal_Sum_Other_Doc() {
+        return total_Sum_Other_Doc;
+    }
+
+    public void setTotal_Sum_Other_Doc(long total_Sum_Other_Doc) {
+        this.total_Sum_Other_Doc = total_Sum_Other_Doc;
     }
 }

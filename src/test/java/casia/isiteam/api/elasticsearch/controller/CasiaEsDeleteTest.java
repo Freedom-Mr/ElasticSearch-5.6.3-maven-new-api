@@ -18,48 +18,86 @@ import java.util.Arrays;
  */
 public class CasiaEsDeleteTest extends TestCase {
 
-    CasiaEsDelete casiaEsDelete = new CasiaEsDelete("data");
 
     public void testDeleteIndexByName() {
-        casiaEsDelete.setIndexName("test","");
+
+        CasiaEsDelete casiaEsDelete = new CasiaEsDelete("os1");
+        casiaEsDelete.setIndexName("toutiao-news-2021-08","toutiao");
         System.out.println(casiaEsDelete.deleteIndexByName());
     }
 
 
     public void testDeleteDataByIds() {
-        casiaEsDelete.setIndexName("test","test_data");
+
+        CasiaEsDelete casiaEsDelete = new CasiaEsDelete("data");
+        casiaEsDelete.setIndexName("aircraft_info","graph");
         System.out.println(casiaEsDelete.deleteDataByIds(Arrays.asList(new String[]{"123456789","1"})));
     }
 
     public void testDeleteDataById() {
-        casiaEsDelete.setIndexName("test","test_data");
-        System.out.println(casiaEsDelete.deleteDataById("1"));
+
+        CasiaEsDelete casiaEsDelete = new CasiaEsDelete("data");
+        casiaEsDelete.setIndexName("aircraft_info","graph");
+        System.out.println(casiaEsDelete.deleteDataById("e9523544ae3d16eb2cd930ca89561dc2"));
     }
 
     public void testDeleteScrollByIds() {
+
+        CasiaEsDelete casiaEsDelete = new CasiaEsDelete("data");
         System.out.println(casiaEsDelete.deleteScrollByIds(Arrays.asList(new String[]{"DXF1ZXJ5QW5kRmV0Y2gBAAAAAAAAALQWZzZzanNIOGVULTZWS0Z4ckh6amVwUQ=="})));
     }
 
     public void testDeleteScrollByAll() {
+
+        CasiaEsDelete casiaEsDelete = new CasiaEsDelete("data");
         System.out.println(casiaEsDelete.deleteScrollByAll());
     }
 
     public void testClearCache() {
+
+        CasiaEsDelete casiaEsDelete = new CasiaEsDelete("data");
         casiaEsDelete.setIndexName("test","test_data");
         System.out.println(casiaEsDelete.clearCache());
     }
 
     public void testDeleteDataByQuery() {
-        casiaEsDelete.setIndexName("test","test_data");
+
+        CasiaEsDelete casiaEsDelete = new CasiaEsDelete("data");
+        casiaEsDelete.setIndexName("arr_adsa-2021-04-22","graph");
         casiaEsDelete.setRange(
-                  new RangeField(FieldOccurs.INCLUDES,"pubtime","2020-05-09 07:36:00",null)
+                  new RangeField(FieldOccurs.INCLUDES,"pubtime",null,"2020-11-16 22:04:34")
         );
-        casiaEsDelete.setQueryKeyWords(
+        /*casiaEsDelete.setQueryKeyWords(
                 new KeywordsCombine(2,
                         new KeyWordsBuider("title","肺炎", FieldOccurs.INCLUDES, QueriesLevel.Term),
                         new KeyWordsBuider("title","病毒",FieldOccurs.INCLUDES, QueriesLevel.Term))
-        );
+        );*/
         int deleteTotal= casiaEsDelete.deleteDataByQuery();
         System.out.println(deleteTotal);
+    }
+    public void testDeleteDataScrollByQuery() {
+
+        CasiaEsDelete casiaEsDelete = new CasiaEsDelete("data");
+        casiaEsDelete.setIndexName("arr_adsa-2021-04-22","graph");
+//        casiaEsDelete.setRange(
+//                new RangeField(FieldOccurs.INCLUDES,"pubtime",null,"2020-11-16 22:04:34")
+//        );
+        casiaEsDelete.setQueryKeyWords(
+                new KeywordsCombine(1,
+//                        new KeyWordsBuider("title","肺炎", FieldOccurs.INCLUDES, QueriesLevel.Term),
+                        new KeyWordsBuider("title","张高丽",FieldOccurs.INCLUDES, QueriesLevel.Phrase))
+        );
+        casiaEsDelete.setConflicts("proceed");
+        casiaEsDelete.setRefresh("wait_for");
+        casiaEsDelete.setWaitForCompletion(false);
+        casiaEsDelete.setScrollSize(1);
+        String task = casiaEsDelete.deleteDataScrollByQuery();
+        System.out.println(task);
+    }
+    public void testDeleteIndexAlias() {
+        CasiaEsDelete casiaEsDelete = new CasiaEsDelete("data");
+        casiaEsDelete.setIndexName("demo_test","test_data");
+        Boolean rs= casiaEsDelete.deleteIndexAlias("wu");
+        System.out.println(rs);
     }
 }

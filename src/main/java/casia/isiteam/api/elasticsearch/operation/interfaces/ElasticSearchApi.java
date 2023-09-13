@@ -1,12 +1,18 @@
 package casia.isiteam.api.elasticsearch.operation.interfaces;
 
 import casia.isiteam.api.elasticsearch.common.enums.FieldOccurs;
+import casia.isiteam.api.elasticsearch.common.enums.GeoQueryLevel;
 import casia.isiteam.api.elasticsearch.common.vo.field.aggs.AggsFieldBuider;
 import casia.isiteam.api.elasticsearch.common.vo.result.SearchResult;
 import casia.isiteam.api.elasticsearch.common.vo.field.search.KeywordsCombine;
 import casia.isiteam.api.elasticsearch.common.vo.field.RangeField;
 import casia.isiteam.api.elasticsearch.common.vo.field.SortField;
+import casia.isiteam.api.elasticsearch.common.vo.security.RoleInfomation;
+import casia.isiteam.api.elasticsearch.common.vo.security.UserInfomation;
 import casia.isiteam.api.elasticsearch.operation.security.EncapsulationInfo;
+import casia.isiteam.api.toolutil.Validator;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 import java.util.List;
@@ -35,6 +41,7 @@ public class ElasticSearchApi extends EncapsulationInfo {
         void setHighlight(String pre_tags,String post_tags,String ... fileds);
         void setMinScore(Float min_score);
         void openProfile();
+        void openScroll(String scroll_time);
         void setRange(RangeField ... rangeFields);
         void setFieldExistsFilter(FieldOccurs fieldOccurs,String ... fileds);
         void setQueryKeyWords(KeywordsCombine... keywordsCombines);
@@ -53,13 +60,19 @@ public class ElasticSearchApi extends EncapsulationInfo {
         void config(List<String> ipPorts,String username,String password);
         void setIndexName(String indexName,String indexType);
         boolean creatIndex(String indexName,String mapping);
+        boolean creatIndex(String mapping);
         boolean writeData(List<JSONObject> datas , String uniqueKeyName ,String bakingName);
         Map<String,Object> writeDatas( List<JSONObject> datas , String uniqueKeyName ,String bakingName);
-        boolean insertField(String fieldName,Map<String, String> map);
+        boolean insertField(String fieldName, Object json);
         boolean closeIndex();
         boolean openIndex();
         boolean flushIndex();
         boolean refreshIndex();
+        Map<String,Object> reIndexData(String oldIndexName,String newIndexName);
+        boolean addIndexAlias(String alias);
+        boolean routingAllocation(boolean isEnable);
+        boolean routingRebalance(boolean isEnable);
+        boolean delayedNodeSettings(String delayedTime);
     }
     public interface QueryApi {
         void config(String driverName);
@@ -68,6 +81,8 @@ public class ElasticSearchApi extends EncapsulationInfo {
         void setIndexName(String indexName,String indexType);
         JSONObject queryIndexByName(String indexName);
         List<String> queryIndexNames();
+        Map<String,List<String>> queryIndexAlias(String wildcard);
+        JSONObject queryTask(String taskId);
     }
     public interface DelApi {
         void config(String driverName);
@@ -81,11 +96,17 @@ public class ElasticSearchApi extends EncapsulationInfo {
         boolean deleteScrollByAll();
         boolean clearCache();
 
+        void reset();
+        void setRefresh(String refresh);
+        void setConflicts(String conflicts);
+        void setWaitForCompletion(boolean wait_for_completion);
+        void setScrollSize(long scrollSize);
         void setQueryKeyWords(KeywordsCombine... keywordsCombines);
         void setRange(RangeField ... rangeFields);
         void setFieldExistsFilter(FieldOccurs fieldOccurs,String ... fileds);
         int deleteDataByQuery();
-
+        String deleteDataScrollByQuery();
+        boolean delIndexAlias(String alias);
     }
 
     public interface UpadeApi {
@@ -94,6 +115,18 @@ public class ElasticSearchApi extends EncapsulationInfo {
         void config(List<String> ipPorts,String username,String password);
         void setIndexName(String indexName,String indexType);
         boolean updateParameterById (String _id ,Map< String, Object > parameters);
+        boolean updateParameterById (String _id ,JSONObject parameters);
+        boolean upsertParameterById (String _id ,JSONObject update_parameters,JSONObject create_parameters);
+        Map<String,Object> updateParameterByQuery (String field, Object newValue);
+        boolean moveShardRoute (int shard_id ,String from_node_name,String to_node_name);
+        boolean cancelShardRoute (int shard_id ,String node_name);
+        boolean allocateShardRoute (int shard_id ,String node_name);
+        boolean updateNumberOfReplicas (int replicas_number );
+
+        void reset();
+        void setQueryKeyWords(KeywordsCombine... keywordsCombines);
+        void setRange(RangeField ... rangeFields);
+        void setFieldExistsFilter(FieldOccurs fieldOccurs,String ... fileds);
     }
 
     public interface SqlApi {
@@ -104,9 +137,28 @@ public class ElasticSearchApi extends EncapsulationInfo {
         SearchResult executeQueryInfo();
     }
 
-    public void addIndexName(String indexName,String indexType) {
-        indexParmsStatus.setIndexName(indexName);
-        indexParmsStatus.setIndexType(indexType);
+    public interface SecurityApi {
+        void config(String driverName);
+        void config(List<String> ipPorts);
+        void config(List<String> ipPorts,String username,String password);
+        void setIndexName(String indexName,String indexType);
+        UserInfomation searchAuthenticate();
+        List<UserInfomation> searchAllUser();
+        boolean resetPassword(String password);
+        boolean addUser(UserInfomation userInfomation);
+        boolean delUser(UserInfomation userInfomation);
+        boolean userState(boolean isEnable,String userName);
+        List<RoleInfomation> allRoles();
+        RoleInfomation getRoleInfo(String roleName);
+        boolean addRole(RoleInfomation roleInfomation);
+        boolean delRole(String roleName);
     }
+
+
+    public void addIndexName(String indexName,String indexType) {
+        if(Validator.check(indexName)){indexParmsStatus.setIndexName(indexName);};
+        if(Validator.check(indexType)){indexParmsStatus.setIndexType(indexType);};
+    }
+
 
 }

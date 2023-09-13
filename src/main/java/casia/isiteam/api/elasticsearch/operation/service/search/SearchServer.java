@@ -5,6 +5,7 @@ import casia.isiteam.api.elasticsearch.common.enums.FieldOccurs;
 import casia.isiteam.api.elasticsearch.common.enums.GeoLevel;
 import casia.isiteam.api.elasticsearch.common.enums.GeoQueryLevel;
 import casia.isiteam.api.elasticsearch.common.status.IndexSearchBuilder;
+import casia.isiteam.api.elasticsearch.common.vo.field.search.KeyWordsBuider;
 import casia.isiteam.api.elasticsearch.common.vo.result.SearchResult;
 import casia.isiteam.api.elasticsearch.common.vo.field.aggs.AggsFieldBuider;
 import casia.isiteam.api.elasticsearch.common.vo.field.search.KeywordsCombine;
@@ -17,10 +18,13 @@ import casia.isiteam.api.elasticsearch.util.StringAppend;
 import casia.isiteam.api.http.controller.CasiaHttpUtil;
 import casia.isiteam.api.toolutil.Validator;
 import casia.isiteam.api.toolutil.regex.CasiaRegexUtil;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.stream.Collectors;
 
 /**
  * ClassName: SearchServer
@@ -106,16 +110,22 @@ public class SearchServer extends ElasticSearchApi implements ElasticSearchApi.S
         indexSearchBuilder.putSearchCover(PROFILE,true);
         indexSearchBuilder.putCountCover(PROFILE,true);
     }
+    public void openScroll(String scroll_time){
+        indexSearchBuilder.putScrollTime(scroll_time);
+    };
     @Override
     public void setRange(RangeField ... rangeFields) {
         for(RangeField filed : rangeFields ){
-            JSONObject rangefiled = o(RANGE,o(filed.getField(),o(o(GTE,filed.getGte()),LTE,filed.getLte())));
+            JSONObject rangefiled = filed.getField().contains(DOT2)?
+                    o( NESTED, o(o(PATH,filed.getField().substring(0,filed.getField().lastIndexOf(DOT2))), QUERY,o(BOOL, o( MUST,a( o(RANGE,o(filed.getField(),o(o(filed.getIncludeLower()?GTE:GT,filed.getGte()),filed.getIncludeUpper()?LTE:LT,filed.getLte()))) )))) ) :
+                    o(RANGE,o(filed.getField(),o(o(filed.getIncludeLower()?GTE:GT,filed.getGte()),filed.getIncludeUpper()?LTE:LT,filed.getLte())));
+            String isNESTED = filed.getField().contains(DOT2)? NESTED : RANGE ;
             if( !indexSearchBuilder.addQueryBigBoolKeyArray(filed.getFieldOccurs().getIsMust()).
                     getQueryBigBool().getJSONArray(filed.getFieldOccurs().getIsMust()).stream().filter(s ->
-                    JSONObject.parseObject(s.toString()).containsKey(RANGE) &&  JSONObject.parseObject(s.toString()).getString(RANGE) .equals(
-                            rangefiled.getString(RANGE)
-                    )
-            ).findFirst().isPresent() ){
+                            JSONObject.parseObject(s.toString()).containsKey(isNESTED) &&  JSONObject.parseObject(s.toString()).getString(isNESTED) .equals(
+                                    rangefiled.getString(isNESTED)
+                            )
+                    ).findFirst().isPresent() ){
                 indexSearchBuilder.getQueryBigBool().getJSONArray(filed.getFieldOccurs().getIsMust()).add(rangefiled);
             }
         }
@@ -123,10 +133,11 @@ public class SearchServer extends ElasticSearchApi implements ElasticSearchApi.S
     @Override
     public void setFieldExistsFilter(FieldOccurs fieldOccurs,String ... fileds) {
         for(String filed : fileds ){
-            JSONObject existsFiled = o(EXISTS,o(FIELD,filed));
+            JSONObject existsFiled = filed.contains(DOT2)? o( NESTED, o(o(PATH,filed.substring(0,filed.lastIndexOf(DOT2))), QUERY,o(BOOL, o( MUST,a( o(EXISTS,o(FIELD,filed)) )))) ) : o(EXISTS,o(FIELD,filed));
+            String isNESTED = filed.contains(DOT2)? NESTED : EXISTS ;
             if( !indexSearchBuilder.addQueryBigBoolKeyArray(fieldOccurs.getIsMust()).getQueryBigBool().getJSONArray(fieldOccurs.getIsMust()).stream().filter(s ->
-                    JSONObject.parseObject(s.toString()).containsKey(EXISTS) &&  JSONObject.parseObject(s.toString()).getString(EXISTS) .equals(
-                            existsFiled.getString(EXISTS)
+                    JSONObject.parseObject(s.toString()).containsKey(isNESTED) &&  JSONObject.parseObject(s.toString()).getString(isNESTED) .equals(
+                            existsFiled.getString(isNESTED)
                     )
             ).findFirst().isPresent() ){
                 indexSearchBuilder.getQueryBigBool().getJSONArray(fieldOccurs.getIsMust()).add(existsFiled);
@@ -148,92 +159,6 @@ public class SearchServer extends ElasticSearchApi implements ElasticSearchApi.S
     }
 
     /**
-     * pars translate query build keyword
-     * @param jsono
-     * @param keywordsCombine
-     * @return
-     */
-    private JSONObject parsQueryKeyWords(JSONObject jsono,KeywordsCombine keywordsCombine){
-        if( Validator.check(keywordsCombine) && Validator.check(keywordsCombine.getKeyWordsBuiders()) ){
-            keywordsCombine.getKeyWordsBuiders().forEach(s->{
-                String SM = Validator.check(s.getFieldOccurs()) && s.getFieldOccurs().getIsMust().equals(MUST_NOT) ? MUST_NOT : SHOULD;
-                if( !Validator.check(s.getKeywordsCombines()) ){
-                    JSONObject matchjson = o();
-
-                    //关键词格式
-                    if( Validator.check(s.getQueriesLevel()) ){
-                        matchjson.put( s.getQueriesLevel().getLevel(),o(s.getField(),s.getKeyWord())) ;
-                    }
-                    //地理位置格式
-                    else if( Validator.check(s.getGeoQueryLevel()) && Validator.check(s.getGeoQueryInfo()) ){
-                        if( s.getGeoQueryLevel().getLevel() .equals(GeoQueryLevel.Polygon.getLevel()) ){
-                            JSONArray jsonArray =a();
-                            s.getGeoQueryInfo().getPolygon().forEach(lal->jsonArray.add(o(o(LAT,lal.getLat()),LON,lal.getLon())));
-                            matchjson.put(s.getGeoQueryLevel().getLevel(),o(s.getField(),o(POINTS,jsonArray) ));
-                        }else if( s.getGeoQueryLevel().getLevel() .equals(GeoQueryLevel.Box.getLevel()) ){
-                            matchjson.put(s.getGeoQueryLevel().getLevel(),o(s.getField(),o()));
-                            s.getGeoQueryInfo().getBox().forEach((k,v)->{
-                                matchjson.getJSONObject(s.getGeoQueryLevel().getLevel()).getJSONObject(s.getField()).put(k,o(o(LAT,v.getLat()),LON,v.getLon()));
-                            });
-                        }else if( s.getGeoQueryLevel().getLevel() .equals(GeoQueryLevel.Distance.getLevel()) ){
-                            matchjson.put(s.getGeoQueryLevel().getLevel(),o());
-                            matchjson.getJSONObject(s.getGeoQueryLevel().getLevel()).put(DISTANCE, s.getGeoQueryInfo().getDistance() );
-                            matchjson.getJSONObject(s.getGeoQueryLevel().getLevel()).put(s.getField(),o(o(LAT,s.getGeoQueryInfo().getDistanceGeo().getLat()),LON,s.getGeoQueryInfo().getDistanceGeo().getLon()));
-                        }else if( s.getGeoQueryLevel().getLevel() .equals(GeoQueryLevel.DistanceRange.getLevel()) ){
-                            matchjson.put(s.getGeoQueryLevel().getLevel(),o());
-                            matchjson.getJSONObject(s.getGeoQueryLevel().getLevel()).put(FROM, s.getGeoQueryInfo().getFrom() );
-                            matchjson.getJSONObject(s.getGeoQueryLevel().getLevel()).put(TO, s.getGeoQueryInfo().getTo() );
-                            matchjson.getJSONObject(s.getGeoQueryLevel().getLevel()).put(s.getField(),o(o(LAT,s.getGeoQueryInfo().getDistanceGeo().getLat()),LON,s.getGeoQueryInfo().getDistanceGeo().getLon()));
-                        }
-                    }
-                    //其他
-                    else{
-                        return;
-                    }
-
-                    //组装
-                    if( keywordsCombine.getKeyWordsBuiders().size() == 1 && !SM.equals(MUST_NOT) ){
-                        jsono.putAll(matchjson);
-                        return;
-                    }
-                    oAddoKey(jsono,BOOL);
-                    if( SM.equals(MUST_NOT) ){
-                        oAddaKey(jsono.getJSONObject(BOOL),SHOULD);
-                        JSONObject js = o(BOOL,o(MUST_NOT,matchjson));
-                        if( !jsono.getJSONObject(BOOL).getJSONArray(SHOULD).stream().filter(a->
-                                a.toString() .equals( js.toString() ) ).findFirst().isPresent()
-                        ){
-                            jsono.getJSONObject(BOOL).getJSONArray(SHOULD).add( js );
-                        }
-                    }else{
-                        oAddaKey(jsono.getJSONObject(BOOL),SM);
-                        if( !jsono.getJSONObject(BOOL).getJSONArray(SM).stream().filter(a->
-                                a.toString() .equals( matchjson.toString() ) ).findFirst().isPresent()
-                        ){
-                            jsono.getJSONObject(BOOL).getJSONArray(SM).add( matchjson );
-                        }
-                    }
-                }else {
-                    s.getKeywordsCombines().forEach(d->{
-                        oAddoKey(jsono,BOOL);
-                        oAddaKey(jsono.getJSONObject(BOOL),SHOULD);
-                        jsono.getJSONObject(BOOL).getJSONArray(SHOULD).add(0,o());
-                        parsQueryKeyWords(jsono.getJSONObject(BOOL).getJSONArray(SHOULD).getJSONObject(0),d);
-                    });
-                }
-            });
-            if(jsono.containsKey(BOOL)){
-                keywordsCombine.setMinimumMatch( keywordsCombine.getMinimumMatch()>0 && keywordsCombine.getMinimumMatch()<=jsono.getJSONObject(BOOL).getJSONArray(SHOULD).size() ?
-                        keywordsCombine.getMinimumMatch() : jsono.getJSONObject(BOOL).getJSONArray(SHOULD).size() );
-                jsono.getJSONObject(BOOL).put(MINIMUM_SHOULD_MATCH,keywordsCombine.getMinimumMatch());
-            }
-            return jsono;
-        }else{
-            return o();
-        }
-    }
-
-    /**
      *  build Aggregations info
      * @param aggsFieldBuiders
      */
@@ -247,41 +172,70 @@ public class SearchServer extends ElasticSearchApi implements ElasticSearchApi.S
         //类型
         if( Validator.check(aggsFieldBuider.getCardinalitys()) ){
             aggsFieldBuider.getCardinalitys().forEach(s->{
-                String newField = StringAppend.aggsFieldAppend(AggsLevel.Group,s.getField());
-                if( !object.containsKey( newField) ){
-                    object.put( newField ,
-                            o(AggsLevel.Group.getLevel(),
-                                    Validator.check(s.getPrecision()) ?
-                                            o(o(FIELD,s.getField()),PRECISION_THRESHOLD,s.getPrecision()) :
-                                            o(FIELD,s.getField()) ) );
-                }
+                String newField = StringAppend.aggsFieldAppend(AggsLevel.Group,s.getField().replaceAll(SIGN,DOT),s.getAlias());
+                if( !object.containsKey(newField) ){
+                    JSONObject cardinality = o(AggsLevel.Group.getLevel(),Validator.check(s.getPrecision()) ? o(o(FIELD,s.getField().replaceAll(SIGN,DOT)),PRECISION_THRESHOLD,s.getPrecision()):o(FIELD,s.getField().replaceAll(SIGN,DOT)) );
+                    if( s.getField().contains(DOT2) ){
+                        String[] fileds = s.getField().split(DOT);
+                        JSONObject aggsn = o();
+                        JSONObject child_aggs = o();
+                        String path_filed = s.getField();
+                        for (int i=fileds.length-1;i>=0;i--) {
+                            path_filed =fileds.length-1 == i ? path_filed: path_filed.substring(0,path_filed.lastIndexOf(DOT2));
+                            child_aggs = JSONObject.parseObject(aggsn.toString());aggsn.clear();
+                            aggsn = o(newField,i==fileds.length-1 ? cardinality : o(o(AGGS,child_aggs),NESTED,o(PATH,path_filed.replaceAll(SIGN,DOT))));
+                        }
+                        object.put(newField,aggsn.getJSONObject(newField));
+                    }else{
+                        object.put(newField ,cardinality);
+                    }
+                };
             });
         }
-        //TOP 聚合字段信息
+        //Term 聚合字段信息
         if( Validator.check(aggsFieldBuider.getTermInfos()) ){
             aggsFieldBuider.getTermInfos().forEach(s->{
-                String newField = StringAppend.aggsFieldAppend(AggsLevel.Term,s.getField());
+                String newField = StringAppend.aggsFieldAppend(AggsLevel.Term,s.getField().replaceAll(SIGN,DOT),s.getAlias());
                 if( !object.containsKey( newField) ){
-                    object.put( newField ,
-                        o(AggsLevel.Term.getLevel(),
+                    JSONObject terms = o(AggsLevel.Term.getLevel(),
                             o(
-                                o(
                                     o(
-                                        o(
-                                            o(FIELD,s.getField()),
-                                            Validator.check(s.getSize()) ? SIZE : NONE,s.getSize()
-                                        ),
-                                        Validator.check(s.getShardSize()) ? SHARD_SIZE : NONE,s.getShardSize()
+                                            o(
+                                                    o(
+                                                            o(FIELD,s.getField().replaceAll(SIGN,DOT)),
+                                                            Validator.check(s.getSize()) ? SIZE : NONE,s.getSize()
+                                                    ),
+                                                    Validator.check(s.getShardSize()) ? SHARD_SIZE : NONE,s.getShardSize()
+                                            ),
+                                            Validator.check(s.getMinDocTotal()) ? MIN_DOC_COUNT : NONE,s.getMinDocTotal()
                                     ),
-                                    Validator.check(s.getMinDocTotal()) ? MIN_DOC_COUNT : NONE,s.getMinDocTotal()
-                                ),
-                                Validator.check(s.getSortOrder()) ? ORDER : NONE ,o(_COUNT, Validator.check(s.getSortOrder()) ? s.getSortOrder().getSymbolValue() : NONE)
+                                    Validator.check(s.getSortOrder()) ? ORDER : NONE ,o(_COUNT, Validator.check(s.getSortOrder()) ? s.getSortOrder().getSymbolValue() : NONE)
                             )
-                        )
                     );
-                    if( Validator.check(s.getAggsFieldBuider()) ){
-                        o( object.getJSONObject(newField),AGGS,o());
-                        pareAggsFieldBuider(s.getAggsFieldBuider(),object.getJSONObject(newField).getJSONObject(AGGS));
+//
+                    if( s.getField().contains(DOT2) ){
+                        String[] fileds = s.getField().split(DOT);
+                        JSONObject aggsn = o();
+                        JSONObject child_aggs = o();
+                        String path_filed = s.getField();
+                        for (int i=fileds.length-1;i>=0;i--) {
+                            path_filed =fileds.length-1 == i ? path_filed: path_filed.substring(0,path_filed.lastIndexOf(DOT2));
+                            child_aggs = JSONObject.parseObject(aggsn.toString());aggsn.clear();
+                            aggsn = o(newField,i==fileds.length-1 ? terms : o(o(AGGS,child_aggs),NESTED,o(PATH,path_filed.replaceAll(SIGN,DOT))));
+                            if( fileds.length-1 == i && Validator.check(s.getAggsFieldBuider())){
+                                o(aggsn.getJSONObject(newField),AGGS,o());
+                                pareAggsFieldBuider(s.getAggsFieldBuider(),aggsn.getJSONObject(newField).getJSONObject(AGGS));
+                            }
+                        }
+                        if( !object.containsKey(newField) ){
+                            object.put(newField,aggsn.getJSONObject(newField));
+                        }
+                    }else{
+                        object.put(newField ,terms);
+                        if( Validator.check(s.getAggsFieldBuider()) ){
+                            o( object.getJSONObject(newField),AGGS,o());
+                            pareAggsFieldBuider(s.getAggsFieldBuider(),object.getJSONObject(newField).getJSONObject(AGGS));
+                        }
                     }
                 }
             });
@@ -289,25 +243,32 @@ public class SearchServer extends ElasticSearchApi implements ElasticSearchApi.S
         //date
         if( Validator.check(aggsFieldBuider.getDateInfos()) ){
             aggsFieldBuider.getDateInfos().forEach(s->{
-                String newField = StringAppend.aggsFieldAppend(AggsLevel.Date,s.getField());
+                String newField = StringAppend.aggsFieldAppend(AggsLevel.Date,s.getField().replaceAll(SIGN,DOT),s.getAlias());
+                JSONObject  date_histogram = o(AggsLevel.Date.getLevel(),o(o(o(o(o(FIELD,s.getField().replaceAll(SIGN,DOT)),FORMAT,s.getFormat()),INTERVAL,s.getInterval()),Validator.check(s.getMinDocTotal()) ? MIN_DOC_COUNT : NONE,s.getMinDocTotal()),EXTENDED_BOUNDS,o(o( Validator.check(s.getMinDate()) ? MIN :NONE,s.getMinDate()),Validator.check(s.getMaxDate()) ? MAX :NONE,s.getMaxDate() )));
                 if( !object.containsKey( newField) ){
-                    object.put( newField ,
-                            o(AggsLevel.Date.getLevel(),
-                                o(
-                                    o(
-                                        o(
-                                            o(FIELD,s.getField()),
-                                            FORMAT,s.getFormat()
-                                        ),
-                                        INTERVAL,s.getInterval()
-                                    ),
-                                    Validator.check(s.getMinDocTotal()) ? MIN_DOC_COUNT : NONE,s.getMinDocTotal()
-                                )
-                            )
-                    );
-                    if( Validator.check(s.getAggsFieldBuider()) ){
-                        o( object.getJSONObject(newField),AGGS,o());
-                        pareAggsFieldBuider(s.getAggsFieldBuider(),object.getJSONObject(newField).getJSONObject(AGGS));
+                    if(s.getField().contains(DOT2) ){
+                        String[] fileds = s.getField().split(DOT);
+                        JSONObject aggsn = o();
+                        JSONObject child_aggs = o();
+                        String path_filed = s.getField();
+                        for (int i=fileds.length-1;i>=0;i--) {
+                            path_filed =fileds.length-1 == i ? path_filed: path_filed.substring(0,path_filed.lastIndexOf(DOT2));
+                            child_aggs = JSONObject.parseObject(aggsn.toString());aggsn.clear();
+                            aggsn = o(newField,i==fileds.length-1 ? date_histogram : o(o(AGGS,child_aggs),NESTED,o(PATH,path_filed.replaceAll(SIGN,DOT))));
+                            if( fileds.length-1 == i && Validator.check(s.getAggsFieldBuider())){
+                                o(aggsn.getJSONObject(newField),AGGS,o());
+                                pareAggsFieldBuider(s.getAggsFieldBuider(),aggsn.getJSONObject(newField).getJSONObject(AGGS));
+                            }
+                        }
+                        if( !object.containsKey(newField) ){
+                            object.put(newField,aggsn.getJSONObject(newField));
+                        }
+                    }else {
+                        object.put(newField ,date_histogram);
+                        if( Validator.check(s.getAggsFieldBuider()) ){
+                            o( object.getJSONObject(newField),AGGS,o());
+                            pareAggsFieldBuider(s.getAggsFieldBuider(),object.getJSONObject(newField).getJSONObject(AGGS));
+                        }
                     }
                 }
             });
@@ -315,39 +276,61 @@ public class SearchServer extends ElasticSearchApi implements ElasticSearchApi.S
         //Operation
         if( Validator.check(aggsFieldBuider.getOperationInfos()) ){
             aggsFieldBuider.getOperationInfos().forEach(s->{
-                String newField = StringAppend.aggsFieldAppend(s.getOperationLevel().getLevel(),s.getField());
+                String newField = StringAppend.aggsFieldAppend(s.getOperationLevel().getLevel(),s.getField().replaceAll(SIGN,DOT),s.getAlias());
                 if( !object.containsKey( newField) ){
-                    object.put( newField ,
-                            o(s.getOperationLevel().getLevel(),
-                                    o( o(FIELD,s.getField()), Validator.check(s.getMissing()) ? MISSING : NONE,s.getMissing())
-                            )
-                    );
+                    JSONObject operation =  o(s.getOperationLevel().getLevel(),o( o(FIELD,s.getField().replaceAll(SIGN,DOT)), Validator.check(s.getMissing()) ? MISSING : NONE,s.getMissing()));
+                    if( s.getField().contains(DOT2) ){
+                        String[] fileds = s.getField().split(DOT);
+                        JSONObject aggsn = o();
+                        JSONObject child_aggs = o();
+                        String path_filed = s.getField();
+                        for (int i=fileds.length-1;i>=0;i--) {
+                            path_filed =fileds.length-1 == i ? path_filed: path_filed.substring(0,path_filed.lastIndexOf(DOT2));
+                            child_aggs = JSONObject.parseObject(aggsn.toString());aggsn.clear();
+                            aggsn = o(newField,i==fileds.length-1 ? operation : o(o(AGGS,child_aggs),NESTED,o(PATH,path_filed.replaceAll(SIGN,DOT))));
+                        }
+                        object.put(newField,aggsn.getJSONObject(newField));
+                    }else{
+                        object.put(newField ,operation);
+                    }
                 }
             });
         }
         //Geo
         if( Validator.check(aggsFieldBuider.getGeoInfos()) ){
             aggsFieldBuider.getGeoInfos().forEach(s->{
-                String newField = StringAppend.aggsFieldAppend(s.getGeoLevel().getLevel(),s.getField());
+                String newField = StringAppend.aggsFieldAppend(s.getGeoLevel().getLevel(),s.getField().replaceAll(SIGN,DOT),s.getAlias());
                 if( !object.containsKey( newField) ){
-                    object.put( newField ,
-                            o(s.getGeoLevel().getLevel(),
-                                    o( o(FIELD,s.getField()),
+                    JSONObject geo = o(s.getGeoLevel().getLevel(),
+                            o( o(FIELD,s.getField().replaceAll(SIGN,DOT)),
                                     s.getGeoLevel().getLevel().equals(GeoLevel.Bounds.getLevel()) && Validator.check(s.getWrap()) ? WRAP_LONGITUDE : NONE,s.getWrap())
-                            )
                     );
+                    if( s.getField().contains(DOT2) ){
+                        String[] fileds = s.getField().split(DOT);
+                        JSONObject aggsn = o();
+                        JSONObject child_aggs = o();
+                        String path_filed = s.getField();
+                        for (int i=fileds.length-1;i>=0;i--) {
+                            path_filed =fileds.length-1 == i ? path_filed: path_filed.substring(0,path_filed.lastIndexOf(DOT2));
+                            child_aggs = JSONObject.parseObject(aggsn.toString());aggsn.clear();
+                            aggsn = o(newField,i==fileds.length-1 ? geo : o(o(AGGS,child_aggs),NESTED,o(PATH,path_filed.replaceAll(SIGN,DOT))));
+                        }
+                        object.put(newField,aggsn.getJSONObject(newField));
+                    }else{
+                        object.put( newField ,geo);
+                    }
                 }
             });
         }
         //TopData
         if( Validator.check(aggsFieldBuider.getTopDatas()) ){
             aggsFieldBuider.getTopDatas().forEach(s->{
-                String newField = StringAppend.aggsFieldAppend(AggsLevel.Top,HITS+DATA);
+                String newField = StringAppend.aggsFieldAppend(AggsLevel.Top,Validator.check(s.getAlias()) ? s.getAlias() : HITS+DATA );
                 if( !object.containsKey( newField) ){
                     JSONArray sorts = a();
                     s.getSortFields().stream().forEach(c->{
-                        JSONObject json =o(c.getField(), o(ORDER,c.getSortOrder().getSymbolValue()));
-                        if( sorts.contains(json) ){
+                        JSONObject json =o(c.getField().replaceAll(SIGN,DOT), o(ORDER,c.getSortOrder().getSymbolValue()));
+                        if( !sorts.contains(json) ){
                             sorts.add(json);
                         }
                     });
@@ -384,7 +367,7 @@ public class SearchServer extends ElasticSearchApi implements ElasticSearchApi.S
         //Price 范围文档数
         if( Validator.check(aggsFieldBuider.getPriceInfos()) ){
             aggsFieldBuider.getPriceInfos().forEach(s->{
-                String newField = StringAppend.aggsFieldAppend(AggsLevel.Price,s.getField());
+                String newField = StringAppend.aggsFieldAppend(AggsLevel.Price,s.getField().replaceAll(SIGN,DOT),s.getAlias());
                 if( !object.containsKey( newField) ){
                     JSONArray array = a();
                     s.getRanges().forEach(r->{
@@ -405,17 +388,30 @@ public class SearchServer extends ElasticSearchApi implements ElasticSearchApi.S
                             if(Validator.check(ss) && !array.contains(ss)){array.add(ss);}
                         }
                     });
-                    object.put( newField ,
-                            o(AggsLevel.Price.getLevel(),
-                                o(
-                                    o(o(FIELD,s.getField()),KEYED,s.getKeyed()),
-                                        RANGES,array
-                                )
-                            )
-                    );
-                    if( Validator.check(s.getAggsFieldBuider()) ){
-                        o( object.getJSONObject(newField),AGGS,o());
-                        pareAggsFieldBuider(s.getAggsFieldBuider(),object.getJSONObject(newField).getJSONObject(AGGS));
+                    JSONObject price = o(AggsLevel.Price.getLevel(), o(o(o(FIELD,s.getField().replaceAll(SIGN,DOT)),KEYED,s.getKeyed()),RANGES,array));
+                    if( s.getField().contains(DOT2) ){
+                        String[] fileds = s.getField().split(DOT);
+                        JSONObject aggsn = o();
+                        JSONObject child_aggs = o();
+                        String path_filed = s.getField();
+                        for (int i=fileds.length-1;i>=0;i--) {
+                            path_filed =fileds.length-1 == i ? path_filed: path_filed.substring(0,path_filed.lastIndexOf(DOT2));
+                            child_aggs = JSONObject.parseObject(aggsn.toString());aggsn.clear();
+                            aggsn = o(newField,i==fileds.length-1 ? price : o(o(AGGS,child_aggs),NESTED,o(PATH,path_filed.replaceAll(SIGN,DOT))));
+                            if( fileds.length-1 == i && Validator.check(s.getAggsFieldBuider())){
+                                o(aggsn.getJSONObject(newField),AGGS,o());
+                                pareAggsFieldBuider(s.getAggsFieldBuider(),aggsn.getJSONObject(newField).getJSONObject(AGGS));
+                            }
+                        }
+                        if( !object.containsKey(newField) ){
+                            object.put(newField,aggsn.getJSONObject(newField));
+                        }
+                    }else{
+                        object.put(newField,price);
+                        if( Validator.check(s.getAggsFieldBuider()) ){
+                            o( object.getJSONObject(newField),AGGS,o());
+                            pareAggsFieldBuider(s.getAggsFieldBuider(),object.getJSONObject(newField).getJSONObject(AGGS));
+                        }
                     }
                 }
             });
@@ -423,7 +419,7 @@ public class SearchServer extends ElasticSearchApi implements ElasticSearchApi.S
         //IP 范围文档数
         if( Validator.check(aggsFieldBuider.getIpRangeInfos()) ){
             aggsFieldBuider.getIpRangeInfos().forEach(s->{
-                String newField = StringAppend.aggsFieldAppend(AggsLevel.IPRange,s.getField());
+                String newField = StringAppend.aggsFieldAppend(AggsLevel.IPRange,s.getField().replaceAll(SIGN,DOT),s.getAlias());
                 if( !object.containsKey( newField) ){
                     JSONArray array = a();
                     s.getRanges().forEach(r->{
@@ -449,17 +445,30 @@ public class SearchServer extends ElasticSearchApi implements ElasticSearchApi.S
                             }
                         }
                     });
-                    object.put( newField ,
-                            o(AggsLevel.IPRange.getLevel(),
-                                    o(
-                                            o(o(FIELD,s.getField()),KEYED,s.getKeyed()),
-                                            RANGES,array
-                                    )
-                            )
-                    );
-                    if( Validator.check(s.getAggsFieldBuider()) ){
-                        o( object.getJSONObject(newField),AGGS,o());
-                        pareAggsFieldBuider(s.getAggsFieldBuider(),object.getJSONObject(newField).getJSONObject(AGGS));
+                    JSONObject range = o(AggsLevel.IPRange.getLevel(),o(o(o(FIELD,s.getField().replaceAll(SIGN,DOT)),KEYED,s.getKeyed()),RANGES,array));
+                    if( s.getField().contains(DOT2) ){
+                        String[] fileds = s.getField().split(DOT);
+                        JSONObject aggsn = o();
+                        JSONObject child_aggs = o();
+                        String path_filed = s.getField();
+                        for (int i=fileds.length-1;i>=0;i--) {
+                            path_filed =fileds.length-1 == i ? path_filed: path_filed.substring(0,path_filed.lastIndexOf(DOT2));
+                            child_aggs = JSONObject.parseObject(aggsn.toString());aggsn.clear();
+                            aggsn = o(newField,i==fileds.length-1 ? range : o(o(AGGS,child_aggs),NESTED,o(PATH,path_filed.replaceAll(SIGN,DOT))));
+                            if( fileds.length-1 == i && Validator.check(s.getAggsFieldBuider())){
+                                o(aggsn.getJSONObject(newField),AGGS,o());
+                                pareAggsFieldBuider(s.getAggsFieldBuider(),aggsn.getJSONObject(newField).getJSONObject(AGGS));
+                            }
+                        }
+                        if( !object.containsKey(newField) ){
+                            object.put(newField,aggsn.getJSONObject(newField));
+                        }
+                    }else{
+                        object.put( newField ,range);
+                        if( Validator.check(s.getAggsFieldBuider()) ){
+                            o( object.getJSONObject(newField),AGGS,o());
+                            pareAggsFieldBuider(s.getAggsFieldBuider(),object.getJSONObject(newField).getJSONObject(AGGS));
+                        }
                     }
                 }
             });
@@ -467,13 +476,30 @@ public class SearchServer extends ElasticSearchApi implements ElasticSearchApi.S
         //地理网格文档数
         if( Validator.check(aggsFieldBuider.getGridInfos()) ){
             aggsFieldBuider.getGridInfos().forEach(s->{
-                String newField = StringAppend.aggsFieldAppend(AggsLevel.Grid,s.getField());
+                String newField = StringAppend.aggsFieldAppend(AggsLevel.Grid,s.getField().replaceAll(SIGN,DOT),s.getAlias());
                 if( !object.containsKey( newField) ){
-                    object.put( newField ,
-                            o(AggsLevel.Grid.getLevel(),
-                                    o( o(FIELD,s.getField()), PRECISION,s.getPrecision())
-                            )
-                    );
+                    JSONObject grid = o(AggsLevel.Grid.getLevel(), o( o(FIELD,s.getField().replaceAll(SIGN,DOT)), PRECISION,s.getPrecision()));
+                    if( s.getField().contains(DOT2) ){
+                        String[] fileds = s.getField().split(DOT);
+                        JSONObject aggsn = o();
+                        JSONObject child_aggs = o();
+                        String path_filed = s.getField();
+                        for (int i=fileds.length-1;i>=0;i--) {
+                            path_filed =fileds.length-1 == i ? path_filed: path_filed.substring(0,path_filed.lastIndexOf(DOT2));
+                            child_aggs = JSONObject.parseObject(aggsn.toString());aggsn.clear();
+                            aggsn = o(newField,i==fileds.length-1 ? grid : o(o(AGGS,child_aggs),NESTED,o(PATH,path_filed.replaceAll(SIGN,DOT))));
+                            if( fileds.length-1 == i && Validator.check(s.getAggsFieldBuider())){
+                                o(aggsn.getJSONObject(newField),AGGS,o());
+                                pareAggsFieldBuider(s.getAggsFieldBuider(),aggsn.getJSONObject(newField).getJSONObject(AGGS));
+                            }
+                        }
+                        if( !object.containsKey(newField) ){
+                            object.put(newField,aggsn.getJSONObject(newField));
+                        }
+                        return;
+                    }else{
+                        object.put(newField ,grid);
+                    }
                 }
                 if( Validator.check(s.getAggsFieldBuider()) ){
                     o( object.getJSONObject(newField),AGGS,o());
@@ -481,7 +507,55 @@ public class SearchServer extends ElasticSearchApi implements ElasticSearchApi.S
                 }
             });
         }
+        //KeywordsCombines
+        if( Validator.check(aggsFieldBuider.getKeywordsCombines()) ){
+            aggsFieldBuider.getKeywordsCombines().forEach(s->{
+                JSONObject newShould = parsQueryKeyWords(o(),s);
+                if( Validator.check(newShould) ){
+                    String keyName=s.getKeyName();
+                    if( !Validator.check(s.getKeyName()) ){
+                        for(KeyWordsBuider keyWordsBuider:s.getKeyWordsBuiders()){
+                            keyName=keyName+ (Validator.check(keyName)?BLANK:NONE)+getKeyString(keyWordsBuider);
+                        };
+                    }
+                    String newField = StringAppend.aggsFieldAppend(AggsLevel.KeyWord,keyName);
+                    if( !object.containsKey( newField) ){
+                        object.put( newField ,o(AggsLevel.KeyWord.getLevel(),o(AggsLevel.KeyWord.getLevel(),o(keyName,newShould))));
+                    }
+                    if( Validator.check(s.getAggsFieldBuider()) ){
+                        o( object.getJSONObject(newField),AGGS,o());
+                        pareAggsFieldBuider(s.getAggsFieldBuider(),object.getJSONObject(newField).getJSONObject(AGGS));
+                    }
+                }
+            });
+        }
+        //Matrix Info
+        if( Validator.check(aggsFieldBuider.getMatrixInfos()) ){
+            aggsFieldBuider.getMatrixInfos().forEach(s->{
+                String newField = StringAppend.aggsFieldAppend(AggsLevel.Matrix,MATRIXINFO);
+                if( !object.containsKey(newField) ){
+                    object.put( newField , o(MATRIX_STATS,o(o(FIELDS,a(s.getFields())),Validator.check(s.getMissing()) ? MISSING :NONE,o(INCOME,s.getMissing()))) );
+                }
+            });
+        }
     }
+    private String getKeyString(KeyWordsBuider keyWordsBuider){
+        String keyString = NONE;
+        if( Validator.check(keyWordsBuider.getKeywordsCombines() )){
+            for(KeywordsCombine s:keyWordsBuider.getKeywordsCombines()){
+                if( Validator.check(s.getKeyWordsBuiders()) ){
+                    for(KeyWordsBuider c:s.getKeyWordsBuiders()){
+                        keyString =keyString+ (Validator.check(keyString)?BLANK:NONE)+getKeyString(c);
+                    }
+                }
+            }
+        }else{
+            keyString=keyString+(Validator.check(keyString)?BLANK:NONE)+ keyWordsBuider.getFieldOccurs().getIsExist()+
+                    keyWordsBuider.getField()+COLON+keyWordsBuider.getKeyWord();
+        }
+        return keyString;
+    }
+
 
     /**
      * execute query
@@ -489,10 +563,16 @@ public class SearchServer extends ElasticSearchApi implements ElasticSearchApi.S
     @Override
     public SearchResult executeQueryInfo() {
         if( !Validator.check( indexSearchBuilder.getSearch() ) ){
-            logger.debug(LogUtil.compositionLogEmpty("query parms"));
+            logger.warn(LogUtil.compositionLogEmpty("query parms"));
         }
         String curl =curl(indexParmsStatus.getUrl(),indexParmsStatus.getIndexName(),indexParmsStatus.getIndexType(),_SEARCH);
-        logger.info(LogUtil.compositionLogCurl(curl,indexSearchBuilder.getSearch()) );
+        if( Validator.check(indexSearchBuilder.getScrollTime()) ){
+            curl =curlSymbol(curlSymbol(curlSymbol(curl,QUESTION,PRETTY),AND,SCROLL),EQUAL,indexSearchBuilder.getScrollTime());
+        }
+//        logger.debug(LogUtil.compositionLogCurl(curl,indexSearchBuilder.getSearch()) );
+        if(debugInfo()){
+            logger.info(LogUtil.compositionLogCurl(curl,indexSearchBuilder.getSearch()) );
+        }
         String resultStr = new CasiaHttpUtil().post(curl,indexParmsStatus.getHeards(),null,indexSearchBuilder.getSearch().toString() );
         return ExecuteResult.executeQueryResult(o(resultStr));
     }
@@ -512,7 +592,10 @@ public class SearchServer extends ElasticSearchApi implements ElasticSearchApi.S
         String curl =curlSymbol( curl(indexParmsStatus.getUrl(),!Validator.check(scroll_id)?indexParmsStatus.getIndexName():"",!Validator.check(scroll_id)?indexParmsStatus.getIndexType():"", _SEARCH),Validator.check(scroll_id)?SLASH:QUESTION  ,
         Validator.check(scroll_id)?SCROLL:SCROLL+EQUAL+scroll_time);
         String bodys=Validator.check(scroll_id)?o(o(SCROLL,scroll_time),SCROLL_ID,scroll_id).toString():indexSearchBuilder.getSearch().toString();
-        logger.debug(LogUtil.compositionLogCurl(curl,bodys));
+//        logger.debug(LogUtil.compositionLogCurl(curl,bodys));
+        if(debugInfo()){
+            logger.info(LogUtil.compositionLogCurl(curl,bodys) );
+        }
         String resultStr = new CasiaHttpUtil().post(curl,
                 indexParmsStatus.getHeards(),
                 null,bodys
@@ -525,8 +608,14 @@ public class SearchServer extends ElasticSearchApi implements ElasticSearchApi.S
     @Override
     public SearchResult executeQueryTotal() {
         String curl=curl(indexParmsStatus.getUrl(),indexParmsStatus.getIndexName(),indexParmsStatus.getIndexType(),_COUNT);
+        if( Validator.check(indexSearchBuilder.getScrollTime()) ){
+            curl =curlSymbol(curlSymbol(curlSymbol(curl,QUESTION,PRETTY),AND,SCROLL),EQUAL,indexSearchBuilder.getScrollTime());
+        }
         String bodys = os(QUERY,indexSearchBuilder.getQuery().toString());
-        logger.debug(LogUtil.compositionLogCurl(curl,bodys) );
+//        logger.debug(LogUtil.compositionLogCurl(curl,bodys) );
+        if(debugInfo()){
+            logger.info(LogUtil.compositionLogCurl(curl,bodys) );
+        }
         String resultStr = new CasiaHttpUtil().post(curl,indexParmsStatus.getHeards(),null,bodys);
         return ExecuteResult.executeQueryTotal(o(resultStr));
     }
@@ -543,7 +632,13 @@ public class SearchServer extends ElasticSearchApi implements ElasticSearchApi.S
             return searchResult;
         }
         String curl=curl(indexParmsStatus.getUrl(),indexParmsStatus.getIndexName(),indexParmsStatus.getIndexType(),_SEARCH);
-        logger.debug(LogUtil.compositionLogCurl(curl,indexSearchBuilder.getCount().toString() ) );
+//        logger.debug(LogUtil.compositionLogCurl(curl,indexSearchBuilder.getCount().toString() ) );
+        if( Validator.check(indexSearchBuilder.getScrollTime()) ){
+            curl =curlSymbol(curlSymbol(curlSymbol(curl,QUESTION,PRETTY),AND,SCROLL),EQUAL,indexSearchBuilder.getScrollTime());
+        }
+        if(debugInfo()){
+            logger.info(LogUtil.compositionLogCurl(curl,indexSearchBuilder.getCount().toString()) );
+        }
         String resultStr = new CasiaHttpUtil().post(curl,indexParmsStatus.getHeards(),null,indexSearchBuilder.getCount().toString());
         return ExecuteResult.executeQueryResult(o(resultStr));
     }

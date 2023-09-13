@@ -23,16 +23,34 @@ public class GeoInfo {
      * The default value is true
      */
     private Boolean wrap;
+    /**
+     * field alias
+     */
+    private String alias;
 
+    public GeoInfo() { }
     public GeoInfo(GeoLevel geoLevel ,String field) {
         this.geoLevel = geoLevel;
         this.field = field;
     }
 
-    public GeoInfo(GeoLevel geoLevel ,String field, Boolean wrap) {
+    public GeoInfo(GeoLevel geoLevel, String field, String alias) {
+        this.geoLevel = geoLevel;
+        this.field = field;
+        this.alias = alias;
+    }
+
+    public GeoInfo(GeoLevel geoLevel , String field, Boolean wrap) {
         this.geoLevel = geoLevel;
         this.field = field;
         this.wrap = wrap;
+    }
+
+    public GeoInfo(GeoLevel geoLevel, String field, Boolean wrap, String alias) {
+        this.geoLevel = geoLevel;
+        this.field = field;
+        this.wrap = wrap;
+        this.alias = alias;
     }
 
     public GeoLevel getGeoLevel() {
@@ -59,6 +77,15 @@ public class GeoInfo {
 
     public GeoInfo setWrap(Boolean wrap) {
         this.wrap = wrap;
+        return this;
+    }
+
+    public String getAlias() {
+        return alias;
+    }
+
+    public GeoInfo setAlias(String alias) {
+        this.alias = alias;
         return this;
     }
 }

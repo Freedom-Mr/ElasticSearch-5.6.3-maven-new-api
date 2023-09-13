@@ -1,0 +1,653 @@
+{
+  "settings": {
+    "number_of_replicas": 1,
+    "number_of_shards": 6,
+    "refresh_interval": "5s",
+    "translog": {
+      "flush_threshold_size": "1.5gb"
+    },
+    "merge": {
+      "scheduler": {
+        "max_thread_count": "3"
+      }
+    },
+    "analysis": {
+      "normalizer": {
+        "my_normalizer": {
+          "type": "custom",
+          "char_filter": [],
+          "filter": [
+            "lowercase",
+            "asciifolding"
+          ]
+        }
+      }
+    }
+  },
+  "mappings": {
+    "all": {
+      "dynamic": "false",
+
+      "properties": {
+        "it": {
+          "index": "not_analyzed",
+          "type": "keyword"
+        },
+        "gid": {
+          "index": "not_analyzed",
+          "type": "keyword"
+        },
+
+        "offset": {
+          "index": "not_analyzed",
+          "type": "long"
+        },
+        "partition": {
+          "index": "not_analyzed",
+          "type": "short"
+        },
+
+
+        "source_md5": {
+          "index": "not_analyzed",
+          "store": true,
+          "type": "keyword"
+        },
+        "reproduce_md5": {
+          "index": "not_analyzed",
+          "type": "keyword"
+        },
+        "site_channel_model_md5": {
+          "index": "not_analyzed",
+          "type": "keyword"
+        },
+        "publish_author_md5": {
+          "index": "not_analyzed",
+          "type": "keyword"
+        },
+        "receive_author_md5": {
+          "index": "not_analyzed",
+          "type": "keyword"
+        },
+        "publish_group_md5": {
+          "index": "not_analyzed",
+          "type": "keyword"
+        },
+
+
+        "publish_type": {
+          "index": "not_analyzed",
+          "type": "short"
+        },
+        "is_update": {
+          "index": "not_analyzed",
+          "type": "short"
+        },
+
+
+        "media_type": {
+          "index": "not_analyzed",
+          "type": "short"
+        },
+        "image_info": {
+          "index": "not_analyzed",
+          "type": "keyword"
+        },
+        "voice_info": {
+          "index": "not_analyzed",
+          "type": "keyword"
+        },
+        "video_info": {
+          "index": "not_analyzed",
+          "type": "keyword"
+        },
+        "docs_info": {
+          "index": "not_analyzed",
+          "type": "keyword"
+        },
+        "application_info": {
+          "index": "not_analyzed",
+          "type": "keyword"
+        },
+
+
+        "title": {
+          "analyzer": "standard",
+          "type": "text"
+        },
+        "title_translation": {
+          "analyzer": "standard",
+          "type": "text"
+        },
+        "content": {
+          "analyzer": "standard",
+          "type": "text"
+        },
+        "content_translation": {
+          "analyzer": "standard",
+          "type": "text"
+        },
+        "summary": {
+          "analyzer": "standard",
+          "type": "text"
+        },
+
+
+        "source_url": {
+          "index": "not_analyzed",
+          "type": "keyword"
+        },
+        "source_domain": {
+          "index": "not_analyzed",
+          "type": "keyword"
+        },
+        "source_host": {
+          "index": "not_analyzed",
+          "type": "keyword"
+        },
+        "reproduce_url": {
+          "index": "not_analyzed",
+          "type": "keyword"
+        },
+        "site_channel_model_url": {
+          "index": "not_analyzed",
+          "type": "keyword"
+        },
+        "publish_author_url": {
+          "index": "not_analyzed",
+          "type": "keyword"
+        },
+        "receive_author_url": {
+          "index": "not_analyzed",
+          "type": "keyword"
+        },
+        "publish_group_url": {
+          "index": "not_analyzed",
+          "type": "keyword"
+        },
+
+
+        "site_channel_model_name": {
+          "analyzer": "standard",
+          "fielddata": true,
+          "type": "text",
+          "fields": {
+            "site_channel_model_name": {
+              "type": "keyword"
+            }
+          }
+        },
+        "site_id": {
+          "index": "not_analyzed",
+          "type": "keyword"
+        },
+        "site_name": {
+          "analyzer": "standard",
+          "fielddata": true,
+          "type": "text",
+          "fields": {
+            "site_name": {
+              "type": "keyword"
+            }
+          }
+        },
+        "channel_name": {
+          "analyzer": "standard",
+          "fielddata": true,
+          "type": "text",
+          "fields": {
+            "channel_name": {
+              "type": "keyword"
+            }
+          }
+        },
+        "model_name": {
+          "analyzer": "standard",
+          "fielddata": true,
+          "type": "text",
+          "fields": {
+            "model_name": {
+              "type": "keyword"
+            }
+          }
+        },
+
+
+        "publish_author_id": {
+          "analyzer": "standard",
+          "fielddata": true,
+          "type": "text",
+          "fields": {
+            "publish_author_id": {
+              "type": "keyword"
+            }
+          }
+        },
+        "publish_author_account": {
+          "analyzer": "standard",
+          "fielddata": true,
+          "type": "text",
+          "fields": {
+            "publish_author_account": {
+              "type": "keyword"
+            }
+          }
+        },
+        "publish_author_name": {
+          "analyzer": "standard",
+          "fielddata": true,
+          "type": "text",
+          "fields": {
+            "publish_author_name": {
+              "type": "keyword"
+            }
+          }
+        },
+        "receive_author_id": {
+          "analyzer": "standard",
+          "fielddata": true,
+          "type": "text",
+          "fields": {
+            "receive_author_id": {
+              "type": "keyword"
+            }
+          }
+        },
+        "receive_author_account": {
+          "analyzer": "standard",
+          "fielddata": true,
+          "type": "text",
+          "fields": {
+            "receive_author_account": {
+              "type": "keyword"
+            }
+          }
+        },
+        "receive_author_name": {
+          "analyzer": "standard",
+          "fielddata": true,
+          "type": "text",
+          "fields": {
+            "receive_author_name": {
+              "type": "keyword"
+            }
+          }
+        },
+        "publish_group_id": {
+          "analyzer": "standard",
+          "fielddata": true,
+          "type": "text",
+          "fields": {
+            "publish_group_id": {
+              "type": "keyword"
+            }
+          }
+        },
+        "publish_group_account": {
+          "analyzer": "standard",
+          "fielddata": true,
+          "type": "text",
+          "fields": {
+            "publish_group_account": {
+              "type": "keyword"
+            }
+          }
+        },
+        "publish_group_name": {
+          "analyzer": "standard",
+          "fielddata": true,
+          "type": "text",
+          "fields": {
+            "publish_group_name": {
+              "type": "keyword"
+            }
+          }
+        },
+
+
+        "publish_ip": {
+          "type": "ip"
+        },
+        "receive_ip": {
+          "type": "ip"
+        },
+
+
+        "publish_lal": {
+          "type": "geo_point"
+        },
+        "publish_longitude": {
+          "index": "not_analyzed",
+          "type": "float"
+        },
+        "publish_latitude": {
+          "index": "not_analyzed",
+          "type": "float"
+        },
+        "receive_lal": {
+          "type": "geo_point"
+        },
+        "receive_longitude": {
+          "index": "not_analyzed",
+          "type": "float"
+        },
+        "receive_latitude": {
+          "index": "not_analyzed",
+          "type": "float"
+        },
+
+
+
+        "forwarding_number": {
+          "index": "not_analyzed",
+          "type": "integer"
+        },
+        "reply_number": {
+          "index": "not_analyzed",
+          "type": "integer"
+        },
+        "like_number": {
+          "index": "not_analyzed",
+          "type": "integer"
+        },
+        "play_number": {
+          "index": "not_analyzed",
+          "type": "integer"
+        },
+        "download_number": {
+          "index": "not_analyzed",
+          "type": "integer"
+        },
+
+
+        "data_source": {
+          "index": "not_analyzed",
+          "type": "keyword"
+        },
+        "nation_category": {
+          "index": "not_analyzed",
+          "type": "short"
+        },
+
+
+        "spam_data": {
+          "type": "boolean"
+        },
+        "repeat_data": {
+          "type": "boolean"
+        },
+
+
+        "language": {
+          "index": "not_analyzed",
+          "type": "keyword"
+        },
+
+        "eid": {
+          "index": "not_analyzed",
+          "type": "integer"
+        },
+
+        "entity_info": {
+          "type": "nested",
+          "properties": {
+            "name_info": {
+              "index": "not_analyzed",
+              "type": "keyword"
+            },
+            "organization_info": {
+              "index": "not_analyzed",
+              "type": "keyword"
+            },
+            "time_info": {
+              "index": "not_analyzed",
+              "type": "keyword"
+            },
+            "area_info": {
+              "index": "not_analyzed",
+              "type": "keyword"
+            },
+            "email_info": {
+              "index": "not_analyzed",
+              "type": "keyword"
+            },
+            "telephone_info": {
+              "index": "not_analyzed",
+              "type": "keyword"
+            },
+            "account_info": {
+              "index": "not_analyzed",
+              "type": "keyword"
+            },
+            "keyword_info": {
+              "index": "not_analyzed",
+              "type": "keyword"
+            },
+            "topic_info": {
+              "index": "not_analyzed",
+              "type": "keyword"
+            },
+            "entity_info": {
+              "index": "not_analyzed",
+              "type": "keyword"
+            }
+          }
+        },
+
+        "txt_extraction_info": {
+          "type": "nested",
+          "properties": {
+            "topic_info": {
+              "analyzer": "standard",
+              "fielddata": true,
+              "type": "text",
+              "fields": {
+                "topic_info": {
+                  "type": "keyword"
+                }
+              }
+            },
+            "direction_type": {
+              "index": "not_analyzed",
+              "type": "keyword"
+            },
+            "tendency_level": {
+              "index": "not_analyzed",
+              "type": "short"
+            },
+            "attitude_towards_china": {
+              "index": "not_analyzed",
+              "type": "short"
+            },
+            "speech_info": {
+              "type": "nested",
+              "properties": {
+                "category": {
+                  "index": "not_analyzed",
+                  "type": "keyword"
+                },
+                "info": {
+                  "analyzer": "standard",
+                  "type": "text"
+                }
+              }
+            },
+            "stance_info": {
+              "type": "nested",
+              "properties": {
+                "stance": {
+                  "index": "not_analyzed",
+                  "type": "short"
+                },
+                "topic": {
+                  "index": "not_analyzed",
+                  "type": "keyword"
+                },
+                "sentiment": {
+                  "index": "not_analyzed",
+                  "type": "short"
+                }
+              }
+            }
+          }
+        },
+        "image_extraction_info": {
+          "type": "nested",
+          "properties": {
+            "image_type": {
+              "index": "not_analyzed",
+              "type": "keyword"
+            },
+            "image_to_url": {
+              "type": "nested",
+              "properties": {
+                "description": {
+                  "analyzer": "standard",
+                  "type": "text"
+                },
+                "url": {
+                  "index": "not_analyzed",
+                  "type": "keyword"
+                },
+                "info": {
+                  "type": "nested",
+                  "properties": {
+                    "category": {
+                      "index": "not_analyzed",
+                      "type": "keyword"
+                    },
+                    "names": {
+                      "analyzer": "standard",
+                      "fielddata": true,
+                      "type": "text",
+                      "fields": {
+                        "names": {
+                          "type": "keyword"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "image_to_category": {
+              "type": "nested",
+              "properties": {
+                "category": {
+                  "index": "not_analyzed",
+                  "type": "keyword"
+                },
+                "info": {
+                  "type": "nested",
+                  "properties": {
+                    "url": {
+                      "index": "not_analyzed",
+                      "type": "keyword"
+                    },
+                    "names": {
+                      "analyzer": "standard",
+                      "fielddata": true,
+                      "type": "text",
+                      "fields": {
+                        "names": {
+                          "type": "keyword"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+
+
+        "pubtime": {
+          "format": "yyyy-MM-dd HH:mm:ss",
+          "store": true,
+          "type": "date"
+        },
+        "pubdate": {
+          "format": "yyyy-MM-dd",
+          "type": "date"
+        },
+        "addtime": {
+          "format": "yyyy-MM-dd HH:mm:ss",
+          "type": "date"
+        },
+        "caitime": {
+          "format": "yyyy-MM-dd HH:mm:ss",
+          "type": "date"
+        },
+        "instime": {
+          "index": "not_analyzed",
+          "type": "long"
+        },
+        "updtime": {
+          "format": "yyyy-MM-dd HH:mm:ss",
+          "type": "date"
+        },
+
+
+
+        "name_info": {
+          "index": "not_analyzed",
+          "type": "keyword"
+        },
+        "organization_info": {
+          "index": "not_analyzed",
+          "type": "keyword"
+        },
+        "time_info": {
+          "index": "not_analyzed",
+          "type": "keyword"
+        },
+        "area_info": {
+          "index": "not_analyzed",
+          "type": "keyword"
+        },
+        "email_info": {
+          "index": "not_analyzed",
+          "type": "keyword"
+        },
+        "telephone_info": {
+          "index": "not_analyzed",
+          "type": "keyword"
+        },
+        "account_info": {
+          "index": "not_analyzed",
+          "type": "keyword"
+        },
+        "keyword_info": {
+          "index": "not_analyzed",
+          "type": "keyword"
+        },
+        "topic_info": {
+          "index": "not_analyzed",
+          "type": "keyword"
+        },
+        "entity_info": {
+          "index": "not_analyzed",
+          "type": "keyword"
+        },
+        "book_info": {
+          "index": "not_analyzed",
+          "type": "keyword"
+        },
+        "tendency_level": {
+          "index": "not_analyzed",
+          "type": "short"
+        },
+        "attitude_towards_china": {
+          "index": "not_analyzed",
+          "type": "short"
+        },
+        "direction_type": {
+          "index": "not_analyzed",
+          "type": "keyword"
+        }
+
+      }
+    }
+  }
+}

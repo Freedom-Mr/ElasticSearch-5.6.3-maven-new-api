@@ -9,7 +9,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * ClassName: QueryServer
@@ -35,7 +37,7 @@ public class QueryServer extends ElasticSearchApi implements ElasticSearchApi.Qu
             logger.warn(LogUtil.compositionLogEmpty("indexName"));
             return null;
         }
-        String curl=curl(indexParmsStatus.getUrl(),indexName);
+        String curl=curl(indexParmsStatus.getUrl(),Validator.check(indexName)? indexName : indexParmsStatus.getIndexName() );
         logger.debug(LogUtil.compositionLogCurl(curl,indexName));
         CasiaHttpUtil casiaHttpUtil = new CasiaHttpUtil();
         String resultStr = casiaHttpUtil.get(curl,indexParmsStatus.getHeards());
@@ -49,6 +51,7 @@ public class QueryServer extends ElasticSearchApi implements ElasticSearchApi.Qu
         List<String> list = new ArrayList<String>();
         String curl=curlSymbol( curl(indexParmsStatus.getUrl(),_CAT,INDICES),QUESTION,h+EQUAL+INDEX);
         logger.debug(LogUtil.compositionLogCurl(curl,""));
+        if(debugInfo()){logger.info(LogUtil.compositionLogCurl(curl,""));};
         CasiaHttpUtil casiaHttpUtil = new CasiaHttpUtil();
         String resultStr = casiaHttpUtil.get(curl,indexParmsStatus.getHeards());
         try {
@@ -64,5 +67,67 @@ public class QueryServer extends ElasticSearchApi implements ElasticSearchApi.Qu
             return list;
         }
         return list;
+    }
+    /**
+     * search all Alias
+     * or
+     * search all Alias by indexName
+     * or
+     * search all Alias by wildcard
+     * @return map
+     */
+    public Map<String,List<String>> queryIndexAlias(String wildcard){
+        Map<String,List<String>> map = new HashMap<>();
+
+        String curl = curl(indexParmsStatus.getUrl(),indexParmsStatus.getIndexName(),_ALIAS,Validator.check(wildcard)?wildcard:STAR);
+        CasiaHttpUtil casiaHttpUtil = new CasiaHttpUtil();
+        String resultStr = casiaHttpUtil.get(curl,indexParmsStatus.getHeards());
+        try {
+            JSONObject rs =o(resultStr);
+            if( !rs.containsKey(ERROR)  ){
+                rs.forEach((k,v)->{
+                    List<String> list = new ArrayList<String>();
+                    o(String.valueOf(v)).getJSONObject(ALIASES).forEach((o,p)->{
+                        list.add(o);
+                    });
+                    if( Validator.check(list) ){
+                        map.put(k,list);
+                    }
+                });
+            }
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            logger.error("query index Alias Exception:{}",e.getMessage());
+            return map;
+        }
+        return map;
+    }
+    /**
+     * search task info
+     * @return map
+     */
+    public JSONObject queryTask(String taskId){
+        if( !Validator.check(taskId) ){
+            logger.warn(LogUtil.compositionLogEmpty("taskId"));
+            return null;
+        }
+        String curl = curl(indexParmsStatus.getUrl(),_TASKS,taskId);
+        CasiaHttpUtil casiaHttpUtil = new CasiaHttpUtil();
+        String resultStr = casiaHttpUtil.get(curl,indexParmsStatus.getHeards());
+        return JSONObject.parseObject(resultStr);
+    }
+    /**
+     * search index indices info
+     * @return map
+     */
+    public JSONObject queryIndices(String taskId){
+        if( !Validator.check(taskId) ){
+            logger.warn(LogUtil.compositionLogEmpty("taskId"));
+            return null;
+        }
+        String curl = curl(indexParmsStatus.getUrl(),_TASKS,taskId);
+        CasiaHttpUtil casiaHttpUtil = new CasiaHttpUtil();
+        String resultStr = casiaHttpUtil.get(curl,indexParmsStatus.getHeards());
+        return JSONObject.parseObject(resultStr);
     }
 }
